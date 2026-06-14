@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# App web
 
-## Getting Started
+Este e o app principal do Workspace Town. Ele concentra a interface web do MVP, a sala demo, o renderer PixiJS, schemas iniciais, estado local e rotas server-side.
 
-First, run the development server:
+## Papel no monorepo
+
+`apps/web` e a aplicacao Next.js voltada ao usuario final. Ela deve controlar paginas, paineis, formularios, rotas server-side e integracoes do produto.
+
+O renderer da sala nao deve ser implementado como uma arvore grande de componentes React. A cena em movimento fica no PixiJS, montada dentro de um componente client-side pequeno.
+
+## Tecnologias usadas
+
+- Next.js App Router.
+- React e TypeScript.
+- Tailwind CSS e shadcn/ui.
+- PixiJS para canvas da sala.
+- Zustand para estado local client-side.
+- Zod para schemas e validacao.
+- Drizzle ORM para schema PostgreSQL.
+- LiveKit server SDK para geracao de token no servidor.
+
+## Estrutura principal
+
+```txt
+app/
+  page.tsx                  # Home simples com link para a sala demo
+  rooms/demo/page.tsx       # Rota da sala demo
+  api/livekit/token/route.ts# Endpoint server-side para token LiveKit
+components/
+  ui/                       # Componentes shadcn/ui
+db/
+  schema.ts                 # Schema Drizzle inicial
+features/
+  room/
+    components/             # Componentes React da feature
+    renderer/               # Renderer PixiJS isolado
+    stores/                 # Zustand stores
+    types.ts                # Tipos e schemas Zod
+lib/
+  utils.ts                  # Utilitarios compartilhados do app
+```
+
+## Como rodar
+
+A partir de `apps/web`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O app roda em:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+Rotas uteis:
 
-## Learn More
+- `/`: entrada simples do produto.
+- `/rooms/demo`: sala demo com canvas PixiJS e movimento local.
+- `/api/livekit/token`: rota server-side para token LiveKit. Use `POST` para gerar token.
 
-To learn more about Next.js, take a look at the following resources:
+## Variaveis de ambiente
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copie `apps/web/.env.example` para `apps/web/.env.local` e preencha quando for usar banco ou LiveKit.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+DATABASE_URL=
+LIVEKIT_API_KEY=
+LIVEKIT_API_SECRET=
+LIVEKIT_URL=
+```
 
-## Deploy on Vercel
+O endpoint LiveKit retorna erro se as variaveis LiveKit nao estiverem configuradas. Nao ha secrets hardcoded no codigo.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Feature de sala
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A feature inicial esta em `features/room`.
+
+- `types.ts`: schemas Zod e tipos de `room`, `player`, `roomObject`, `avatarConfig` e `meetingType`.
+- `stores/room-store.ts`: estado local da sala demo, player local, objetos estaticos e movimento por grid.
+- `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
+- `components/room-status-panel.tsx`: painel simples com dados do player local.
+- `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a cena e limpa recursos no unmount.
+
+## Client components e server-side code
+
+Use `"use client"` apenas para codigo que depende do browser, como canvas, teclado, Zustand e componentes LiveKit client-side.
+
+Codigo server-side deve ficar em rotas do App Router ou modulos server-only. O endpoint atual de LiveKit esta em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
+
+Banco de dados tambem deve permanecer no servidor. O schema inicial esta em `db/schema.ts`, mas ainda nao ha cliente de banco, migrations ou queries implementadas.
+
+## MVP atual
+
+Implementado:
+
+- home simples;
+- sala demo;
+- canvas PixiJS;
+- grid 2D;
+- player local;
+- movimento por WASD ou setas;
+- objetos estaticos;
+- estado local com Zustand;
+- schemas Zod iniciais;
+- schema Drizzle inicial;
+- rota inicial de token LiveKit.
+
+Limites atuais:
+
+- nao ha servidor realtime;
+- nao ha multiplayer real;
+- nao ha persistencia conectada a banco;
+- nao ha editor de sala;
+- nao ha componente de chamada LiveKit conectado;
+- nao ha autenticacao;
+- nao ha testes automatizados.
+
+## Comandos uteis
+
+Lint:
+
+```bash
+bun run lint
+```
+
+Checagem de tipos:
+
+```bash
+bun run check-types
+```
+
+Build:
+
+```bash
+bun run build
+```

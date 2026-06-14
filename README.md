@@ -1,159 +1,133 @@
-# Turborepo starter
+# Workspace Town
 
-This Turborepo starter is maintained by the Turborepo core team.
+Workspace Town e um projeto de workspace virtual colaborativo inspirado em interfaces espaciais como Gather. A proposta e combinar uma aplicacao web, um renderer 2D leve, presenca em tempo real, chamadas ao vivo e fluxos de reuniao para times de software.
 
-## Using this example
+O objetivo do produto e permitir que usuarios criem salas virtuais, organizem moveis e itens, personalizem avatares, movam-se por um ambiente 2D ou isometrico e participem de chamadas ao vivo. Em etapas futuras, o sistema tambem deve apoiar rituais como daily, planning, retro, review e pair programming.
 
-Run the following command:
+## Arquitetura geral
 
-```sh
-npx create-turbo@latest
+O repositorio usa uma estrutura de monorepo em estilo Turborepo.
+
+```txt
+apps/
+  web/       # App principal em Next.js
+  docs/      # App de documentacao criado pelo template, ainda nao usado como docs tecnica
+packages/
+  ui/        # Componentes compartilhados iniciais do template
+  eslint-config/
+  typescript-config/
+docs/        # Documentacao tecnica do projeto
 ```
 
-## What's inside?
+No momento, a aplicacao principal esta em `apps/web`. A documentacao tecnica do projeto fica em `docs/`.
 
-This Turborepo includes the following packages/apps:
+## Tecnologias principais
 
-### Apps and Packages
+- Bun como runtime e package manager.
+- Turborepo para orquestracao do monorepo.
+- Next.js, React e TypeScript para o app web.
+- Tailwind CSS e shadcn/ui para interface.
+- PixiJS para o renderer da sala virtual.
+- Zustand para estado client-side local.
+- Zod para schemas e validacao.
+- Drizzle ORM para modelagem de banco PostgreSQL.
+- LiveKit como provedor planejado de audio e video.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Separacao de responsabilidades
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- App web: paginas, rotas, componentes de UI, chamadas server-side e integracao do MVP.
+- Renderer PixiJS: desenho da sala, grid, objetos, avatar e movimento local no canvas.
+- Estado local: posicao atual do player e dados efemeros do prototipo ficam no Zustand.
+- Banco de dados: entidades persistentes como usuarios, players, workspaces, salas, objetos, chat, chamadas e reunioes ficam no schema Drizzle.
+- LiveKit: tratado como provedor de chamada. O dominio usa entidades internas como `callSessions` e `callParticipants`.
+- Realtime server: planejado para presenca e movimento em tempo real. Ainda nao foi implementado.
 
-### Utilities
+O movimento do player nao deve ser persistido em SQL. Para o MVP, ele e local e efemero.
 
-This Turborepo has some additional tools already setup for you:
+## Variaveis de ambiente
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+O app web espera as variaveis abaixo. Veja tambem `apps/web/.env.example`.
 
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```env
+DATABASE_URL=
+LIVEKIT_API_KEY=
+LIVEKIT_API_SECRET=
+LIVEKIT_URL=
 ```
 
-Without global `turbo`, use your package manager:
+Nao coloque secrets reais no repositorio.
 
-```sh
-cd my-turborepo
-npx turbo build
-bun dlx turbo build
-bun exec turbo build
+## Comandos
+
+Instalar dependencias:
+
+```bash
+bun install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Rodar todos os apps pelo monorepo:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+```bash
+bun dev
 ```
 
-Without global `turbo`:
+Rodar apenas o app web:
 
-```sh
-npx turbo build --filter=docs
-bun exec turbo build --filter=docs
-bun exec turbo build --filter=docs
+```bash
+cd apps/web
+bun dev
 ```
 
-### Develop
+Build:
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+```bash
+bun run build
 ```
 
-Without global `turbo`, use your package manager:
+Lint:
 
-```sh
-cd my-turborepo
-npx turbo dev
-bun exec turbo dev
-bun exec turbo dev
+```bash
+bun run lint
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Checagem de tipos do app web:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
+```bash
+cd apps/web
+bun run check-types
 ```
 
-Without global `turbo`:
+## Estado atual
 
-```sh
-npx turbo dev --filter=web
-bun exec turbo dev --filter=web
-bun exec turbo dev --filter=web
-```
+Ja existe uma fundacao inicial para o MVP:
 
-### Remote Caching
+- pagina inicial com link para a sala demo;
+- rota `/rooms/demo`;
+- componente client-side que monta um canvas PixiJS;
+- renderer PixiJS separado da camada React;
+- grid 2D simples, objetos estaticos e player local;
+- movimento local com teclado;
+- store Zustand para estado local da sala e do player;
+- schemas Zod iniciais para sala, player, avatar, objetos e tipos de reuniao;
+- schema Drizzle inicial para os principais dominios persistentes;
+- endpoint inicial `POST /api/livekit/token` para gerar token LiveKit;
+- arquivo `.env.example` do app web.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## A implementar
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+As proximas etapas planejadas incluem:
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+- painel de chamada LiveKit no app web;
+- conexao real a uma sala LiveKit;
+- editor basico de sala e objetos;
+- modelos e migrations Drizzle;
+- persistencia real em PostgreSQL;
+- servidor realtime para presenca e movimento;
+- fluxo de reunioes para daily, planning, retro, review e pair programming;
+- testes automatizados para renderer, schemas, rotas e UI.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Documentacao interna
 
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-bun exec turbo login
-bun exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-bun exec turbo link
-bun exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+- Documentacao tecnica: [`docs/README.md`](docs/README.md)
+- App web: [`apps/web/README.md`](apps/web/README.md)
+- Pendencias vivas do projeto: [`TODO.md`](TODO.md)
