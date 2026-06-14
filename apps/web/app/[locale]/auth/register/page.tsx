@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,13 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LoginForm } from "@/features/auth/components/login-form";
+import { RegisterForm } from "@/features/auth/components/register-form";
 import { Link } from "@/i18n/navigation";
 import { getCurrentSession } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
-  const t = await getTranslations("auth.login");
+export default async function RegisterPage() {
+  const t = await getTranslations("auth.register");
   const common = await getTranslations("common");
   const session = await getCurrentSession();
 
@@ -23,10 +23,10 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#e0f2fe,transparent_32%),linear-gradient(135deg,#f8fafc,#eef2ff)] px-6 py-12 text-foreground">
-      <section className="mx-auto grid min-h-[calc(100vh-6rem)] w-full max-w-6xl items-center gap-10 lg:grid-cols-[1fr_440px]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,#dcfce7,transparent_30%),linear-gradient(135deg,#f8fafc,#eef2ff)] px-6 py-12 text-foreground">
+      <section className="mx-auto grid min-h-[calc(100vh-6rem)] w-full max-w-6xl items-center gap-10 lg:grid-cols-[1fr_460px]">
         <div className="max-w-2xl space-y-6">
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-sky-700">
+          <p className="text-sm font-medium uppercase tracking-[0.18em] text-emerald-700">
             {common("appName")}
           </p>
           <h1 className="text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl">
@@ -43,12 +43,12 @@ export default async function LoginPage() {
             <CardDescription>{t("description")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            <RegisterForm />
           </CardContent>
           <CardFooter className="justify-center gap-2 text-sm">
-            <span className="text-muted-foreground">{t("registerPrompt")}</span>
+            <span className="text-muted-foreground">{t("loginPrompt")}</span>
             <Button asChild variant="link" className="h-auto p-0">
-              <Link href="/auth/register">{t("registerLink")}</Link>
+              <Link href="/auth/login">{t("loginLink")}</Link>
             </Button>
           </CardFooter>
         </Card>

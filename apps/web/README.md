@@ -1,6 +1,6 @@
 # App web
 
-Este é o app principal do Workspace Town. Ele concentra a interface web do MVP, o fluxo mockado de entrada, a sala/mapa, o renderer PixiJS, a configuração de i18n, schemas iniciais, estado local e rotas server-side.
+Este é o app principal do Workspace Town. Ele concentra a interface web do MVP, o fluxo autenticado de entrada, a sala/mapa, o renderer PixiJS, a configuração de i18n, schemas iniciais, estado local e rotas server-side.
 
 ## Papel no monorepo
 
@@ -14,6 +14,7 @@ O renderer da sala não deve ser implementado como uma árvore grande de compone
 - React e TypeScript.
 - Tailwind CSS e shadcn/ui.
 - next-intl para internacionalização.
+- better-auth para autenticação por e-mail e senha.
 - PixiJS para canvas da sala.
 - Zustand para estado local client-side.
 - Zod para schemas e validação.
@@ -28,17 +29,24 @@ app/
   [locale]/
     layout.tsx                     # Valida o locale da rota
     page.tsx                       # Redireciona para /auth/login
-    auth/login/page.tsx            # Login mockado
+    auth/login/page.tsx            # Login com e-mail e senha
+    auth/register/page.tsx         # Cadastro com e-mail e senha
     workspaces/page.tsx            # Seleção de workspaces/cidades mockados
     workspaces/[workspaceSlug]/map/page.tsx
                                    # Mapa principal do workspace mockado
     rooms/demo/page.tsx            # Rota da sala demo
   api/livekit/token/route.ts       # Endpoint server-side para token LiveKit
+  api/auth/[...all]/route.ts       # Endpoint do Better Auth
 components/
   ui/                              # Componentes shadcn/ui
 db/
+  client.ts                        # Cliente Drizzle/Neon server-side
   schema.ts                        # Schema Drizzle inicial
+  drizzle.config.ts                # Configuração de migrations
 features/
+  auth/
+    components/                    # Formulários de login, cadastro e logout
+    schemas.ts                     # Validação Zod dos formulários
   room/
     components/                    # Componentes React da feature
     renderer/                      # Renderer PixiJS isolado
@@ -73,7 +81,8 @@ http://localhost:3000
 Rotas úteis:
 
 - `/`: redireciona para `/auth/login`.
-- `/auth/login`: login mockado com botão para entrar.
+- `/auth/login`: login real com e-mail e senha.
+- `/auth/register`: cadastro real com e-mail e senha.
 - `/workspaces`: seleção de workspaces/cidades mockados.
 - `/workspaces/[workspaceSlug]/map`: mapa principal mockado do workspace.
 - `/rooms/demo`: sala demo com canvas PixiJS e movimento local.
@@ -100,12 +109,40 @@ Copie `apps/web/.env.example` para `apps/web/.env.local` e preencha quando for u
 
 ```env
 DATABASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
 LIVEKIT_URL=
 ```
 
 O endpoint LiveKit retorna erro se as variáveis LiveKit não estiverem configuradas. Não há secrets hardcoded no código.
+
+Para autenticação real, `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` devem estar configuradas. Sem essas variáveis, o build pode passar, mas o fluxo de login/cadastro não deve ser considerado pronto para uso.
+
+## Autenticação
+
+O app usa `better-auth` com e-mail e senha. O fluxo atual é:
+
+```txt
+/auth/login ou /auth/register
+  -> sessão válida
+  -> /workspaces
+  -> /workspaces/[workspaceSlug]/map
+```
+
+Rotas protegidas server-side:
+
+- `/workspaces`;
+- `/workspaces/[workspaceSlug]/map`.
+
+Usuários sem sessão são redirecionados para `/auth/login`. O logout está disponível nas telas autenticadas.
+
+As tabelas iniciais de autenticação estão no schema Drizzle (`user`, `session`, `account`, `verification`). Gere e aplique migrations antes de usar um banco novo:
+
+```bash
+bun run db:generate
+```
 
 ## Feature de sala
 
@@ -151,7 +188,10 @@ Banco de dados também deve permanecer no servidor. O schema inicial está em `d
 Implementado:
 
 - i18n inicial com `pt-BR` e `en-US`;
-- redirecionamento da raiz para o login mockado;
+- autenticação com `better-auth`;
+- login, cadastro e logout;
+- proteção server-side das rotas de workspaces;
+- redirecionamento da raiz para o login;
 - tela `/auth/login`;
 - tela `/workspaces`;
 - tela `/workspaces/[workspaceSlug]/map`;
@@ -172,9 +212,10 @@ Limites atuais:
 - não há multiplayer real;
 - não há persistência conectada a banco;
 - workspaces são mockados;
+- migrations ainda precisam ser geradas e aplicadas;
 - não há editor de sala;
 - não há componente de chamada LiveKit conectado;
-- não há autenticação;
+- não há OAuth, recuperação de senha ou verificação de e-mail;
 - não há testes automatizados.
 
 ## Comandos úteis

@@ -634,6 +634,30 @@ Organize as chaves por domínio ou página e use nomes de chaves em inglês. Tex
 
 O idioma padrão deve continuar funcionando sem prefixo obrigatório na URL. Idiomas adicionais podem usar prefixo, como `/en-US/auth/login`.
 
+## Autenticação
+
+Use `better-auth` para autenticação.
+
+O fluxo atual usa e-mail e senha, com rotas em:
+
+```txt
+apps/web/app/[locale]/auth/login/page.tsx
+apps/web/app/[locale]/auth/register/page.tsx
+apps/web/app/api/auth/[...all]/route.ts
+```
+
+Arquivos principais:
+
+```txt
+apps/web/lib/auth/auth.ts
+apps/web/lib/auth/client.ts
+apps/web/lib/auth/session.ts
+```
+
+Rotas protegidas, como `/workspaces` e `/workspaces/[workspaceSlug]/map`, devem validar sessão server-side. Não proteja rotas sensíveis apenas no client.
+
+Não exponha `BETTER_AUTH_SECRET` no client. Configure `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` e `DATABASE_URL` no ambiente local ou de deploy.
+
 ## shadcn/ui
 
 Use shadcn/ui quando estiver configurado corretamente.

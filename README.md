@@ -28,6 +28,7 @@ No momento, a aplicação principal está em `apps/web`. A documentação técni
 - Next.js, React e TypeScript para o app web.
 - Tailwind CSS e shadcn/ui para interface.
 - next-intl para internacionalização.
+- better-auth para autenticação por e-mail e senha.
 - PixiJS para o renderer da sala virtual.
 - Zustand para estado client-side local.
 - Zod para schemas e validação.
@@ -64,6 +65,8 @@ O app web espera as variáveis abaixo. Veja também `apps/web/.env.example`.
 
 ```env
 DATABASE_URL=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
 LIVEKIT_URL=
@@ -115,11 +118,13 @@ bun run check-types
 
 Já existe uma fundação inicial para o MVP:
 
-- rota raiz redirecionando para o login mockado;
-- rota `/auth/login` com entrada mockada;
-- rota `/workspaces` com seleção de workspaces/cidades mockados;
-- rota `/workspaces/[workspaceSlug]/map` com o mapa principal e renderer PixiJS;
+- rota raiz redirecionando para o login;
+- rota `/auth/login` com login real por e-mail e senha;
+- rota `/auth/register` com cadastro real por e-mail e senha;
+- rota `/workspaces` protegida por sessão, com seleção de workspaces/cidades mockados;
+- rota `/workspaces/[workspaceSlug]/map` protegida por sessão, com o mapa principal e renderer PixiJS;
 - rota `/rooms/demo`;
+- logout disponível na área autenticada;
 - i18n inicial com `pt-BR` e `en-US`;
 - componente client-side que monta um canvas PixiJS;
 - renderer PixiJS separado da camada React;
@@ -129,14 +134,29 @@ Já existe uma fundação inicial para o MVP:
 - mocks tipados de workspaces em `apps/web/features/workspaces`;
 - schemas Zod iniciais para sala, player, avatar, objetos e tipos de reunião;
 - schema Drizzle inicial para os principais domínios persistentes;
+- tabelas Drizzle iniciais para `better-auth`;
 - endpoint inicial `POST /api/livekit/token` para gerar token LiveKit;
 - arquivo `.env.example` do app web.
+
+## Autenticação
+
+O app usa `better-auth` com e-mail e senha. As rotas de workspaces exigem sessão server-side:
+
+- `/workspaces`;
+- `/workspaces/[workspaceSlug]/map`.
+
+Usuários sem sessão são redirecionados para `/auth/login`. Após login ou cadastro bem-sucedido, a interface navega para `/workspaces`.
+
+Para autenticação real funcionar em desenvolvimento, configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` e gere/aplique as migrations do Drizzle.
 
 ## A implementar
 
 As próximas etapas planejadas incluem:
 
 - autenticação real;
+- OAuth;
+- recuperação de senha;
+- verificação de e-mail;
 - persistência real de workspaces e salas;
 - painel de chamada LiveKit no app web;
 - conexão real a uma sala LiveKit;

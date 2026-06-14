@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
 import { getMockWorkspaceBySlug } from "@/features/workspaces/mocks/workspaces";
 import { Link } from "@/i18n/navigation";
+import { requireCurrentSession } from "@/lib/auth/session";
 
 type WorkspaceMapPageProps = {
   params: Promise<{
@@ -15,6 +17,7 @@ type WorkspaceMapPageProps = {
 export default async function WorkspaceMapPage({
   params,
 }: WorkspaceMapPageProps) {
+  await requireCurrentSession();
   const { workspaceSlug } = await params;
   const workspace = getMockWorkspaceBySlug(workspaceSlug);
 
@@ -28,9 +31,9 @@ export default async function WorkspaceMapPage({
   const workspaces = await getTranslations("workspaces");
 
   return (
-    <main className="min-h-screen bg-background px-6 py-6 text-foreground">
+    <main className="min-h-screen bg-[linear-gradient(180deg,#f8fafc,#eef2ff)] px-6 py-6 text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-5">
-        <header className="flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-end">
+        <header className="flex flex-col justify-between gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-medium text-muted-foreground">
               {map("eyebrow")}
@@ -42,15 +45,18 @@ export default async function WorkspaceMapPage({
               {workspaces(`items.${workspace.translationKey}.description`)}
             </p>
           </div>
-          <Button asChild variant="outline">
-            <Link href="/workspaces">{actions("backToWorkspaces")}</Link>
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild variant="outline">
+              <Link href="/workspaces">{actions("backToWorkspaces")}</Link>
+            </Button>
+            <SignOutButton />
+          </div>
         </header>
 
         <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
           <RoomCanvas />
           <div className="flex flex-col gap-4">
-            <aside className="rounded-md border bg-card p-4 text-sm shadow-sm">
+            <aside className="rounded-md border border-slate-200 bg-white p-4 text-sm shadow-sm">
               <h2 className="text-base font-semibold">
                 {labels("workspace")}
               </h2>

@@ -5,6 +5,8 @@
     "build": {
       "dependsOn": ["^build"],
       "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "DATABASE_URL",
         "LIVEKIT_API_KEY",
         "LIVEKIT_API_SECRET",
@@ -16,6 +18,8 @@
     "lint": {
       "dependsOn": ["^lint"],
       "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "DATABASE_URL",
         "LIVEKIT_API_KEY",
         "LIVEKIT_API_SECRET",
@@ -25,6 +29,8 @@
     "check-types": {
       "dependsOn": ["^check-types"],
       "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
         "DATABASE_URL",
         "LIVEKIT_API_KEY",
         "LIVEKIT_API_SECRET",

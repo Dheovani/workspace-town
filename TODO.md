@@ -10,6 +10,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Separar a feature de sala em `features/room`.
 - [x] Criar fluxo inicial mockado Login -> seleção de workspace -> mapa principal.
 - [x] Configurar i18n inicial com `pt-BR` como idioma padrão.
+- [x] Substituir login mockado por autenticação com `better-auth`.
 - [ ] Definir padrão final para organização entre `apps/web`, `packages/db` e `packages/shared`.
 - [ ] Adicionar testes automatizados básicos.
 
@@ -17,13 +18,15 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 
 - [x] Criar entrada inicial do app.
 - [x] Redirecionar `/` para `/auth/login`.
-- [x] Criar tela de login mockado em `/auth/login`.
+- [x] Criar tela de login real em `/auth/login`.
+- [x] Criar tela de cadastro real em `/auth/register`.
 - [x] Criar tela de seleção de workspaces em `/workspaces`.
 - [x] Criar mapa principal por workspace em `/workspaces/[workspaceSlug]/map`.
 - [x] Criar página de sala demo.
 - [x] Adicionar painel simples de status da sala/player.
 - [ ] Criar layout principal do produto com navegação mínima.
-- [ ] Substituir o login mockado por autenticação real.
+- [x] Proteger `/workspaces` e `/workspaces/[workspaceSlug]/map` por sessão server-side.
+- [x] Adicionar ação de logout na área autenticada.
 - [ ] Criar componentes de UI para painel de participantes, chat e chamada.
 - [ ] Revisar responsividade da sala em viewports pequenas.
 
@@ -48,6 +51,19 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [ ] Persistir workspaces reais no banco.
 - [ ] Criar permissão e membership reais por workspace.
 - [ ] Carregar sala padrão real do workspace.
+
+## Autenticação
+
+- [x] Instalar e configurar `better-auth`.
+- [x] Criar rota `app/api/auth/[...all]/route.ts`.
+- [x] Criar formulários reais de login e cadastro com Zod.
+- [x] Adicionar tabelas Drizzle iniciais para `better-auth`.
+- [x] Adicionar `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` aos exemplos de ambiente.
+- [ ] Gerar e aplicar migrations para tabelas de autenticação.
+- [ ] Implementar recuperação de senha.
+- [ ] Implementar verificação de e-mail.
+- [ ] Avaliar OAuth quando o fluxo principal estiver estável.
+- [ ] Criar onboarding real após cadastro.
 
 ## Room renderer
 
@@ -84,7 +100,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar schema Drizzle inicial em `apps/web/db/schema.ts`.
 - [x] Modelar entidades persistentes principais.
 - [x] Separar entidades de chamadas e reuniões do provider LiveKit.
-- [ ] Criar `drizzle.config.ts`.
+- [x] Criar `drizzle.config.ts`.
 - [ ] Gerar migrations iniciais.
 - [ ] Configurar cliente de banco server-side.
 - [ ] Implementar queries iniciais para workspaces, rooms e room objects.
@@ -138,4 +154,4 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [ ] Validar comportamento do renderer com resize.
 - [ ] Revisar acessibilidade da página de sala.
 - [ ] Remover qualquer conteúdo remanescente do template que não represente o produto.
-- [ ] Adicionar testes do fluxo mockado de login, seleção de workspace e mapa.
+- [ ] Adicionar testes do fluxo de autenticação, seleção de workspace e mapa.

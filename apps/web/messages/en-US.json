@@ -7,6 +7,7 @@
       "enter": "Enter"
     },
     "labels": {
+      "enterWorkspace": "Enter workspace",
       "members": "Members",
       "mock": "mock",
       "rooms": "Rooms",
@@ -15,9 +16,58 @@
   },
   "auth": {
     "login": {
-      "description": "Mock login to access the MVP workspace selection.",
-      "helper": "This step does not use real authentication yet. The button below only continues the local flow.",
-      "title": "Workspace Town"
+      "description": "Sign in to access your virtual work city.",
+      "errors": {
+        "invalidCredentials": "We could not sign you in with this email and password.",
+        "unexpected": "We could not complete sign-in right now. Try again."
+      },
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "loading": "Signing in...",
+      "placeholders": {
+        "email": "you@company.com",
+        "password": "Your password"
+      },
+      "registerLink": "Create account",
+      "registerPrompt": "Do not have an account yet?",
+      "submit": "Sign in",
+      "title": "Sign in to Workspace Town"
+    },
+    "register": {
+      "description": "Create an account to access your team's workspaces.",
+      "errors": {
+        "unableToCreate": "We could not create the account with this information.",
+        "unexpected": "We could not complete registration right now. Try again."
+      },
+      "fields": {
+        "confirmPassword": "Confirm password",
+        "email": "Email",
+        "name": "Name",
+        "password": "Password"
+      },
+      "loading": "Creating account...",
+      "loginLink": "Sign in",
+      "loginPrompt": "Already have an account?",
+      "placeholders": {
+        "confirmPassword": "Repeat your password",
+        "email": "you@company.com",
+        "name": "Your name",
+        "password": "At least 8 characters"
+      },
+      "submit": "Create account",
+      "title": "Create account"
+    },
+    "session": {
+      "signedInAs": "Active session",
+      "signingOut": "Signing out...",
+      "signOut": "Sign out"
+    },
+    "validation": {
+      "invalidCredentialsForm": "Enter a valid email and a password with at least 8 characters.",
+      "invalidRegisterForm": "Review the information. Name, email, and password are required.",
+      "passwordMismatch": "The passwords do not match."
     }
   },
   "home": {
@@ -53,6 +103,7 @@
   "workspaces": {
     "description": "This mock data validates the initial flow: login, workspace selection, and main map.",
     "eyebrow": "Workspace selection",
+    "signedInHelper": "Your session is active. Choose where you want to work now.",
     "items": {
       "engineeringHub": {
         "description": "A space for daily meetings, pair programming, and technical team coordination.",

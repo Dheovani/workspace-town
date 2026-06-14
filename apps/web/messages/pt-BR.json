@@ -7,6 +7,7 @@
       "enter": "Entrar"
     },
     "labels": {
+      "enterWorkspace": "Entrar no workspace",
       "members": "Membros",
       "mock": "mock",
       "rooms": "Salas",
@@ -15,9 +16,58 @@
   },
   "auth": {
     "login": {
-      "description": "Login mockado para acessar a seleção de workspaces do MVP.",
-      "helper": "Esta etapa ainda não usa autenticação real. O botão abaixo apenas continua o fluxo local.",
-      "title": "Workspace Town"
+      "description": "Entre para acessar sua cidade virtual de trabalho.",
+      "errors": {
+        "invalidCredentials": "Não foi possível entrar com este e-mail e senha.",
+        "unexpected": "Não foi possível concluir o login agora. Tente novamente."
+      },
+      "fields": {
+        "email": "E-mail",
+        "password": "Senha"
+      },
+      "loading": "Entrando...",
+      "placeholders": {
+        "email": "pessoa@empresa.com",
+        "password": "Sua senha"
+      },
+      "registerLink": "Criar conta",
+      "registerPrompt": "Ainda não tem uma conta?",
+      "submit": "Entrar",
+      "title": "Entrar no Workspace Town"
+    },
+    "register": {
+      "description": "Crie uma conta para acessar os workspaces da sua equipe.",
+      "errors": {
+        "unableToCreate": "Não foi possível criar a conta com estes dados.",
+        "unexpected": "Não foi possível concluir o cadastro agora. Tente novamente."
+      },
+      "fields": {
+        "confirmPassword": "Confirmar senha",
+        "email": "E-mail",
+        "name": "Nome",
+        "password": "Senha"
+      },
+      "loading": "Criando conta...",
+      "loginLink": "Entrar",
+      "loginPrompt": "Já tem uma conta?",
+      "placeholders": {
+        "confirmPassword": "Repita sua senha",
+        "email": "pessoa@empresa.com",
+        "name": "Seu nome",
+        "password": "No mínimo 8 caracteres"
+      },
+      "submit": "Criar conta",
+      "title": "Criar conta"
+    },
+    "session": {
+      "signedInAs": "Sessão ativa",
+      "signingOut": "Saindo...",
+      "signOut": "Sair"
+    },
+    "validation": {
+      "invalidCredentialsForm": "Informe um e-mail válido e uma senha com pelo menos 8 caracteres.",
+      "invalidRegisterForm": "Revise os dados informados. Nome, e-mail e senha são obrigatórios.",
+      "passwordMismatch": "As senhas informadas não conferem."
     }
   },
   "home": {
@@ -53,6 +103,7 @@
   "workspaces": {
     "description": "Estes dados são mockados para validar o fluxo inicial: login, seleção de workspace e mapa principal.",
     "eyebrow": "Seleção de workspace",
+    "signedInHelper": "A sessão está ativa. Escolha o ambiente em que deseja trabalhar agora.",
     "items": {
       "engineeringHub": {
         "description": "Espaço para daily, pair programming e acompanhamento técnico do time.",
