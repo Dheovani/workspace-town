@@ -1,0 +1,72 @@
+{
+  "common": {
+    "appName": "Workspace Town",
+    "actions": {
+      "backToLogin": "Voltar ao login",
+      "backToWorkspaces": "Voltar à seleção",
+      "enter": "Entrar"
+    },
+    "labels": {
+      "members": "Membros",
+      "mock": "mock",
+      "rooms": "Salas",
+      "workspace": "Workspace"
+    }
+  },
+  "auth": {
+    "login": {
+      "description": "Login mockado para acessar a seleção de workspaces do MVP.",
+      "helper": "Esta etapa ainda não usa autenticação real. O botão abaixo apenas continua o fluxo local.",
+      "title": "Workspace Town"
+    }
+  },
+  "home": {
+    "redirectTarget": "/auth/login"
+  },
+  "map": {
+    "defaultRoom": "Sala padrão",
+    "eyebrow": "Mapa principal mockado"
+  },
+  "room": {
+    "canvas": {
+      "ariaLabel": "Canvas da sala demo"
+    },
+    "demo": {
+      "backLabel": "Workspace Town",
+      "description": "Mova-se com as setas ou WASD. Esta é uma presença local para a fundação do MVP.",
+      "title": "Sala demo"
+    },
+    "status": {
+      "direction": "Direção",
+      "directions": {
+        "down": "baixo",
+        "left": "esquerda",
+        "right": "direita",
+        "up": "cima"
+      },
+      "localPlayerName": "Jogador local",
+      "player": "Jogador",
+      "position": "Posição",
+      "title": "Sala local"
+    }
+  },
+  "workspaces": {
+    "description": "Estes dados são mockados para validar o fluxo inicial: login, seleção de workspace e mapa principal.",
+    "eyebrow": "Seleção de workspace",
+    "items": {
+      "engineeringHub": {
+        "description": "Espaço para daily, pair programming e acompanhamento técnico do time.",
+        "name": "Engineering Hub"
+      },
+      "productTown": {
+        "description": "Cidade mockada para discovery, planning e revisões de produto.",
+        "name": "Product Town"
+      },
+      "retroSquare": {
+        "description": "Ambiente dedicado a retrospectivas, action items e melhorias contínuas.",
+        "name": "Retro Square"
+      }
+    },
+    "title": "Escolha uma cidade para entrar"
+  }
+}

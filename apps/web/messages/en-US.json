@@ -1,0 +1,72 @@
+{
+  "common": {
+    "appName": "Workspace Town",
+    "actions": {
+      "backToLogin": "Back to login",
+      "backToWorkspaces": "Back to selection",
+      "enter": "Enter"
+    },
+    "labels": {
+      "members": "Members",
+      "mock": "mock",
+      "rooms": "Rooms",
+      "workspace": "Workspace"
+    }
+  },
+  "auth": {
+    "login": {
+      "description": "Mock login to access the MVP workspace selection.",
+      "helper": "This step does not use real authentication yet. The button below only continues the local flow.",
+      "title": "Workspace Town"
+    }
+  },
+  "home": {
+    "redirectTarget": "/auth/login"
+  },
+  "map": {
+    "defaultRoom": "Default room",
+    "eyebrow": "Mock main map"
+  },
+  "room": {
+    "canvas": {
+      "ariaLabel": "Demo room canvas"
+    },
+    "demo": {
+      "backLabel": "Workspace Town",
+      "description": "Move with arrow keys or WASD. This is local-only presence for the MVP foundation.",
+      "title": "Demo Room"
+    },
+    "status": {
+      "direction": "Direction",
+      "directions": {
+        "down": "down",
+        "left": "left",
+        "right": "right",
+        "up": "up"
+      },
+      "localPlayerName": "Local player",
+      "player": "Player",
+      "position": "Position",
+      "title": "Local room"
+    }
+  },
+  "workspaces": {
+    "description": "This mock data validates the initial flow: login, workspace selection, and main map.",
+    "eyebrow": "Workspace selection",
+    "items": {
+      "engineeringHub": {
+        "description": "A space for daily meetings, pair programming, and technical team coordination.",
+        "name": "Engineering Hub"
+      },
+      "productTown": {
+        "description": "A mock city for discovery, planning, and product reviews.",
+        "name": "Product Town"
+      },
+      "retroSquare": {
+        "description": "An environment dedicated to retrospectives, action items, and continuous improvement.",
+        "name": "Retro Square"
+      }
+    },
+    "title": "Choose a city to enter"
+  }
+}

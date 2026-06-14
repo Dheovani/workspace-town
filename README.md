@@ -1,52 +1,66 @@
 # Workspace Town
 
-Workspace Town e um projeto de workspace virtual colaborativo inspirado em interfaces espaciais como Gather. A proposta e combinar uma aplicacao web, um renderer 2D leve, presenca em tempo real, chamadas ao vivo e fluxos de reuniao para times de software.
+Workspace Town é um projeto de workspace virtual colaborativo inspirado em interfaces espaciais como Gather. A proposta é combinar uma aplicação web, um renderer 2D leve, presença em tempo real, chamadas ao vivo e fluxos de reunião para times de software.
 
-O objetivo do produto e permitir que usuarios criem salas virtuais, organizem moveis e itens, personalizem avatares, movam-se por um ambiente 2D ou isometrico e participem de chamadas ao vivo. Em etapas futuras, o sistema tambem deve apoiar rituais como daily, planning, retro, review e pair programming.
+O objetivo do produto é permitir que usuários criem salas virtuais, organizem móveis e itens, personalizem avatares, movam-se por um ambiente 2D ou isométrico e participem de chamadas ao vivo. Em etapas futuras, o sistema também deve apoiar rituais como daily, planning, retro, review e pair programming.
 
 ## Arquitetura geral
 
-O repositorio usa uma estrutura de monorepo em estilo Turborepo.
+O repositório usa uma estrutura de monorepo em estilo Turborepo.
 
 ```txt
 apps/
   web/       # App principal em Next.js
-  docs/      # App de documentacao criado pelo template, ainda nao usado como docs tecnica
+  docs/      # App de documentação criado pelo template
 packages/
-  ui/        # Componentes compartilhados iniciais do template
+  ui/
   eslint-config/
   typescript-config/
-docs/        # Documentacao tecnica do projeto
+docs/        # Documentação técnica em Markdown
 ```
 
-No momento, a aplicacao principal esta em `apps/web`. A documentacao tecnica do projeto fica em `docs/`.
+No momento, a aplicação principal está em `apps/web`. A documentação técnica do projeto fica em `docs/`.
 
 ## Tecnologias principais
 
 - Bun como runtime e package manager.
-- Turborepo para orquestracao do monorepo.
+- Turborepo para orquestração do monorepo.
 - Next.js, React e TypeScript para o app web.
 - Tailwind CSS e shadcn/ui para interface.
+- next-intl para internacionalização.
 - PixiJS para o renderer da sala virtual.
 - Zustand para estado client-side local.
-- Zod para schemas e validacao.
+- Zod para schemas e validação.
 - Drizzle ORM para modelagem de banco PostgreSQL.
-- LiveKit como provedor planejado de audio e video.
+- LiveKit como provedor planejado de áudio e vídeo.
 
-## Separacao de responsabilidades
+## Internacionalização
 
-- App web: paginas, rotas, componentes de UI, chamadas server-side e integracao do MVP.
+O projeto usa i18n desde o início com `pt-BR` como idioma padrão. Os arquivos de mensagens ficam em:
+
+```txt
+apps/web/messages/pt-BR.json
+apps/web/messages/en-US.json
+```
+
+As telas devem usar mensagens desses arquivos, não textos fixos diretamente em componentes ou páginas. Novas mensagens devem ser organizadas por domínio ou página, com chaves em inglês e valores localizados.
+
+Todo texto em português brasileiro deve seguir a norma culta e usar acentuação correta.
+
+## Separação de responsabilidades
+
+- App web: páginas, rotas, componentes de UI, chamadas server-side e integração do MVP.
 - Renderer PixiJS: desenho da sala, grid, objetos, avatar e movimento local no canvas.
-- Estado local: posicao atual do player e dados efemeros do prototipo ficam no Zustand.
-- Banco de dados: entidades persistentes como usuarios, players, workspaces, salas, objetos, chat, chamadas e reunioes ficam no schema Drizzle.
-- LiveKit: tratado como provedor de chamada. O dominio usa entidades internas como `callSessions` e `callParticipants`.
-- Realtime server: planejado para presenca e movimento em tempo real. Ainda nao foi implementado.
+- Estado local: posição atual do player e dados efêmeros do protótipo ficam no Zustand.
+- Banco de dados: entidades persistentes como usuários, players, workspaces, salas, objetos, chat, chamadas e reuniões ficam no schema Drizzle.
+- LiveKit: tratado como provedor de chamada. O domínio usa entidades internas como `callSessions` e `callParticipants`.
+- Realtime server: planejado para presença e movimento em tempo real. Ainda não foi implementado.
 
-O movimento do player nao deve ser persistido em SQL. Para o MVP, ele e local e efemero.
+O movimento do player não deve ser persistido em SQL. Para o MVP, ele é local e efêmero.
 
-## Variaveis de ambiente
+## Variáveis de ambiente
 
-O app web espera as variaveis abaixo. Veja tambem `apps/web/.env.example`.
+O app web espera as variáveis abaixo. Veja também `apps/web/.env.example`.
 
 ```env
 DATABASE_URL=
@@ -55,26 +69,26 @@ LIVEKIT_API_SECRET=
 LIVEKIT_URL=
 ```
 
-Nao coloque secrets reais no repositorio.
+Não coloque secrets reais no repositório.
 
 ## Comandos
 
-Instalar dependencias:
+Instalar dependências:
 
 ```bash
 bun install
-```
-
-Rodar todos os apps pelo monorepo:
-
-```bash
-bun dev
 ```
 
 Rodar apenas o app web:
 
 ```bash
 cd apps/web
+bun dev
+```
+
+Rodar todos os apps pelo monorepo:
+
+```bash
 bun dev
 ```
 
@@ -99,35 +113,42 @@ bun run check-types
 
 ## Estado atual
 
-Ja existe uma fundacao inicial para o MVP:
+Já existe uma fundação inicial para o MVP:
 
-- pagina inicial com link para a sala demo;
+- rota raiz redirecionando para o login mockado;
+- rota `/auth/login` com entrada mockada;
+- rota `/workspaces` com seleção de workspaces/cidades mockados;
+- rota `/workspaces/[workspaceSlug]/map` com o mapa principal e renderer PixiJS;
 - rota `/rooms/demo`;
+- i18n inicial com `pt-BR` e `en-US`;
 - componente client-side que monta um canvas PixiJS;
 - renderer PixiJS separado da camada React;
-- grid 2D simples, objetos estaticos e player local;
+- grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
 - store Zustand para estado local da sala e do player;
-- schemas Zod iniciais para sala, player, avatar, objetos e tipos de reuniao;
-- schema Drizzle inicial para os principais dominios persistentes;
+- mocks tipados de workspaces em `apps/web/features/workspaces`;
+- schemas Zod iniciais para sala, player, avatar, objetos e tipos de reunião;
+- schema Drizzle inicial para os principais domínios persistentes;
 - endpoint inicial `POST /api/livekit/token` para gerar token LiveKit;
 - arquivo `.env.example` do app web.
 
 ## A implementar
 
-As proximas etapas planejadas incluem:
+As próximas etapas planejadas incluem:
 
+- autenticação real;
+- persistência real de workspaces e salas;
 - painel de chamada LiveKit no app web;
-- conexao real a uma sala LiveKit;
-- editor basico de sala e objetos;
+- conexão real a uma sala LiveKit;
+- editor básico de sala e objetos;
 - modelos e migrations Drizzle;
-- persistencia real em PostgreSQL;
-- servidor realtime para presenca e movimento;
-- fluxo de reunioes para daily, planning, retro, review e pair programming;
-- testes automatizados para renderer, schemas, rotas e UI.
+- persistência real em PostgreSQL;
+- servidor realtime para presença e movimento;
+- fluxo de reuniões para daily, planning, retro, review e pair programming;
+- testes automatizados para i18n, renderer, schemas, rotas e UI.
 
-## Documentacao interna
+## Documentação interna
 
-- Documentacao tecnica: [`docs/README.md`](docs/README.md)
+- Documentação técnica: [`docs/README.md`](docs/README.md)
 - App web: [`apps/web/README.md`](apps/web/README.md)
-- Pendencias vivas do projeto: [`TODO.md`](TODO.md)
+- Pendências vivas do projeto: [`TODO.md`](TODO.md)

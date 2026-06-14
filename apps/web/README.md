@@ -1,43 +1,59 @@
 # App web
 
-Este e o app principal do Workspace Town. Ele concentra a interface web do MVP, a sala demo, o renderer PixiJS, schemas iniciais, estado local e rotas server-side.
+Este é o app principal do Workspace Town. Ele concentra a interface web do MVP, o fluxo mockado de entrada, a sala/mapa, o renderer PixiJS, a configuração de i18n, schemas iniciais, estado local e rotas server-side.
 
 ## Papel no monorepo
 
-`apps/web` e a aplicacao Next.js voltada ao usuario final. Ela deve controlar paginas, paineis, formularios, rotas server-side e integracoes do produto.
+`apps/web` é a aplicação Next.js voltada ao usuário final. Ela deve controlar páginas, painéis, formulários, rotas server-side e integrações do produto.
 
-O renderer da sala nao deve ser implementado como uma arvore grande de componentes React. A cena em movimento fica no PixiJS, montada dentro de um componente client-side pequeno.
+O renderer da sala não deve ser implementado como uma árvore grande de componentes React. A cena em movimento fica no PixiJS, montada dentro de um componente client-side pequeno.
 
 ## Tecnologias usadas
 
 - Next.js App Router.
 - React e TypeScript.
 - Tailwind CSS e shadcn/ui.
+- next-intl para internacionalização.
 - PixiJS para canvas da sala.
 - Zustand para estado local client-side.
-- Zod para schemas e validacao.
+- Zod para schemas e validação.
 - Drizzle ORM para schema PostgreSQL.
-- LiveKit server SDK para geracao de token no servidor.
+- LiveKit server SDK para geração de token no servidor.
 
 ## Estrutura principal
 
 ```txt
 app/
-  page.tsx                  # Home simples com link para a sala demo
-  rooms/demo/page.tsx       # Rota da sala demo
-  api/livekit/token/route.ts# Endpoint server-side para token LiveKit
+  page.tsx                         # Redireciona para /auth/login
+  [locale]/
+    layout.tsx                     # Valida o locale da rota
+    page.tsx                       # Redireciona para /auth/login
+    auth/login/page.tsx            # Login mockado
+    workspaces/page.tsx            # Seleção de workspaces/cidades mockados
+    workspaces/[workspaceSlug]/map/page.tsx
+                                   # Mapa principal do workspace mockado
+    rooms/demo/page.tsx            # Rota da sala demo
+  api/livekit/token/route.ts       # Endpoint server-side para token LiveKit
 components/
-  ui/                       # Componentes shadcn/ui
+  ui/                              # Componentes shadcn/ui
 db/
-  schema.ts                 # Schema Drizzle inicial
+  schema.ts                        # Schema Drizzle inicial
 features/
   room/
-    components/             # Componentes React da feature
-    renderer/               # Renderer PixiJS isolado
-    stores/                 # Zustand stores
-    types.ts                # Tipos e schemas Zod
-lib/
-  utils.ts                  # Utilitarios compartilhados do app
+    components/                    # Componentes React da feature
+    renderer/                      # Renderer PixiJS isolado
+    stores/                        # Zustand stores
+    types.ts                       # Tipos e schemas Zod
+  workspaces/
+    mocks/                         # Workspaces/cidades mockados
+i18n/
+  config.ts                        # Locales e routing
+  navigation.ts                    # Helpers de navegação localizados
+  request.ts                       # Carregamento de mensagens por request
+messages/
+  pt-BR.json                       # Mensagens do idioma padrão
+  en-US.json                       # Mensagens em inglês
+middleware.ts                      # Middleware do next-intl
 ```
 
 ## Como rodar
@@ -54,13 +70,31 @@ O app roda em:
 http://localhost:3000
 ```
 
-Rotas uteis:
+Rotas úteis:
 
-- `/`: entrada simples do produto.
+- `/`: redireciona para `/auth/login`.
+- `/auth/login`: login mockado com botão para entrar.
+- `/workspaces`: seleção de workspaces/cidades mockados.
+- `/workspaces/[workspaceSlug]/map`: mapa principal mockado do workspace.
 - `/rooms/demo`: sala demo com canvas PixiJS e movimento local.
+- `/en-US/auth/login`: exemplo de rota em inglês.
 - `/api/livekit/token`: rota server-side para token LiveKit. Use `POST` para gerar token.
 
-## Variaveis de ambiente
+## Internacionalização
+
+O idioma padrão é `pt-BR`. A implementação usa `next-intl` com `localePrefix: "as-needed"`, então o português brasileiro não exige prefixo na URL.
+
+Para adicionar uma nova mensagem:
+
+1. Escolha uma chave em inglês e organizada por domínio ou página.
+2. Adicione a chave em `messages/pt-BR.json`.
+3. Adicione a mesma chave em `messages/en-US.json`.
+4. Use `getTranslations` em server components.
+5. Use `useTranslations` somente em client components que já precisem rodar no cliente.
+
+Não deixe textos fixos diretamente na UI. Textos em português brasileiro devem usar acentuação correta e norma culta.
+
+## Variáveis de ambiente
 
 Copie `apps/web/.env.example` para `apps/web/.env.local` e preencha quando for usar banco ou LiveKit.
 
@@ -71,37 +105,62 @@ LIVEKIT_API_SECRET=
 LIVEKIT_URL=
 ```
 
-O endpoint LiveKit retorna erro se as variaveis LiveKit nao estiverem configuradas. Nao ha secrets hardcoded no codigo.
+O endpoint LiveKit retorna erro se as variáveis LiveKit não estiverem configuradas. Não há secrets hardcoded no código.
 
 ## Feature de sala
 
-A feature inicial esta em `features/room`.
+A feature inicial está em `features/room`.
 
 - `types.ts`: schemas Zod e tipos de `room`, `player`, `roomObject`, `avatarConfig` e `meetingType`.
-- `stores/room-store.ts`: estado local da sala demo, player local, objetos estaticos e movimento por grid.
+- `stores/room-store.ts`: estado local da sala demo, player local, objetos estáticos e movimento por grid.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
 - `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a cena e limpa recursos no unmount.
 
+## Feature de workspaces
+
+A seleção inicial de workspaces/cidades usa dados mockados em `features/workspaces/mocks/workspaces.ts`.
+
+O modelo atual é:
+
+```ts
+type MockWorkspace = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  translationKey: "productTown" | "engineeringHub" | "retroSquare";
+  memberCount: number;
+  roomCount: number;
+  defaultRoomId: string;
+};
+```
+
+Ainda não há autenticação real, banco de dados ou permissão por workspace. O fluxo atual existe para validar navegação e composição do mapa principal.
+
 ## Client components e server-side code
 
-Use `"use client"` apenas para codigo que depende do browser, como canvas, teclado, Zustand e componentes LiveKit client-side.
+Use `"use client"` apenas para código que depende do browser, como canvas, teclado, Zustand e componentes LiveKit client-side.
 
-Codigo server-side deve ficar em rotas do App Router ou modulos server-only. O endpoint atual de LiveKit esta em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
+Código server-side deve ficar em rotas do App Router ou módulos server-only. O endpoint atual de LiveKit está em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
 
-Banco de dados tambem deve permanecer no servidor. O schema inicial esta em `db/schema.ts`, mas ainda nao ha cliente de banco, migrations ou queries implementadas.
+Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, mas ainda não há cliente de banco, migrations ou queries implementadas.
 
 ## MVP atual
 
 Implementado:
 
-- home simples;
+- i18n inicial com `pt-BR` e `en-US`;
+- redirecionamento da raiz para o login mockado;
+- tela `/auth/login`;
+- tela `/workspaces`;
+- tela `/workspaces/[workspaceSlug]/map`;
 - sala demo;
 - canvas PixiJS;
 - grid 2D;
 - player local;
 - movimento por WASD ou setas;
-- objetos estaticos;
+- objetos estáticos;
 - estado local com Zustand;
 - schemas Zod iniciais;
 - schema Drizzle inicial;
@@ -109,15 +168,16 @@ Implementado:
 
 Limites atuais:
 
-- nao ha servidor realtime;
-- nao ha multiplayer real;
-- nao ha persistencia conectada a banco;
-- nao ha editor de sala;
-- nao ha componente de chamada LiveKit conectado;
-- nao ha autenticacao;
-- nao ha testes automatizados.
+- não há servidor realtime;
+- não há multiplayer real;
+- não há persistência conectada a banco;
+- workspaces são mockados;
+- não há editor de sala;
+- não há componente de chamada LiveKit conectado;
+- não há autenticação;
+- não há testes automatizados.
 
-## Comandos uteis
+## Comandos úteis
 
 Lint:
 

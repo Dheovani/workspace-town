@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { RoomRenderer } from "../renderer/room-renderer";
 import { useRoomStore } from "../stores/room-store";
 import type { PlayerDirection } from "../types";
@@ -20,6 +21,7 @@ const keyMoves: Record<
 };
 
 export function RoomCanvas() {
+  const t = useTranslations("room.canvas");
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<RoomRenderer | null>(null);
   const localPlayer = useRoomStore((state) => state.localPlayer);
@@ -89,7 +91,7 @@ export function RoomCanvas() {
   return (
     <div
       ref={containerRef}
-      aria-label="Demo room canvas"
+      aria-label={t("ariaLabel")}
       className="h-[min(70vh,640px)] min-h-[420px] w-full overflow-hidden rounded-md border bg-slate-50 shadow-sm"
     />
   );

@@ -1,8 +1,11 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
+import { Link } from "@/i18n/navigation";
 
-export default function DemoRoomPage() {
+export default async function DemoRoomPage() {
+  const t = await getTranslations("room.demo");
+
   return (
     <main className="min-h-screen bg-background px-6 py-6 text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-5">
@@ -12,13 +15,12 @@ export default function DemoRoomPage() {
               href="/"
               className="text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              Workspace Town
+              {t("backLabel")}
             </Link>
-            <h1 className="mt-2 text-3xl font-semibold">Demo Room</h1>
+            <h1 className="mt-2 text-3xl font-semibold">{t("title")}</h1>
           </div>
           <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-            Move with arrow keys or WASD. This is local-only presence for the
-            MVP foundation.
+            {t("description")}
           </p>
         </header>
 

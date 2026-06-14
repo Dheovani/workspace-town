@@ -1,36 +1,40 @@
 # AGENTS.md
 
-## Project context
+## Contexto do projeto
 
-This project is a virtual collaborative workspace inspired by Gather-style spatial interfaces.
+Este projeto é uma plataforma de workspace virtual colaborativo inspirada em experiências como Gather.
 
-The product goal is to allow users to:
+O objetivo do produto é permitir que usuários:
 
-* create and customize virtual rooms;
-* place, move and configure furniture/items;
-* customize their avatar/player;
-* move through a shared 2D/isometric workspace;
-* communicate through live audio/video calls;
-* use meeting-specific flows for software teams, such as daily, planning, retro, review, pair programming and similar ceremonies.
+* criem e personalizem workspaces virtuais;
+* acessem uma “cidade” ou ambiente de trabalho compartilhado;
+* personalizem seus avatares;
+* movam-se por um mapa 2D/isométrico;
+* organizem salas com móveis e objetos interativos;
+* comuniquem-se por chamadas ao vivo;
+* utilizem fluxos próprios de equipes de desenvolvimento, como daily, planning, retrospectiva, review e pair programming.
 
-The product is not just a video call app. It combines:
+A aplicação não deve ser tratada apenas como um sistema de chamadas. Ela combina:
 
-1. a web application;
-2. a lightweight 2D room/game renderer;
-3. real-time presence and movement;
-4. live calls;
-5. persistent room/workspace data;
-6. meeting workflows for development teams.
+1. aplicação web;
+2. interface jogável;
+3. renderização 2D/isométrica;
+4. presença em tempo real;
+5. chamadas de áudio/vídeo;
+6. persistência de workspaces, salas, usuários e reuniões;
+7. fluxos colaborativos próprios para times de software.
 
-## Current setup
+## Estado atual do projeto
 
-The repository was initialized as a monorepo, and the current web app is under:
+O projeto está organizado como monorepo.
+
+O app web está em:
 
 ```txt
 apps/web
 ```
 
-The following commands have already been executed inside `apps/web`:
+Os seguintes comandos já foram executados dentro de `apps/web`:
 
 ```bash
 bun add pixi.js zustand zod @tanstack/react-query
@@ -41,108 +45,296 @@ bun add -d drizzle-kit tsx
 bunx shadcn@latest init
 ```
 
-Do not reinstall these dependencies unless there is a clear reason.
+Não reinstale essas dependências sem necessidade.
 
-Use Bun as the package manager/runtime.
+Use Bun como package manager/runtime.
 
-## Preferred stack
+## Stack preferencial
 
-Use the following stack unless there is a strong reason not to:
+Use esta stack, salvo motivo técnico relevante para alterá-la:
 
-* Monorepo: Turborepo-style structure
-* Runtime/package manager: Bun
-* Main app: Next.js + React + TypeScript
-* Styling: Tailwind CSS
-* UI components: shadcn/ui
-* 2D renderer: PixiJS
-* Client state: Zustand
-* Server/query state: TanStack Query
-* Validation: Zod
-* Database: PostgreSQL, preferably Neon
-* ORM: Drizzle ORM
-* Live calls: LiveKit
-* Realtime presence/movement: future WebSocket service, preferably Cloudflare Durable Objects or a separate realtime app
+* Monorepo: Turborepo ou estrutura equivalente;
+* Runtime/package manager: Bun;
+* Framework principal: Next.js com App Router;
+* Linguagem: TypeScript;
+* UI: React;
+* Estilização: Tailwind CSS;
+* Componentes: shadcn/ui;
+* Renderização 2D: PixiJS;
+* Estado local: Zustand;
+* Server/query state: TanStack Query;
+* Validação: Zod;
+* Banco de dados: PostgreSQL, preferencialmente Neon;
+* ORM: Drizzle ORM;
+* Chamadas ao vivo: LiveKit;
+* Realtime futuro: WebSocket, preferencialmente Cloudflare Durable Objects ou serviço separado.
 
-## Architectural principles
+## Princípios arquiteturais
 
-### React is not the game renderer
+### React não é o renderer do mapa
 
-React should control application UI:
+React deve controlar a interface da aplicação:
 
-* pages;
+* páginas;
+* formulários;
 * menus;
-* panels;
-* modals;
-* room editor controls;
-* participant list;
-* meeting widgets;
-* settings;
-* forms.
+* modais;
+* painéis laterais;
+* lista de participantes;
+* controles de reunião;
+* configurações;
+* onboarding;
+* seleção de workspace.
 
-PixiJS should control the room canvas:
+PixiJS deve controlar a cena jogável:
 
-* room grid;
-* floor tiles;
-* avatars;
-* furniture;
-* object ordering/depth;
-* movement animations;
-* pointer interaction inside the room.
+* mapa;
+* grid;
+* tiles;
+* avatares;
+* móveis;
+* objetos interativos;
+* animações;
+* ordenação por profundidade;
+* movimentação local;
+* interação por mouse/teclado dentro do mapa.
 
-Do not render the moving room scene as ordinary React components.
+Não renderize a cena jogável com componentes React comuns.
 
-### Separate persistent data from ephemeral realtime state
+### Separar UI, domínio e renderização
 
-Persistent data belongs in PostgreSQL:
+Evite componentes grandes que misturem:
 
-* users;
-* players/profiles;
+* JSX;
+* regras de negócio;
+* mocks;
+* Zustand;
+* PixiJS;
+* chamadas de API;
+* textos fixos;
+* lógica de navegação.
+
+Prefira organizar por domínio/feature.
+
+Exemplo:
+
+```txt
+src/features/room/
+  components/
+  renderer/
+  stores/
+  schemas/
+  types.ts
+```
+
+### Separar dados persistentes de estado efêmero
+
+Dados persistentes pertencem ao PostgreSQL:
+
+* usuários;
+* players;
 * workspaces;
-* workspace members;
-* rooms;
-* room settings;
-* item definitions;
-* placed room objects;
-* permissions;
-* meeting sessions;
-* meeting notes;
-* action items;
-* call session history.
+* membros do workspace;
+* salas;
+* configurações de sala;
+* objetos colocados na sala;
+* mensagens;
+* sessões de chamada;
+* sessões de reunião;
+* notas;
+* action items.
 
-Ephemeral realtime data should not be primarily stored in PostgreSQL:
+Estado efêmero não deve ser persistido continuamente no banco relacional:
 
-* current avatar position;
-* current direction;
-* who is online now;
-* transient movement events;
-* temporary mute/camera state;
-* proximity state.
+* posição atual do avatar;
+* direção atual;
+* usuários online neste instante;
+* eventos de movimento;
+* status temporário de áudio/vídeo;
+* presença em tempo real.
 
-For the MVP, this ephemeral state may be simulated locally in the frontend. Later, it should move to a WebSocket/Durable Object/realtime service.
+Para o MVP, esse estado pode ser local/mockado. No futuro, deve ser movido para WebSocket, Durable Objects, Redis ou serviço realtime adequado.
 
-### Keep LiveKit separate from domain logic
+### LiveKit deve ser tratado como provider
 
-LiveKit should be treated as the call provider, not as the whole meeting domain.
+Use LiveKit para áudio/vídeo, mas não prenda o domínio do projeto ao LiveKit.
 
-The domain model should have internal entities like:
+Use entidades internas como:
 
-* `callSessions`;
-* `callParticipants`;
-* `meetingSessions`;
-* `meetingParticipants`.
+```txt
+callSessions
+callParticipants
+meetingSessions
+meetingParticipants
+```
 
-Provider-specific data should be stored in fields such as:
+Dados específicos do provider devem ficar em campos como:
 
-* `provider`;
-* `providerRoomName`;
-* `providerParticipantId`;
-* `metadata`.
+```txt
+provider
+providerRoomName
+providerParticipantId
+metadata
+```
 
-This keeps the project flexible if the provider changes later.
+Não implemente WebRTC manualmente no MVP.
 
-## Suggested monorepo structure
+## Internacionalização obrigatória
 
-Aim for this structure over time:
+O projeto deve usar internacionalização desde o início.
+
+O idioma padrão é:
+
+```txt
+pt-BR
+```
+
+O app deve possuir arquivos de mensagens, preferencialmente:
+
+```txt
+messages/
+  pt-BR.json
+  en-US.json
+```
+
+Se a estrutura do projeto exigir outro local, mantenha um padrão claro e documente.
+
+### Regra principal de i18n
+
+Não escreva textos visíveis ao usuário diretamente no JSX, em componentes, páginas ou mocks de UI.
+
+Evite:
+
+```tsx
+<h1>Selecione uma cidade</h1>
+<Button>Entrar</Button>
+```
+
+Prefira mensagens centralizadas:
+
+```tsx
+const t = useTranslations("workspaces");
+
+<h1>{t("title")}</h1>
+<Button>{t("actions.enter")}</Button>
+```
+
+Use a API adequada do `next-intl` para server components e client components.
+
+Não transforme um server component em client component apenas para traduzir texto, se houver alternativa server-side.
+
+### Português brasileiro
+
+O português brasileiro deve seguir a norma culta e possuir acentuação correta.
+
+Use grafia correta, por exemplo:
+
+```txt
+Seleção
+Configuração
+Usuário
+Área
+Você
+Autenticação
+Descrição
+Reunião
+Permissão
+```
+
+Antes de finalizar qualquer alteração de interface, revise todos os textos em português.
+
+A interface em português deve ser natural, clara e tecnicamente correta.
+
+### Organização das mensagens
+
+Use chaves organizadas por domínio ou página.
+
+Exemplo:
+
+```json
+{
+  "common": {
+    "actions": {
+      "enter": "Entrar",
+      "back": "Voltar",
+      "continue": "Continuar"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar no workspace",
+      "description": "Acesse sua cidade virtual de trabalho.",
+      "submit": "Entrar"
+    }
+  },
+  "workspaces": {
+    "title": "Selecione uma cidade",
+    "description": "Escolha o workspace que deseja acessar."
+  },
+  "map": {
+    "title": "Mapa principal",
+    "backToWorkspaces": "Voltar para a seleção de cidades"
+  }
+}
+```
+
+Use nomes de chaves em inglês.
+
+Não misture idiomas na mesma chave.
+
+Não duplique mensagens desnecessariamente.
+
+Não use mensagens genéricas demais quando o contexto exigir clareza.
+
+### Quando adicionar nova UI
+
+Toda nova tela, componente ou fluxo visível ao usuário deve:
+
+1. adicionar suas mensagens em `messages/pt-BR.json`;
+2. adicionar equivalentes em `messages/en-US.json`, mesmo que simples;
+3. usar as mensagens via `next-intl`;
+4. manter português com acentuação correta;
+5. evitar texto hardcoded no JSX.
+
+## Fluxo inicial do usuário
+
+O fluxo inicial do MVP é:
+
+```txt
+Login
+  → seleção de workspace/cidade
+  → abertura do mapa principal
+```
+
+No código, use o conceito técnico `workspace`.
+
+Na interface, a metáfora visual pode ser “cidade”, mas o domínio principal deve continuar sendo `workspace`.
+
+Rotas iniciais desejadas:
+
+```txt
+/
+/auth/login
+/workspaces
+/workspaces/[workspaceSlug]/map
+```
+
+Comportamento esperado:
+
+* `/` redireciona ou aponta para `/auth/login`;
+* `/auth/login` exibe login mockado;
+* o botão de entrada leva para `/workspaces`;
+* `/workspaces` lista workspaces/cidades mockados;
+* ao escolher um workspace, o usuário vai para `/workspaces/[workspaceSlug]/map`;
+* o mapa exibe o workspace selecionado e o renderer PixiJS ou placeholder claro.
+
+Não implemente autenticação real até que seja solicitado.
+
+Não implemente banco real, realtime ou LiveKit nesse fluxo inicial, salvo instrução explícita.
+
+## Estrutura sugerida
+
+A estrutura pode evoluir para:
 
 ```txt
 apps/
@@ -151,10 +343,12 @@ apps/
       app/
       components/
       features/
+      i18n/
       lib/
       styles/
+
   realtime/
-    # Future WebSocket/Durable Object app
+    # Futuro serviço WebSocket/Durable Objects
 
 packages/
   db/
@@ -162,59 +356,66 @@ packages/
       schema/
       index.ts
     drizzle.config.ts
+
   shared/
     src/
       schemas/
       types/
       constants/
+
   ui/
     src/
       components/
 ```
 
-If the current repository does not yet have `packages/db` or `packages/shared`, create them only when useful for the current task. Do not over-engineer the project too early.
+Não crie pacotes prematuramente se o MVP ainda não exigir.
 
-## Naming conventions
+Se a estrutura atual do projeto for mais simples, preserve-a e evolua de forma incremental.
 
-Prefer clear English names.
+## Organização por features
 
-Use:
-
-```txt
-user_id
-player_id
-room_id
-created_at
-updated_at
-is_public
-position_x
-position_y
-avatar_config
-```
-
-Avoid legacy abbreviations like:
+Prefira organizar código por domínio:
 
 ```txt
-cdplayer
-nmroom
-fgpublic
-vlposx
-dtcreate
+features/auth
+features/session
+features/workspaces
+features/room
+features/room-editor
+features/player
+features/calls
+features/meetings
+features/chat
 ```
 
-Use:
+Exemplo para o mapa:
 
-* `boolean` for flags;
-* `timestamp` for dates with time;
-* `jsonb` for flexible configs;
-* enums or check constraints for roles/statuses when appropriate;
-* UUID/CUID-style IDs or a consistent ID strategy across the project.
+```txt
+src/features/room/
+  components/
+    room-canvas.tsx
+  renderer/
+    room-renderer.ts
+  stores/
+    use-room-store.ts
+  schemas/
+    room-schema.ts
+  types.ts
+```
 
-## Database domain model
+Exemplo para workspaces:
 
-The initial database model should move toward these entities:
+```txt
+src/features/workspaces/
+  components/
+  mocks/
+  schemas/
+  types.ts
+```
 
-### Identity and profile
+## Modelo de domínio recomendado
+
+### Identidade
 
 ```txt
 users
@@ -222,11 +423,22 @@ players
 playerSettings
 ```
 
-`users` represent authentication/account data.
+`users` representam conta/autenticação.
 
-`players` represent the user's identity inside the virtual environment.
+`players` representam a identidade visual e jogável dentro do ambiente virtual.
 
-`avatar_config` should preferably be stored as JSON, not as a generated image file.
+Configurações de avatar devem ser preferencialmente JSON, não arquivos de imagem gerados.
+
+Exemplo:
+
+```json
+{
+  "skin": "#d8a47f",
+  "hair": "short-black",
+  "shirt": "#2d6cdf",
+  "pants": "#222222"
+}
+```
 
 ### Workspaces
 
@@ -235,11 +447,9 @@ workspaces
 workspaceMembers
 ```
 
-A workspace represents a team/company/project context.
+Um workspace representa uma empresa, time, projeto ou “cidade” virtual.
 
-Rooms should normally belong to a workspace.
-
-### Rooms
+### Salas
 
 ```txt
 rooms
@@ -248,34 +458,29 @@ roomMembers
 roomPermissions
 ```
 
-Rooms are persistent spaces.
+A primeira sala de um workspace pode ser a sala padrão/mapa principal.
 
-Room settings include:
+Use campos como:
 
-* theme;
-* background color;
-* light mode;
-* guest access;
-* chat permission;
-* voice/video/screen share permission;
-* max users;
-* spawn point;
-* navigation grid.
+```txt
+isDefault
+kind: "main_map"
+```
 
-### Items and room objects
+### Itens e objetos
 
-Separate available item definitions from placed objects.
+Separe definições de itens de objetos colocados na sala:
 
 ```txt
 itemDefinitions
 roomObjects
 ```
 
-`itemDefinitions` describe item types, such as chair, table, plant, whiteboard.
+`itemDefinitions` descrevem tipos de item, como cadeira, mesa, planta ou quadro.
 
-`roomObjects` are concrete instances placed inside a room.
+`roomObjects` representam instâncias concretas posicionadas em uma sala.
 
-Use `state jsonb` for flexible object state, such as color, label, locked state, open/closed state, etc.
+Use `state jsonb` para dados flexíveis de objetos.
 
 ### Chat
 
@@ -283,25 +488,23 @@ Use `state jsonb` for flexible object state, such as color, label, locked state,
 chatMessages
 ```
 
-Messages may be:
+Mensagens podem ser:
 
-* room messages;
-* direct messages;
-* system messages;
-* meeting messages.
+* públicas da sala;
+* diretas;
+* de sistema;
+* relacionadas a reuniões.
 
-Allow nullable receiver for public room messages.
-
-### Calls
+### Chamadas
 
 ```txt
 callSessions
 callParticipants
 ```
 
-Use these to track LiveKit or any future provider.
+Use essas entidades para registrar chamadas, participantes e metadados do provider.
 
-### Meeting workflows
+### Reuniões
 
 ```txt
 meetingTemplates
@@ -312,105 +515,70 @@ meetingActionItems
 retroCards
 ```
 
-These support daily, planning, retro and similar software development ceremonies.
+Essas entidades sustentam fluxos como:
 
-## Feature boundaries
+* daily;
+* planning;
+* retrospectiva;
+* review;
+* pair programming.
 
-Prefer grouping feature code by domain:
+## Convenções de nomenclatura
 
-```txt
-features/room
-features/room-editor
-features/player
-features/calls
-features/meetings
-features/chat
-features/workspaces
-```
+Use nomes claros em inglês no código.
 
-For example:
+Prefira:
 
 ```txt
-src/features/room/
-  components/
-  hooks/
-  stores/
-  renderer/
-  types.ts
+userId
+playerId
+roomId
+workspaceId
+createdAt
+updatedAt
+isPublic
+positionX
+positionY
+avatarConfig
 ```
 
-PixiJS-specific code should live under something like:
+Evite abreviações legadas como:
 
 ```txt
-src/features/room/renderer/
+cdplayer
+nmroom
+fgpublic
+vlposx
+dtcreate
 ```
 
-Avoid spreading PixiJS logic randomly across React components.
+No banco, use uma convenção consistente. Se o schema usar snake_case, mantenha snake_case. Se o código TypeScript usar camelCase, mantenha camelCase.
 
-## MVP priorities
+Não misture estilos sem necessidade.
 
-Implement the project in this order:
+## Banco de dados e Drizzle
 
-1. Basic Next.js app shell.
-2. Room route.
-3. PixiJS canvas mounted inside a client component.
-4. Basic isometric or top-down grid.
-5. Local player/avatar rendered on the canvas.
-6. Local movement with keyboard or pointer.
-7. Zustand store for room/player state.
-8. Static furniture/item rendering.
-9. Basic room editor data model.
-10. Drizzle schema for persistent entities.
-11. LiveKit token endpoint skeleton.
-12. LiveKit room connection UI placeholder.
-13. Meeting templates for daily/planning/retro.
+Use Drizzle ORM para schema e queries.
 
-Do not start with a full production realtime server. First build a local working room prototype.
+O banco-alvo é PostgreSQL, preferencialmente Neon.
 
-## Code style
+Use:
 
-Use TypeScript.
+* `boolean` para flags;
+* `timestamp` para datas com horário;
+* `jsonb` para configurações flexíveis;
+* enums/check constraints quando fizer sentido;
+* IDs consistentes em todo o projeto.
 
-Prefer:
+Não crie migrations destrutivas sem instrução explícita.
 
-* small modules;
-* typed props;
-* Zod schemas for external/input validation;
-* clear feature boundaries;
-* explicit return types for exported functions when useful;
-* server-only code separated from client code;
-* no unnecessary abstractions.
+Não persista movimentação contínua de players no PostgreSQL.
 
-Avoid:
+## Variáveis de ambiente
 
-* `any` unless justified;
-* huge components;
-* mixing PixiJS rendering logic with form/UI logic;
-* storing high-frequency movement in SQL;
-* provider-specific domain lock-in;
-* creating large systems before the MVP needs them.
+Não hardcode secrets.
 
-## Next.js conventions
-
-Use App Router.
-
-Prefer server components by default.
-
-Use `"use client"` only where necessary, especially for:
-
-* PixiJS canvas;
-* Zustand stores;
-* LiveKit client components;
-* browser APIs;
-* keyboard/mouse interactions.
-
-Keep LiveKit server SDK usage on the server side only.
-
-Keep database access on the server side only.
-
-## Environment variables
-
-When implementing environment-dependent code, use clearly named variables such as:
+Quando necessário, use variáveis como:
 
 ```txt
 DATABASE_URL
@@ -419,92 +587,262 @@ LIVEKIT_API_SECRET
 LIVEKIT_URL
 ```
 
-Do not hardcode secrets.
-
-Add examples to `.env.example` when new variables are introduced.
-
-## Drizzle guidance
-
-Use Drizzle for database schema and queries.
-
-Prefer a dedicated schema location, such as:
+Sempre que adicionar uma nova variável, atualize também:
 
 ```txt
-packages/db/src/schema
+.env.example
+README.md
+apps/web/README.md
 ```
 
-or, if keeping everything inside the app during the MVP:
+## Next.js
+
+Use App Router.
+
+Prefira server components por padrão.
+
+Use `"use client"` apenas quando necessário, por exemplo:
+
+* PixiJS;
+* Zustand;
+* LiveKit client;
+* interações com teclado/mouse;
+* `useRouter`;
+* browser APIs.
+
+Mantenha código server-only separado de código client-side.
+
+Não importe SDKs server-side em client components.
+
+## Internacionalização
+
+Use `next-intl` para textos de interface voltados ao usuário.
+
+O português brasileiro (`pt-BR`) é o idioma padrão do projeto. Os arquivos atuais de mensagens são:
 
 ```txt
-apps/web/src/db/schema
+apps/web/messages/pt-BR.json
+apps/web/messages/en-US.json
 ```
 
-Use a consistent naming strategy and avoid mixing different naming conventions.
+Não escreva textos fixos diretamente em páginas ou componentes de UI. Adicione as mensagens aos arquivos de locale e use:
 
-Do not create destructive migrations unless explicitly requested.
+* `getTranslations` em server components;
+* `useTranslations` apenas em client components que já precisam de comportamento client-side.
 
-## LiveKit guidance
+Organize as chaves por domínio ou página e use nomes de chaves em inglês. Textos em português brasileiro devem seguir a norma culta e usar acentuação correta, como `Seleção`, `Configuração`, `Usuário`, `Área`, `Você`, `Repositório` e `Autenticação`.
 
-Use LiveKit for audio/video calls.
+O idioma padrão deve continuar funcionando sem prefixo obrigatório na URL. Idiomas adicionais podem usar prefixo, como `/en-US/auth/login`.
 
-For the MVP, create:
+## shadcn/ui
 
-* a server endpoint for generating a LiveKit access token;
-* a client component that can join a LiveKit room;
-* a simple call panel with join/leave/mute placeholders.
+Use shadcn/ui quando estiver configurado corretamente.
 
-Do not implement custom WebRTC manually.
+Se o shadcn/ui ainda não estiver funcionando, use HTML/Tailwind simples e registre a pendência no `TODO.md`.
 
-## PixiJS guidance
+Não bloqueie features essenciais apenas porque um componente shadcn ainda não existe.
 
-Use PixiJS for the room renderer.
+Antes de adicionar componentes shadcn, confira se já existem.
 
-The first renderer should be simple and maintainable:
+## PixiJS
 
-* create app;
-* mount canvas;
-* draw room grid;
-* draw player;
-* support basic movement;
-* clean up Pixi app on unmount.
+Use PixiJS para renderizar a sala/mapa.
 
-Keep PixiJS objects inside renderer classes/modules instead of deeply coupling them to React render cycles.
+O renderer inicial deve ser simples:
 
-## Communication with the user
+* criar app Pixi;
+* montar canvas;
+* desenhar grid;
+* desenhar player;
+* permitir movimento local;
+* limpar recursos no unmount.
 
-When making changes, explain:
+Mantenha PixiJS isolado em módulos/classes do renderer.
 
-1. what changed;
-2. why it changed;
-3. where the main files are;
-4. how to run or test the change.
+Não espalhe lógica PixiJS diretamente dentro de componentes React grandes.
 
-If a decision is uncertain, prefer implementing the smallest reasonable MVP and explain the tradeoff.
+## LiveKit
 
-## Commands
+Use LiveKit para chamadas de áudio/vídeo.
 
-Use Bun commands.
+Para o MVP, quando solicitado, implemente apenas:
 
-Common commands may include:
+* endpoint server-side para token;
+* componente de entrada em sala;
+* controles básicos de chamada.
 
-```bash
-bun install
-bun dev
-bun run build
-bun run lint
+Não implemente WebRTC manualmente.
+
+Não exponha `LIVEKIT_API_SECRET` no cliente.
+
+## Realtime
+
+Não implemente servidor realtime até que seja solicitado.
+
+A presença e movimentação em tempo real devem ser planejadas para WebSocket/Durable Objects ou serviço separado.
+
+Durante o MVP, simule localmente quando necessário.
+
+## Documentação obrigatória
+
+Ao concluir qualquer tarefa significativa, atualize a documentação relevante.
+
+Arquivos principais:
+
+```txt
+README.md
+TODO.md
+docs/README.md
+apps/web/README.md
+AGENTS.md
 ```
 
-Before adding dependencies, check whether the project already has an equivalent library installed.
+### README.md da raiz
 
-## Current immediate goal
+Deve conter:
 
-The immediate goal is to create a minimal but solid foundation for the virtual workspace:
+* visão geral do projeto;
+* objetivo do produto;
+* arquitetura geral;
+* tecnologias usadas;
+* comandos principais;
+* variáveis de ambiente;
+* status atual;
+* próximos passos;
+* links para documentação interna.
 
-* app structure;
-* room page;
-* PixiJS canvas;
-* local player movement;
-* initial domain types;
-* initial Drizzle schema;
-* LiveKit token route skeleton;
-* clean boundaries for future realtime and meeting systems.
+### TODO.md
+
+Deve funcionar como checklist vivo.
+
+Use:
+
+```md
+- [ ] Tarefa pendente
+- [x] Tarefa concluída
+```
+
+Organize por áreas:
+
+* Foundation;
+* Web app;
+* i18n;
+* Room renderer;
+* Player/avatar;
+* Workspaces;
+* Room editor;
+* Database;
+* LiveKit/calls;
+* Realtime/presence;
+* Meeting workflows;
+* Documentation;
+* Technical debt.
+
+Sempre que alterar código:
+
+* marque tarefas concluídas;
+* adicione pendências descobertas;
+* registre débitos técnicos;
+* não remova pendências relevantes sem justificativa.
+
+### docs/README.md
+
+Deve funcionar como índice técnico.
+
+Inclua documentos existentes e planejados, como:
+
+```txt
+architecture.md
+database.md
+i18n.md
+renderer.md
+realtime.md
+livekit.md
+meetings.md
+```
+
+Não invente documentos como existentes se eles ainda não foram criados.
+
+### apps/web/README.md
+
+Deve documentar especificamente o app web:
+
+* papel do app dentro do monorepo;
+* estrutura de pastas;
+* comandos;
+* i18n;
+* renderer PixiJS;
+* rotas;
+* variáveis de ambiente;
+* limitações atuais.
+
+## Regras de documentação
+
+* Escreva documentação em português brasileiro.
+* Use norma culta.
+* Use acentuação correta.
+* Não invente funcionalidades.
+* Marque claramente o que é “planejado”, “futuro” ou “a implementar”.
+* Mantenha a documentação coerente com o código real.
+* Não use tom publicitário.
+* Prefira clareza técnica.
+
+## Estilo de código
+
+Use TypeScript.
+
+Prefira:
+
+* módulos pequenos;
+* tipos claros;
+* validação com Zod;
+* fronteiras bem definidas;
+* componentes enxutos;
+* nomes explícitos;
+* código legível.
+
+Evite:
+
+* `any` sem justificativa;
+* componentes enormes;
+* duplicação de lógica;
+* textos hardcoded;
+* mistura de idioma;
+* lógica PixiJS espalhada;
+* persistência de estado efêmero no banco;
+* dependência desnecessária de provider externo no domínio.
+
+## Ordem recomendada do MVP
+
+Implemente de forma incremental:
+
+1. Fundação do app web.
+2. i18n com `pt-BR` como padrão.
+3. Login mockado.
+4. Seleção de workspace/cidade.
+5. Mapa principal mockado.
+6. Renderer PixiJS local.
+7. Movimento local do player.
+8. Mocks organizados.
+9. Schemas Zod iniciais.
+10. Schema Drizzle inicial.
+11. Endpoint LiveKit skeleton.
+12. Room editor básico.
+13. Realtime/presença.
+14. Fluxos de reunião.
+
+Não antecipe etapas complexas sem necessidade.
+
+## Comunicação ao finalizar tarefas
+
+Ao finalizar uma tarefa, responda com:
+
+1. resumo do que foi feito;
+2. arquivos criados;
+3. arquivos alterados;
+4. como rodar/testar;
+5. documentação atualizada;
+6. pendências registradas no `TODO.md`;
+7. próximos passos recomendados.
+
+Se algo não pôde ser feito, explique claramente o motivo.
