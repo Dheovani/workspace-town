@@ -42,7 +42,8 @@ components/
 db/
   client.ts                        # Cliente Drizzle/Neon server-side
   schema.ts                        # Schema Drizzle inicial
-  drizzle.config.ts                # Configuração de migrations
+drizzle.config.ts                  # Configuração de migrations
+drizzle/                           # Migrations geradas
 features/
   auth/
     components/                    # Formulários de login, cadastro e logout
@@ -108,8 +109,8 @@ Não deixe textos fixos diretamente na UI. Textos em português brasileiro devem
 Copie `apps/web/.env.example` para `apps/web/.env.local` e preencha quando for usar banco ou LiveKit.
 
 ```env
-DATABASE_URL=
-BETTER_AUTH_SECRET=
+DATABASE_URL=postgresql://workspace_town:workspace_town@localhost:5432/workspace_town
+BETTER_AUTH_SECRET=replace-with-a-long-random-secret
 BETTER_AUTH_URL=http://localhost:3000
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
@@ -141,11 +142,16 @@ Usuários sem sessão são redirecionados para `/auth/login`. O logout está dis
 As tabelas iniciais de autenticação estão no schema Drizzle (`user`, `session`, `account`, `verification`). Gere e aplique migrations antes de usar um banco novo:
 
 ```bash
+bun run db:up
+cd apps/web
 bun run db:generate
 bun run db:migrate
 ```
 
 A migration inicial atual está em `drizzle/0000_solid_vivisector.sql`.
+
+O comando `bun run db:up` deve ser executado na raiz do repositório, pois usa o `docker-compose.yml` local.
+Ele requer Docker Desktop ou outro Docker engine ativo.
 
 ## Feature de sala
 
@@ -207,15 +213,16 @@ Implementado:
 - estado local com Zustand;
 - schemas Zod iniciais;
 - schema Drizzle inicial;
+- PostgreSQL local via Docker Compose;
 - rota inicial de token LiveKit.
 
 Limites atuais:
 
 - não há servidor realtime;
 - não há multiplayer real;
-- não há persistência conectada a banco;
+- a persistência ainda não foi conectada aos fluxos de workspaces e salas;
 - workspaces são mockados;
-- migration inicial gerada, mas ainda precisa ser aplicada em um PostgreSQL configurado;
+- migration inicial gerada, mas ainda precisa ser aplicada no PostgreSQL local ou em outro banco configurado;
 - não há editor de sala;
 - não há componente de chamada LiveKit conectado;
 - não há OAuth, recuperação de senha ou verificação de e-mail;
@@ -239,4 +246,16 @@ Build:
 
 ```bash
 bun run build
+```
+
+Subir o banco local a partir da raiz do repositório:
+
+```bash
+bun run db:up
+```
+
+Aplicar migrations a partir de `apps/web`:
+
+```bash
+bun run db:migrate
 ```

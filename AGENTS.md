@@ -562,6 +562,20 @@ Use Drizzle ORM para schema e queries.
 
 O banco-alvo é PostgreSQL, preferencialmente Neon.
 
+Para desenvolvimento local, o repositório possui um `docker-compose.yml` na raiz com PostgreSQL. Use:
+
+```bash
+bun run db:up
+cd apps/web
+bun run db:migrate
+```
+
+O `DATABASE_URL` local padrão é:
+
+```env
+DATABASE_URL=postgresql://workspace_town:workspace_town@localhost:5432/workspace_town
+```
+
 Use:
 
 * `boolean` para flags;

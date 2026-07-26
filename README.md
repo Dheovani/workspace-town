@@ -17,6 +17,8 @@ packages/
   eslint-config/
   typescript-config/
 docs/        # Documentação técnica em Markdown
+docker-compose.yml
+             # PostgreSQL local para desenvolvimento
 ```
 
 No momento, a aplicação principal está em `apps/web`. A documentação técnica do projeto fica em `docs/`.
@@ -64,8 +66,8 @@ O movimento do player não deve ser persistido em SQL. Para o MVP, ele é local 
 O app web espera as variáveis abaixo. Veja também `apps/web/.env.example`.
 
 ```env
-DATABASE_URL=
-BETTER_AUTH_SECRET=
+DATABASE_URL=postgresql://workspace_town:workspace_town@localhost:5432/workspace_town
+BETTER_AUTH_SECRET=replace-with-a-long-random-secret
 BETTER_AUTH_URL=http://localhost:3000
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
@@ -87,6 +89,21 @@ Rodar apenas o app web:
 ```bash
 cd apps/web
 bun dev
+```
+
+Subir o PostgreSQL local:
+
+```bash
+bun run db:up
+```
+
+Esse comando requer Docker Desktop ou outro Docker engine ativo.
+
+Aplicar migrations no banco local:
+
+```bash
+cd apps/web
+bun run db:migrate
 ```
 
 Rodar todos os apps pelo monorepo:
@@ -135,6 +152,7 @@ Já existe uma fundação inicial para o MVP:
 - schemas Zod iniciais para sala, player, avatar, objetos e tipos de reunião;
 - schema Drizzle inicial para os principais domínios persistentes;
 - tabelas Drizzle iniciais para `better-auth`;
+- PostgreSQL local via Docker Compose;
 - endpoint inicial `POST /api/livekit/token` para gerar token LiveKit;
 - arquivo `.env.example` do app web.
 
@@ -147,11 +165,12 @@ O app usa `better-auth` com e-mail e senha. As rotas de workspaces exigem sessã
 
 Usuários sem sessão são redirecionados para `/auth/login`. Após login ou cadastro bem-sucedido, a interface navega para `/workspaces`.
 
-Para autenticação real funcionar em desenvolvimento, configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` e gere/aplique as migrations do Drizzle.
+Para autenticação real funcionar em desenvolvimento, configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL`, suba o PostgreSQL local e aplique as migrations do Drizzle.
 
 A migration inicial já foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. Para aplicar em um PostgreSQL configurado:
 
 ```bash
+bun run db:up
 cd apps/web
 bun run db:migrate
 ```
@@ -160,7 +179,6 @@ bun run db:migrate
 
 As próximas etapas planejadas incluem:
 
-- autenticação real;
 - OAuth;
 - recuperação de senha;
 - verificação de e-mail;
@@ -168,7 +186,6 @@ As próximas etapas planejadas incluem:
 - painel de chamada LiveKit no app web;
 - conexão real a uma sala LiveKit;
 - editor básico de sala e objetos;
-- modelos e migrations Drizzle;
 - persistência real em PostgreSQL;
 - servidor realtime para presença e movimento;
 - fluxo de reuniões para daily, planning, retro, review e pair programming;
@@ -177,5 +194,6 @@ As próximas etapas planejadas incluem:
 ## Documentação interna
 
 - Documentação técnica: [`docs/README.md`](docs/README.md)
+- Banco de dados: [`docs/database.md`](docs/database.md)
 - App web: [`apps/web/README.md`](apps/web/README.md)
 - Pendências vivas do projeto: [`TODO.md`](TODO.md)

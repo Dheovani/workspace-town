@@ -11,6 +11,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar fluxo inicial mockado Login -> seleção de workspace -> mapa principal.
 - [x] Configurar i18n inicial com `pt-BR` como idioma padrão.
 - [x] Substituir login mockado por autenticação com `better-auth`.
+- [x] Adicionar PostgreSQL local via Docker Compose.
 - [ ] Definir padrão final para organização entre `apps/web`, `packages/db` e `packages/shared`.
 - [ ] Adicionar testes automatizados básicos.
 
@@ -61,6 +62,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Adicionar `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` aos exemplos de ambiente.
 - [x] Gerar migration inicial para tabelas de autenticação.
 - [ ] Aplicar migrations em um banco PostgreSQL configurado.
+- [ ] Iniciar Docker Desktop/engine local e validar `bun run db:up`.
+- [ ] Validar cadastro, login, sessão server-side e logout usando o PostgreSQL local.
 - [ ] Implementar recuperação de senha.
 - [ ] Implementar verificação de e-mail.
 - [ ] Avaliar OAuth quando o fluxo principal estiver estável.
@@ -103,7 +106,10 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Separar entidades de chamadas e reuniões do provider LiveKit.
 - [x] Criar `drizzle.config.ts`.
 - [x] Gerar migration inicial.
+- [x] Configurar PostgreSQL local para desenvolvimento.
+- [x] Documentar fluxo local de banco e migrations.
 - [ ] Aplicar migration inicial em PostgreSQL.
+- [ ] Validar a migration inicial contra o PostgreSQL local depois que o Docker engine estiver ativo.
 - [ ] Configurar cliente de banco server-side.
 - [ ] Implementar queries iniciais para workspaces, rooms e room objects.
 - [ ] Avaliar migrar schema para `packages/db` quando o compartilhamento justificar.
@@ -141,8 +147,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar índice técnico em `docs/README.md`.
 - [x] Atualizar README específico do app web.
 - [x] Registrar regras iniciais de i18n no `AGENTS.md`.
+- [x] Criar `docs/database.md`.
 - [ ] Criar `docs/architecture.md`.
-- [ ] Criar `docs/database.md`.
 - [ ] Criar `docs/renderer.md`.
 - [ ] Criar `docs/livekit.md`.
 - [ ] Criar `docs/realtime.md`.
@@ -157,3 +163,4 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [ ] Revisar acessibilidade da página de sala.
 - [ ] Remover qualquer conteúdo remanescente do template que não represente o produto.
 - [ ] Adicionar testes do fluxo de autenticação, seleção de workspace e mapa.
+- [ ] Remover fallback local de `DATABASE_URL` do código quando a validação de ambiente estiver formalizada.

@@ -5,11 +5,11 @@ Esta pasta concentra a documentação técnica do Workspace Town. O README da ra
 ## Documentos atuais
 
 - `README.md`: este índice técnico.
+- `database.md`: banco local, Drizzle, migrations e regras iniciais de persistência.
 
 ## Documentos planejados
 
 - `architecture.md`: arquitetura geral do monorepo, fronteiras entre app web, renderer, banco, chamadas e realtime.
-- `database.md`: modelo persistente, convenções de schema, Drizzle e migrations.
 - `renderer.md`: organização do renderer PixiJS, ciclo de vida, grid, objetos e avatar.
 - `i18n.md`: estratégia de internacionalização, mensagens e revisão de textos.
 - `livekit.md`: integração com LiveKit, token endpoint, permissões e relação com o domínio interno de chamadas.
@@ -27,6 +27,7 @@ O projeto separa responsabilidades em camadas:
 - `apps/web/features/room`: domínio client-side da sala virtual, incluindo componentes, store, renderer e schemas.
 - `apps/web/features/workspaces`: mocks e helpers para o fluxo inicial de seleção de workspace/cidade.
 - `apps/web/db/schema.ts`: schema Drizzle inicial para dados persistentes.
+- `docker-compose.yml`: PostgreSQL local para desenvolvimento.
 - `apps/web/app/api/auth/[...all]/route.ts`: rota HTTP do Better Auth.
 - LiveKit: provedor de chamadas ao vivo, isolado atrás de entidades internas como `callSessions` e `callParticipants`.
 - Realtime server: futuro serviço para presença e movimento. Ainda não implementado.
@@ -79,7 +80,7 @@ Rotas protegidas:
 
 A proteção acontece server-side por meio da sessão do Better Auth. Usuários sem sessão são redirecionados para `/auth/login`.
 
-O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inicial foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. Ela ainda precisa ser aplicada em um PostgreSQL configurado antes de usar autenticação real contra um banco novo.
+O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inicial foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. O repositório possui PostgreSQL local via Docker Compose. A migration ainda precisa ser aplicada no banco local antes de usar autenticação real contra um banco novo.
 
 ## Domínios principais
 
