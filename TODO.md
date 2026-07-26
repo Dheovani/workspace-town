@@ -18,6 +18,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 ## Web app
 
 - [x] Criar entrada inicial do app.
+- [x] Revisar o layout básico das telas de login e cadastro.
 - [x] Redirecionar `/` para `/auth/login`.
 - [x] Criar tela de login real em `/auth/login`.
 - [x] Criar tela de cadastro real em `/auth/register`.

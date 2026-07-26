@@ -54,10 +54,11 @@ export function LoginForm() {
   }
 
   return (
-    <form className="space-y-4" onSubmit={onSubmit}>
+    <form className="space-y-5" onSubmit={onSubmit}>
       <div className="space-y-2">
         <Label htmlFor="email">{t("fields.email")}</Label>
         <Input
+          className="h-10 rounded-md bg-white px-3"
           id="email"
           name="email"
           type="email"
@@ -71,6 +72,7 @@ export function LoginForm() {
       <div className="space-y-2">
         <Label htmlFor="password">{t("fields.password")}</Label>
         <Input
+          className="h-10 rounded-md bg-white px-3"
           id="password"
           name="password"
           type="password"
@@ -82,12 +84,20 @@ export function LoginForm() {
       </div>
 
       {error ? (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p
+          className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm leading-5 text-destructive"
+          role="alert"
+        >
           {error}
         </p>
       ) : null}
 
-      <Button className="w-full" size="lg" type="submit" disabled={isPending}>
+      <Button
+        className="h-10 w-full rounded-md bg-slate-900 hover:bg-slate-800"
+        size="lg"
+        type="submit"
+        disabled={isPending}
+      >
         {isPending ? t("loading") : t("submit")}
       </Button>
     </form>
