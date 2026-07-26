@@ -149,6 +149,13 @@ Usuários sem sessão são redirecionados para `/auth/login`. Após login ou cad
 
 Para autenticação real funcionar em desenvolvimento, configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` e gere/aplique as migrations do Drizzle.
 
+A migration inicial já foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. Para aplicar em um PostgreSQL configurado:
+
+```bash
+cd apps/web
+bun run db:migrate
+```
+
 ## A implementar
 
 As próximas etapas planejadas incluem:

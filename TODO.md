@@ -59,7 +59,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar formulários reais de login e cadastro com Zod.
 - [x] Adicionar tabelas Drizzle iniciais para `better-auth`.
 - [x] Adicionar `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` aos exemplos de ambiente.
-- [ ] Gerar e aplicar migrations para tabelas de autenticação.
+- [x] Gerar migration inicial para tabelas de autenticação.
+- [ ] Aplicar migrations em um banco PostgreSQL configurado.
 - [ ] Implementar recuperação de senha.
 - [ ] Implementar verificação de e-mail.
 - [ ] Avaliar OAuth quando o fluxo principal estiver estável.
@@ -101,7 +102,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Modelar entidades persistentes principais.
 - [x] Separar entidades de chamadas e reuniões do provider LiveKit.
 - [x] Criar `drizzle.config.ts`.
-- [ ] Gerar migrations iniciais.
+- [x] Gerar migration inicial.
+- [ ] Aplicar migration inicial em PostgreSQL.
 - [ ] Configurar cliente de banco server-side.
 - [ ] Implementar queries iniciais para workspaces, rooms e room objects.
 - [ ] Avaliar migrar schema para `packages/db` quando o compartilhamento justificar.

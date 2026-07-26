@@ -79,7 +79,7 @@ Rotas protegidas:
 
 A proteção acontece server-side por meio da sessão do Better Auth. Usuários sem sessão são redirecionados para `/auth/login`.
 
-O schema Drizzle inclui tabelas iniciais para `better-auth`, mas as migrations ainda precisam ser geradas e aplicadas antes de usar autenticação real contra um banco novo.
+O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inicial foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. Ela ainda precisa ser aplicada em um PostgreSQL configurado antes de usar autenticação real contra um banco novo.
 
 ## Domínios principais
 

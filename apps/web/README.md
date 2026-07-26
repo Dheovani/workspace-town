@@ -142,7 +142,10 @@ As tabelas iniciais de autenticação estão no schema Drizzle (`user`, `session
 
 ```bash
 bun run db:generate
+bun run db:migrate
 ```
+
+A migration inicial atual está em `drizzle/0000_solid_vivisector.sql`.
 
 ## Feature de sala
 
@@ -181,7 +184,7 @@ Use `"use client"` apenas para código que depende do browser, como canvas, tecl
 
 Código server-side deve ficar em rotas do App Router ou módulos server-only. O endpoint atual de LiveKit está em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
 
-Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, mas ainda não há cliente de banco, migrations ou queries implementadas.
+Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, há cliente Drizzle server-side e a migration inicial foi gerada, mas ainda não há queries de domínio implementadas.
 
 ## MVP atual
 
@@ -212,7 +215,7 @@ Limites atuais:
 - não há multiplayer real;
 - não há persistência conectada a banco;
 - workspaces são mockados;
-- migrations ainda precisam ser geradas e aplicadas;
+- migration inicial gerada, mas ainda precisa ser aplicada em um PostgreSQL configurado;
 - não há editor de sala;
 - não há componente de chamada LiveKit conectado;
 - não há OAuth, recuperação de senha ou verificação de e-mail;
