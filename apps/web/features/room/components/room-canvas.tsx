@@ -30,9 +30,11 @@ export function RoomCanvas() {
   const navigationControllerRef = useRef<RoomNavigationController | null>(null);
   const localPlayer = useRoomStore((state) => state.localPlayer);
   const objects = useRoomStore((state) => state.objects);
+  const roomMode = useRoomStore((state) => state.roomMode);
   const isEditing = useRoomStore((state) => state.isEditing);
   const selectedObjectId = useRoomStore((state) => state.selectedObjectId);
   const moveLocalPlayer = useRoomStore((state) => state.moveLocalPlayer);
+  const localPlayerName = t("localPlayerName");
 
   useEffect(() => {
     let cancelled = false;
@@ -54,9 +56,11 @@ export function RoomCanvas() {
         container: containerRef.current,
         room: initialState.room,
         player: initialState.localPlayer,
+        playerDisplayName: localPlayerName,
         objects: initialState.objects,
         editorInteraction: {
           enabled: initialState.isEditing,
+          mode: initialState.roomMode,
           selectedObjectId: initialState.selectedObjectId,
           onTileSelect: (position) =>
             useRoomStore.getState().placeSelectionAt(position),
@@ -86,11 +90,11 @@ export function RoomCanvas() {
       rendererRef.current?.destroy();
       rendererRef.current = null;
     };
-  }, []);
+  }, [localPlayerName]);
 
   useEffect(() => {
-    rendererRef.current?.updatePlayer(localPlayer);
-  }, [localPlayer]);
+    rendererRef.current?.updatePlayer(localPlayer, localPlayerName);
+  }, [localPlayer, localPlayerName]);
 
   useEffect(() => {
     rendererRef.current?.updateObjects(objects);
@@ -99,13 +103,14 @@ export function RoomCanvas() {
   useEffect(() => {
     rendererRef.current?.updateEditorInteraction({
       enabled: isEditing,
+      mode: roomMode,
       selectedObjectId,
       onTileSelect: (position) =>
         useRoomStore.getState().placeSelectionAt(position),
       onObjectSelect: (objectId) =>
         useRoomStore.getState().selectObject(objectId),
     });
-  }, [isEditing, selectedObjectId]);
+  }, [isEditing, roomMode, selectedObjectId]);
 
   useEffect(() => {
     if (isEditing) {
@@ -143,7 +148,10 @@ export function RoomCanvas() {
       aria-label={t("ariaLabel")}
       className={cn(
         "h-full min-h-0 w-full overflow-hidden bg-slate-50",
-        isEditing && "outline-2 outline-offset-[-2px] outline-teal-700/50",
+        roomMode === "editor" &&
+          "outline-2 outline-offset-[-2px] outline-amber-500/70",
+        roomMode === "debug" &&
+          "outline-2 outline-offset-[-2px] outline-slate-900/80",
       )}
     />
   );

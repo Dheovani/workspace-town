@@ -37,7 +37,7 @@ O projeto separa responsabilidades em camadas:
 
 React deve controlar a interface da aplicação. PixiJS deve controlar a cena da sala dentro do canvas. Movimento local, direção e presença atual são dados efêmeros e não devem ser persistidos diretamente em SQL.
 
-As rotas de sala usam um shell próprio em tela cheia. Um cabeçalho compacto ocupa o topo, o canvas usa todo o espaço restante e controles de navegação, sessão, status e edição ficam em uma sidebar fora da cena. Em telas menores, essa sidebar funciona como painel sobreposto.
+As rotas de sala usam um shell próprio em tela cheia. Um cabeçalho compacto ocupa o topo, o canvas usa todo o espaço restante e controles contextuais ficam em uma sidebar fora da cena. Os modos de jogo, editor e debug determinam quais painéis e overlays técnicos são exibidos. Em telas menores, a sidebar funciona como painel sobreposto.
 
 ## Internacionalização
 
@@ -106,11 +106,14 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - A rota raiz `/` redireciona para o login.
 - O renderer PixiJS fica isolado de componentes React grandes.
 - O layout das salas não usa o container de largura máxima das páginas convencionais.
+- O grid lógico permanece disponível para interação, mas só é desenhado em editor e debug.
+- Piso, limites e zonas de ambiente são uma camada visual independente dos objetos persistentes.
 - A câmera 2D acompanha o jogador em mapas maiores, respeita os limites da sala e centraliza e amplia mapas que cabem integralmente na viewport.
 - O cálculo da câmera é isolado do PixiJS e possui testes unitários com o runner nativo do Bun.
 - Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.
 - A posição lógica muda por tile no store, enquanto o ticker do PixiJS interpola a posição visual do player e da câmera.
 - O avatar local possui renderer próprio, orientação por direção e ciclo de caminhada, preparando a cena para múltiplos players.
+- Player e objetos são ordenados pela coordenada vertical de sua base para simular profundidade.
 - A sidebar permite alterar localmente pele, rosto, cabelo e roupas do personagem; a persistência dessa configuração pertence ao futuro fluxo de identidade do player.
 - Clique ou toque no mapa usa uma rota A\* ortogonal, cancelável por teclado ou editor e revalidada contra colisões a cada passo.
 - O estado efêmero inicial usa Zustand.

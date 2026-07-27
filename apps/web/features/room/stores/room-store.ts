@@ -9,7 +9,13 @@ import {
   resolvePlayerMovement,
   type PlayerMove,
 } from "../domain/player-movement";
-import type { AvatarConfig, Player, Room, RoomObject } from "../types";
+import type {
+  AvatarConfig,
+  Player,
+  Room,
+  RoomMode,
+  RoomObject,
+} from "../types";
 
 const demoRoom: Room = {
   id: "demo",
@@ -33,7 +39,7 @@ const demoPlayer: Player = {
     shirtColor: "#38bdf8",
     pantsColor: "#334155",
     shoeColor: "#f8fafc",
-    displayName: "You",
+    displayName: "local-player",
   },
   position: { x: 4, y: 4 },
   direction: "down",
@@ -50,6 +56,24 @@ const demoObjects: RoomObject[] = [
     state: { color: "#f59e0b" },
   },
   {
+    id: "demo-chair-north",
+    roomId: demoRoom.id,
+    itemDefinitionId: "chair",
+    label: "Meeting chair",
+    position: { x: 8, y: 3 },
+    rotation: 180,
+    state: { color: "#0f766e" },
+  },
+  {
+    id: "demo-chair-south",
+    roomId: demoRoom.id,
+    itemDefinitionId: "chair",
+    label: "Meeting chair",
+    position: { x: 8, y: 5 },
+    rotation: 0,
+    state: { color: "#0f766e" },
+  },
+  {
     id: "demo-board",
     roomId: demoRoom.id,
     itemDefinitionId: "whiteboard",
@@ -58,17 +82,28 @@ const demoObjects: RoomObject[] = [
     rotation: 0,
     state: { color: "#f8fafc" },
   },
+  {
+    id: "demo-plant",
+    roomId: demoRoom.id,
+    itemDefinitionId: "plant",
+    label: "Office plant",
+    position: { x: 5, y: 2 },
+    rotation: 0,
+    state: { color: "#3f8f67" },
+  },
 ];
 
 type RoomState = {
   room: Room;
   localPlayer: Player;
   objects: RoomObject[];
+  roomMode: RoomMode;
   isEditing: boolean;
   selectedItemDefinitionId: string | null;
   selectedObjectId: string | null;
   moveLocalPlayer: (move: PlayerMove) => void;
   updateLocalAvatar: (avatarConfig: AvatarConfig) => void;
+  setRoomMode: (roomMode: RoomMode) => void;
   setEditing: (isEditing: boolean) => void;
   selectItemDefinition: (itemDefinitionId: string) => void;
   selectObject: (objectId: string) => void;
@@ -82,6 +117,7 @@ export const useRoomStore = create<RoomState>((set) => ({
   room: demoRoom,
   localPlayer: demoPlayer,
   objects: demoObjects,
+  roomMode: "user",
   isEditing: false,
   selectedItemDefinitionId: null,
   selectedObjectId: null,
@@ -102,8 +138,16 @@ export const useRoomStore = create<RoomState>((set) => ({
         avatarConfig,
       },
     })),
+  setRoomMode: (roomMode) =>
+    set({
+      roomMode,
+      isEditing: roomMode === "editor",
+      selectedItemDefinitionId: null,
+      selectedObjectId: null,
+    }),
   setEditing: (isEditing) =>
     set({
+      roomMode: isEditing ? "editor" : "user",
       isEditing,
       selectedItemDefinitionId: null,
       selectedObjectId: null,

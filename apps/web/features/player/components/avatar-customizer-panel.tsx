@@ -2,20 +2,9 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoomStore } from "@/features/room/stores/room-store";
-import {
-  avatarFaceStyleSchema,
-  avatarHairStyleSchema,
-  avatarShirtStyleSchema,
-  type AvatarConfig,
-} from "@/features/room/types";
+import type { AvatarConfig } from "@/features/room/types";
 import { cn } from "@/lib/utils";
 
 const skinTones = [
@@ -57,9 +46,13 @@ const shoeColors = [
   { color: "#fbbf24", name: "amber", foreground: "text-slate-950" },
 ] as const;
 
-const hairStyles = ["short", "spiky", "bob"] as const;
-const faceStyles = ["neutral", "smile", "focused"] as const;
-const shirtStyles = ["tshirt", "hoodie", "jacket"] as const;
+const hairStyles: AvatarConfig["hairStyle"][] = ["short", "spiky", "bob"];
+const faceStyles: AvatarConfig["faceStyle"][] = ["neutral", "smile", "focused"];
+const shirtStyles: AvatarConfig["shirtStyle"][] = [
+  "tshirt",
+  "hoodie",
+  "jacket",
+];
 
 type ColorOption =
   | (typeof skinTones)[number]
@@ -97,8 +90,8 @@ function ColorSwatches({
               key={option.color}
               type="button"
               className={cn(
-                "grid size-7 place-items-center rounded-full border border-black/15 shadow-sm transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                isSelected && "ring-2 ring-foreground ring-offset-2",
+                "grid size-8 place-items-center rounded-full border border-black/15 shadow-sm transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                isSelected && "ring-2 ring-teal-800 ring-offset-2",
               )}
               style={{ backgroundColor: option.color }}
               aria-label={selectLabel(option.name)}
@@ -108,7 +101,7 @@ function ColorSwatches({
             >
               {isSelected ? (
                 <Check
-                  className={cn("size-3.5", option.foreground)}
+                  className={cn("size-4", option.foreground)}
                   strokeWidth={3}
                   aria-hidden="true"
                 />
@@ -121,43 +114,151 @@ function ColorSwatches({
   );
 }
 
-type StyleSelectProps = {
+type StyleOptionsProps<T extends string> = {
   label: string;
-  value: string;
-  options: readonly string[];
-  optionLabel: (option: string) => string;
-  onChange: (value: string) => void;
+  options: readonly T[];
+  selectedOption: T;
+  optionLabel: (option: T) => string;
+  renderThumbnail: (option: T) => React.ReactNode;
+  onSelect: (option: T) => void;
 };
 
-function StyleSelect({
+function StyleOptions<T extends string>({
   label,
-  value,
   options,
+  selectedOption,
   optionLabel,
-  onChange,
-}: StyleSelectProps) {
+  renderThumbnail,
+  onSelect,
+}: StyleOptionsProps<T>) {
   return (
-    <label className="grid gap-1.5 text-xs font-medium text-muted-foreground">
-      {label}
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full bg-background text-foreground">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {optionLabel(option)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </label>
+    <fieldset>
+      <legend className="text-xs font-medium text-muted-foreground">
+        {label}
+      </legend>
+      <div className="mt-2 grid grid-cols-3 gap-2">
+        {options.map((option) => {
+          const isSelected = option === selectedOption;
+
+          return (
+            <button
+              key={option}
+              type="button"
+              className={cn(
+                "grid min-w-0 place-items-center gap-1 rounded-md border bg-background px-1 py-2 text-[11px] font-medium transition hover:border-teal-500 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isSelected &&
+                  "border-teal-700 bg-teal-50 text-teal-950 shadow-sm",
+              )}
+              aria-pressed={isSelected}
+              onClick={() => onSelect(option)}
+            >
+              {renderThumbnail(option)}
+              <span className="max-w-full truncate">{optionLabel(option)}</span>
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function HairThumbnail({
+  config,
+  style,
+}: {
+  config: AvatarConfig;
+  style: AvatarConfig["hairStyle"];
+}) {
+  return (
+    <span className="relative block h-10 w-9" aria-hidden="true">
+      <span
+        className="absolute bottom-0 left-1/2 h-8 w-7 -translate-x-1/2 rounded-[45%] border border-slate-700"
+        style={{ backgroundColor: config.skinTone }}
+      />
+      <span
+        className={cn(
+          "absolute left-1/2 -translate-x-1/2 border border-slate-800",
+          style === "short" && "top-0 h-3 w-7 rounded-t-[50%]",
+          style === "spiky" &&
+            "top-0 h-4 w-8 [clip-path:polygon(0_100%,10%_30%,25%_65%,40%_0,58%_60%,78%_15%,100%_100%)]",
+          style === "bob" && "top-0 h-8 w-9 rounded-t-[50%]",
+        )}
+        style={{ backgroundColor: config.hairColor }}
+      />
+      {style === "bob" ? (
+        <span
+          className="absolute bottom-0 left-1/2 h-6 w-6 -translate-x-1/2 rounded-[45%]"
+          style={{ backgroundColor: config.skinTone }}
+        />
+      ) : null}
+    </span>
+  );
+}
+
+function FaceThumbnail({
+  config,
+  expression,
+}: {
+  config: AvatarConfig;
+  expression: AvatarConfig["faceStyle"];
+}) {
+  return (
+    <span
+      className="relative block size-9 rounded-[45%] border border-slate-700"
+      style={{ backgroundColor: config.skinTone }}
+      aria-hidden="true"
+    >
+      <span className="absolute left-2 top-3 size-1 rounded-full bg-slate-900" />
+      <span className="absolute right-2 top-3 size-1 rounded-full bg-slate-900" />
+      <span
+        className={cn(
+          "absolute bottom-2 left-1/2 h-1.5 w-3 -translate-x-1/2 border-b-2 border-slate-800",
+          expression === "smile" && "rounded-b-full",
+          expression === "neutral" && "h-0",
+          expression === "focused" && "rotate-[-8deg]",
+        )}
+      />
+    </span>
+  );
+}
+
+function ShirtThumbnail({
+  color,
+  style,
+}: {
+  color: string;
+  style: AvatarConfig["shirtStyle"];
+}) {
+  return (
+    <span className="relative block h-10 w-10" aria-hidden="true">
+      {style === "hoodie" ? (
+        <span
+          className="absolute left-1/2 top-0 size-5 -translate-x-1/2 rounded-full border border-slate-700"
+          style={{ backgroundColor: color }}
+        />
+      ) : null}
+      <span
+        className={cn(
+          "absolute bottom-0 left-1/2 h-8 w-8 -translate-x-1/2 border border-slate-700",
+          style === "tshirt" &&
+            "[clip-path:polygon(18%_0,82%_0,100%_25%,82%_42%,78%_100%,22%_100%,18%_42%,0_25%)]",
+          style === "hoodie" && "rounded-t-md",
+          style === "jacket" &&
+            "[clip-path:polygon(18%_0,82%_0,100%_22%,84%_38%,82%_100%,18%_100%,16%_38%,0_22%)]",
+        )}
+        style={{ backgroundColor: color }}
+      />
+      {style === "jacket" ? (
+        <span className="absolute bottom-0 left-1/2 h-7 w-px -translate-x-1/2 bg-slate-700" />
+      ) : null}
+    </span>
   );
 }
 
 export function AvatarCustomizerPanel() {
   const t = useTranslations("room.avatar");
   const avatarConfig = useRoomStore((state) => state.localPlayer.avatarConfig);
+  const roomMode = useRoomStore((state) => state.roomMode);
   const updateLocalAvatar = useRoomStore((state) => state.updateLocalAvatar);
 
   const updateAvatar = (patch: Partial<AvatarConfig>) => {
@@ -167,87 +268,91 @@ export function AvatarCustomizerPanel() {
     });
   };
 
+  if (roomMode !== "user") {
+    return null;
+  }
+
+  const colorLabel = (colorName: string) =>
+    t("selectColor", { color: t(`colors.${colorName}`) });
+
   return (
     <section className="border-b p-4">
       <h2 className="text-base font-semibold">{t("title")}</h2>
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        <StyleSelect
-          label={t("hairStyle")}
-          value={avatarConfig.hairStyle}
-          options={hairStyles}
-          optionLabel={(option) => t(`styles.hair.${option}`)}
-          onChange={(value) =>
-            updateAvatar({ hairStyle: avatarHairStyleSchema.parse(value) })
-          }
-        />
-        <StyleSelect
-          label={t("faceStyle")}
-          value={avatarConfig.faceStyle}
-          options={faceStyles}
-          optionLabel={(option) => t(`styles.face.${option}`)}
-          onChange={(value) =>
-            updateAvatar({ faceStyle: avatarFaceStyleSchema.parse(value) })
-          }
-        />
-        <div className="col-span-2">
-          <StyleSelect
-            label={t("shirtStyle")}
-            value={avatarConfig.shirtStyle}
-            options={shirtStyles}
-            optionLabel={(option) => t(`styles.shirt.${option}`)}
-            onChange={(value) =>
-              updateAvatar({ shirtStyle: avatarShirtStyleSchema.parse(value) })
-            }
+      <Tabs defaultValue="character" className="mt-3">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="character">{t("tabs.character")}</TabsTrigger>
+          <TabsTrigger value="outfit">{t("tabs.outfit")}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="character" className="mt-4 grid gap-5">
+          <StyleOptions
+            label={t("hairStyle")}
+            options={hairStyles}
+            selectedOption={avatarConfig.hairStyle}
+            optionLabel={(option) => t(`styles.hair.${option}`)}
+            renderThumbnail={(option) => (
+              <HairThumbnail config={avatarConfig} style={option} />
+            )}
+            onSelect={(hairStyle) => updateAvatar({ hairStyle })}
           />
-        </div>
-      </div>
-      <div className="mt-4 grid gap-4">
-        <ColorSwatches
-          label={t("skinTone")}
-          options={skinTones}
-          selectedColor={avatarConfig.skinTone}
-          selectLabel={(colorName) =>
-            t("selectColor", { color: t(`colors.${colorName}`) })
-          }
-          onSelect={(skinTone) => updateAvatar({ skinTone })}
-        />
-        <ColorSwatches
-          label={t("hairColor")}
-          options={hairColors}
-          selectedColor={avatarConfig.hairColor}
-          selectLabel={(colorName) =>
-            t("selectColor", { color: t(`colors.${colorName}`) })
-          }
-          onSelect={(hairColor) => updateAvatar({ hairColor })}
-        />
-        <ColorSwatches
-          label={t("shirtColor")}
-          options={shirtColors}
-          selectedColor={avatarConfig.shirtColor}
-          selectLabel={(colorName) =>
-            t("selectColor", { color: t(`colors.${colorName}`) })
-          }
-          onSelect={(shirtColor) => updateAvatar({ shirtColor })}
-        />
-        <ColorSwatches
-          label={t("pantsColor")}
-          options={pantsColors}
-          selectedColor={avatarConfig.pantsColor}
-          selectLabel={(colorName) =>
-            t("selectColor", { color: t(`colors.${colorName}`) })
-          }
-          onSelect={(pantsColor) => updateAvatar({ pantsColor })}
-        />
-        <ColorSwatches
-          label={t("shoeColor")}
-          options={shoeColors}
-          selectedColor={avatarConfig.shoeColor}
-          selectLabel={(colorName) =>
-            t("selectColor", { color: t(`colors.${colorName}`) })
-          }
-          onSelect={(shoeColor) => updateAvatar({ shoeColor })}
-        />
-      </div>
+          <StyleOptions
+            label={t("faceStyle")}
+            options={faceStyles}
+            selectedOption={avatarConfig.faceStyle}
+            optionLabel={(option) => t(`styles.face.${option}`)}
+            renderThumbnail={(option) => (
+              <FaceThumbnail config={avatarConfig} expression={option} />
+            )}
+            onSelect={(faceStyle) => updateAvatar({ faceStyle })}
+          />
+          <ColorSwatches
+            label={t("skinTone")}
+            options={skinTones}
+            selectedColor={avatarConfig.skinTone}
+            selectLabel={colorLabel}
+            onSelect={(skinTone) => updateAvatar({ skinTone })}
+          />
+          <ColorSwatches
+            label={t("hairColor")}
+            options={hairColors}
+            selectedColor={avatarConfig.hairColor}
+            selectLabel={colorLabel}
+            onSelect={(hairColor) => updateAvatar({ hairColor })}
+          />
+        </TabsContent>
+        <TabsContent value="outfit" className="mt-4 grid gap-5">
+          <StyleOptions
+            label={t("shirtStyle")}
+            options={shirtStyles}
+            selectedOption={avatarConfig.shirtStyle}
+            optionLabel={(option) => t(`styles.shirt.${option}`)}
+            renderThumbnail={(option) => (
+              <ShirtThumbnail color={avatarConfig.shirtColor} style={option} />
+            )}
+            onSelect={(shirtStyle) => updateAvatar({ shirtStyle })}
+          />
+          <ColorSwatches
+            label={t("shirtColor")}
+            options={shirtColors}
+            selectedColor={avatarConfig.shirtColor}
+            selectLabel={colorLabel}
+            onSelect={(shirtColor) => updateAvatar({ shirtColor })}
+          />
+          <ColorSwatches
+            label={t("pantsColor")}
+            options={pantsColors}
+            selectedColor={avatarConfig.pantsColor}
+            selectLabel={colorLabel}
+            onSelect={(pantsColor) => updateAvatar({ pantsColor })}
+          />
+          <ColorSwatches
+            label={t("shoeColor")}
+            options={shoeColors}
+            selectedColor={avatarConfig.shoeColor}
+            selectLabel={colorLabel}
+            onSelect={(shoeColor) => updateAvatar({ shoeColor })}
+          />
+        </TabsContent>
+      </Tabs>
     </section>
   );
 }

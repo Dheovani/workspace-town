@@ -11,6 +11,9 @@ export const meetingTypeSchema = z.enum([
 
 export type MeetingType = z.infer<typeof meetingTypeSchema>;
 
+export const roomModeSchema = z.enum(["user", "editor", "debug"]);
+export type RoomMode = z.infer<typeof roomModeSchema>;
+
 export const avatarHairStyleSchema = z.enum(["short", "spiky", "bob"]);
 export const avatarFaceStyleSchema = z.enum(["neutral", "smile", "focused"]);
 export const avatarShirtStyleSchema = z.enum(["tshirt", "hoodie", "jacket"]);

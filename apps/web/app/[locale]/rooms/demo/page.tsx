@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AvatarCustomizerPanel } from "@/features/player/components/avatar-customizer-panel";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
+import { RoomModeSwitcher } from "@/features/room/components/room-mode-switcher";
 import { RoomShell } from "@/features/room/components/room-shell";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
 import { RoomEditorPanel } from "@/features/room-editor/components/room-editor-panel";
@@ -23,14 +24,12 @@ export default async function DemoRoomPage() {
       closeSidebarLabel={shell("closeSidebar")}
       sidebar={
         <>
-          <nav className="border-b p-4" aria-label={shell("navigation")}>
-            <h2 className="text-xs font-medium text-muted-foreground">
-              {shell("navigation")}
-            </h2>
+          <nav className="border-b p-3" aria-label={shell("navigation")}>
             <Button
               asChild
+              size="sm"
               variant="ghost"
-              className="mt-2 w-full justify-start"
+              className="w-full justify-start"
             >
               <Link href="/">
                 <ArrowLeft aria-hidden="true" />
@@ -38,6 +37,7 @@ export default async function DemoRoomPage() {
               </Link>
             </Button>
           </nav>
+          <RoomModeSwitcher />
           <AvatarCustomizerPanel />
           <RoomEditorPanel />
           <RoomStatusPanel />

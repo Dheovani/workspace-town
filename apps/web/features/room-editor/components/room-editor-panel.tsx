@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { useRoomStore } from "@/features/room/stores/room-store";
 import type { ItemDefinitionKind } from "@/features/room/types";
 import {
@@ -45,13 +44,12 @@ export function RoomEditorPanel({
   roomSlug,
 }: RoomEditorPanelProps) {
   const t = useTranslations("room.editor");
-  const isEditing = useRoomStore((state) => state.isEditing);
+  const roomMode = useRoomStore((state) => state.roomMode);
   const objects = useRoomStore((state) => state.objects);
   const selectedItemDefinitionId = useRoomStore(
     (state) => state.selectedItemDefinitionId,
   );
   const selectedObjectId = useRoomStore((state) => state.selectedObjectId);
-  const setEditing = useRoomStore((state) => state.setEditing);
   const selectItemDefinition = useRoomStore(
     (state) => state.selectItemDefinition,
   );
@@ -73,102 +71,91 @@ export function RoomEditorPanel({
     selectedObject?.itemDefinitionId ?? selectedItemDefinitionId ?? "",
   );
 
+  if (roomMode !== "editor") {
+    return null;
+  }
+
   return (
-    <section className="border-b p-4 text-sm">
-      <div className="flex items-center justify-between gap-4">
+    <section className="border-b border-amber-200 bg-amber-50/40 p-4 text-sm">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="text-base font-semibold">{t("title")}</h2>
-        <div className="flex items-center gap-2">
-          <label
-            className="text-xs text-muted-foreground"
-            htmlFor="room-editor"
-          >
-            {t("toggle")}
-          </label>
-          <Switch
-            id="room-editor"
-            checked={isEditing}
-            onCheckedChange={setEditing}
-            aria-label={t("toggle")}
-          />
+        <span className="rounded-sm bg-amber-200 px-2 py-1 text-[10px] font-semibold uppercase text-amber-950">
+          {t("active")}
+        </span>
+      </div>
+
+      <div className="mt-4 border-t border-amber-200 pt-4">
+        <h3 className="text-xs font-medium text-muted-foreground">
+          {t("catalog")}
+        </h3>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {roomItemDefinitions.map((definition) => (
+            <Button
+              key={definition.id}
+              type="button"
+              size="sm"
+              variant={
+                selectedItemDefinitionId === definition.id
+                  ? "default"
+                  : "outline"
+              }
+              className="justify-start"
+              onClick={() => selectItemDefinition(definition.id)}
+            >
+              <ItemIcon kind={definition.kind} />
+              {t(`items.${definition.translationKey}`)}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {isEditing ? (
-        <>
-          <div className="mt-4 border-t pt-4">
-            <h3 className="text-xs font-medium text-muted-foreground">
-              {t("catalog")}
-            </h3>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {roomItemDefinitions.map((definition) => (
-                <Button
-                  key={definition.id}
-                  type="button"
-                  size="sm"
-                  variant={
-                    selectedItemDefinitionId === definition.id
-                      ? "default"
-                      : "outline"
-                  }
-                  className="justify-start"
-                  onClick={() => selectItemDefinition(definition.id)}
-                >
-                  <ItemIcon kind={definition.kind} />
-                  {t(`items.${definition.translationKey}`)}
-                </Button>
-              ))}
-            </div>
+      <div className="mt-4 border-t border-amber-200 pt-4">
+        <h3 className="text-xs font-medium text-muted-foreground">
+          {t("selection")}
+        </h3>
+        <div className="mt-2 flex min-h-8 items-center justify-between gap-3">
+          <p className="font-medium">
+            {selectedDefinition
+              ? t(`items.${selectedDefinition.translationKey}`)
+              : t("noSelection")}
+          </p>
+          {selectedObject ? (
+            <span className="text-xs text-muted-foreground">
+              {selectedObject.position.x}, {selectedObject.position.y}
+            </span>
+          ) : null}
+        </div>
+
+        {selectedObject ? (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={rotateSelectedObject}
+            >
+              <RotateCw aria-hidden="true" />
+              {t("actions.rotate")}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={removeSelectedObject}
+            >
+              <Trash2 aria-hidden="true" />
+              {t("actions.remove")}
+            </Button>
           </div>
+        ) : null}
+      </div>
 
-          <div className="mt-4 border-t pt-4">
-            <h3 className="text-xs font-medium text-muted-foreground">
-              {t("selection")}
-            </h3>
-            <div className="mt-2 flex min-h-8 items-center justify-between gap-3">
-              <p className="font-medium">
-                {selectedDefinition
-                  ? t(`items.${selectedDefinition.translationKey}`)
-                  : t("noSelection")}
-              </p>
-              {selectedObject ? (
-                <span className="text-xs text-muted-foreground">
-                  {selectedObject.position.x}, {selectedObject.position.y}
-                </span>
-              ) : null}
-            </div>
-
-            {selectedObject ? (
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={rotateSelectedObject}
-                >
-                  <RotateCw aria-hidden="true" />
-                  {t("actions.rotate")}
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="destructive"
-                  onClick={removeSelectedObject}
-                >
-                  <Trash2 aria-hidden="true" />
-                  {t("actions.remove")}
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        </>
-      ) : null}
-
-      <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
+      <p className="mt-4 border-t border-amber-200 pt-3 text-xs text-muted-foreground">
         {t("objectCount", { count: objects.length })}
       </p>
 
       {canPersist ? (
-        <div className="mt-3 flex items-center gap-2 border-t pt-3">
+        <div className="mt-3 flex items-center gap-2 border-t border-amber-200 pt-3">
           <Button
             type="button"
             size="sm"

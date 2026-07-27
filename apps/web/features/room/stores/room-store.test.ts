@@ -7,6 +7,7 @@ beforeEach(() => {
   useRoomStore.setState({
     localPlayer: initialState.localPlayer,
     objects: initialState.objects,
+    roomMode: "user",
     isEditing: false,
     selectedItemDefinitionId: null,
     selectedObjectId: null,
@@ -67,5 +68,19 @@ describe("room store avatar integration", () => {
     });
     expect(playerAfterUpdate.id).toBe(playerBeforeUpdate.id);
     expect(playerAfterUpdate.position).toEqual(playerBeforeUpdate.position);
+  });
+});
+
+describe("room store modes", () => {
+  test("keeps editing state synchronized with the selected room mode", () => {
+    useRoomStore.getState().setRoomMode("editor");
+
+    expect(useRoomStore.getState().roomMode).toBe("editor");
+    expect(useRoomStore.getState().isEditing).toBe(true);
+
+    useRoomStore.getState().setRoomMode("debug");
+
+    expect(useRoomStore.getState().roomMode).toBe("debug");
+    expect(useRoomStore.getState().isEditing).toBe(false);
   });
 });

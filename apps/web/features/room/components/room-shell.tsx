@@ -27,14 +27,14 @@ export function RoomShell({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-100 text-foreground">
-      <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-3 sm:px-4">
+    <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#dce5df] text-foreground">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-emerald-950/30 bg-[#173f36] px-3 text-white shadow-sm sm:px-4">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-slate-950 text-white">
+          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-emerald-200 text-emerald-950 shadow-sm">
             <Building2 aria-hidden="true" className="size-5" />
           </span>
           <div className="min-w-0">
-            <p className="truncate text-xs text-muted-foreground">{appName}</p>
+            <p className="truncate text-xs text-emerald-100/75">{appName}</p>
             <h1 className="truncate text-sm font-semibold sm:text-base">
               {title}
             </h1>
@@ -45,7 +45,7 @@ export function RoomShell({
           type="button"
           size="icon"
           variant="ghost"
-          className="lg:hidden"
+          className="text-white hover:bg-white/10 hover:text-white lg:hidden"
           aria-label={openSidebarLabel}
           title={openSidebarLabel}
           onClick={() => setIsSidebarOpen(true)}
@@ -69,7 +69,7 @@ export function RoomShell({
         <aside
           aria-label={sidebarLabel}
           className={cn(
-            "absolute inset-y-0 right-0 z-20 flex w-[min(20rem,calc(100vw-2rem))] shrink-0 flex-col overflow-y-auto border-l bg-background shadow-xl transition-transform lg:static lg:w-80 lg:translate-x-0 lg:shadow-none",
+            "absolute inset-y-0 right-0 z-20 flex w-[min(21rem,calc(100vw-1rem))] shrink-0 flex-col overflow-y-auto border-l bg-white/95 shadow-2xl backdrop-blur-sm transition-transform lg:static lg:w-[21rem] lg:translate-x-0 lg:shadow-[-8px_0_24px_rgba(23,63,54,0.08)]",
             isSidebarOpen ? "translate-x-0" : "translate-x-full",
           )}
         >

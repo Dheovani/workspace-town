@@ -128,10 +128,15 @@
           "tshirt": "T-shirt"
         }
       },
+      "tabs": {
+        "character": "Character",
+        "outfit": "Outfit"
+      },
       "title": "Avatar"
     },
     "canvas": {
-      "ariaLabel": "Room canvas"
+      "ariaLabel": "Playable room area",
+      "localPlayerName": "You"
     },
     "shell": {
       "closeSidebar": "Close room panel",
@@ -145,6 +150,7 @@
       "title": "Demo Room"
     },
     "editor": {
+      "active": "Editing",
       "actions": {
         "remove": "Remove",
         "rotate": "Rotate"
@@ -173,7 +179,21 @@
       "title": "Room editor",
       "toggle": "Edit"
     },
+    "modes": {
+      "descriptions": {
+        "debug": "Shows the grid, position, and direction for diagnostics.",
+        "editor": "Edit furniture and objects without moving the character.",
+        "user": "Explore the room and customize your character."
+      },
+      "options": {
+        "debug": "Debug",
+        "editor": "Editor",
+        "user": "Play"
+      },
+      "title": "Room mode"
+    },
     "status": {
+      "active": "Debug",
       "direction": "Direction",
       "directions": {
         "down": "down",

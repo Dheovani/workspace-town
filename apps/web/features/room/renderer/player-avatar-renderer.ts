@@ -18,6 +18,8 @@ export class PlayerAvatarRenderer {
   readonly container = new Container();
 
   private readonly characterLayer = new Container();
+  private readonly labelLayer = new Container();
+  private readonly labelBackground = new Graphics();
   private readonly shadow = new Graphics();
   private readonly backDetails = new Graphics();
   private readonly backArm = new Graphics();
@@ -39,22 +41,23 @@ export class PlayerAvatarRenderer {
   constructor(
     private readonly tileSize: number,
     player: Player,
+    displayName: string,
   ) {
-    this.characterScale = tileSize / 48;
+    this.characterScale = (tileSize / 48) * 1.35;
     this.avatarConfig = player.avatarConfig;
     this.direction = player.direction;
     this.label = new Text({
-      text: player.avatarConfig.displayName,
+      text: displayName,
       style: new TextStyle({
-        fill: "#0f172a",
+        fill: "#ffffff",
         fontFamily: "Arial",
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: "700",
-        stroke: { color: "#ffffff", width: 3 },
       }),
     });
-    this.label.anchor.set(0.5, 0);
-    this.label.position.set(0, tileSize * 0.42);
+    this.label.anchor.set(0.5);
+    this.labelLayer.position.set(0, -tileSize * 1.58);
+    this.labelLayer.addChild(this.labelBackground, this.label);
 
     this.characterLayer.addChild(
       this.backDetails,
@@ -68,16 +71,17 @@ export class PlayerAvatarRenderer {
       this.hair,
       this.clothingDetails,
     );
-    this.container.addChild(this.shadow, this.characterLayer, this.label);
+    this.container.addChild(this.shadow, this.characterLayer, this.labelLayer);
 
     this.drawShadow();
-    this.updatePlayer(player);
+    this.updatePlayer(player, displayName);
   }
 
-  updatePlayer(player: Player): void {
+  updatePlayer(player: Player, displayName: string): void {
     this.avatarConfig = player.avatarConfig;
     this.direction = player.direction;
-    this.label.text = player.avatarConfig.displayName;
+    this.label.text = displayName;
+    this.drawLabel();
     this.drawCharacter();
   }
 
@@ -95,7 +99,8 @@ export class PlayerAvatarRenderer {
     const pose = calculateAvatarWalkPose(elapsedMilliseconds, isMoving);
 
     this.container.position.set(position.x, position.y);
-    this.characterLayer.position.y = pose.bodyOffsetY * this.characterScale;
+    this.characterLayer.position.y =
+      -23 * this.characterScale + pose.bodyOffsetY * this.characterScale;
     this.backArm.rotation = pose.limbRotation;
     this.frontArm.rotation = -pose.limbRotation;
     this.backLeg.rotation = -pose.limbRotation * 0.72;
@@ -426,7 +431,19 @@ export class PlayerAvatarRenderer {
 
   private drawShadow(): void {
     this.shadow
-      .ellipse(0, this.tileSize * 0.3, this.tileSize * 0.3, this.tileSize * 0.1)
-      .fill({ color: "#0f172a", alpha: 0.18 });
+      .ellipse(0, 0, this.tileSize * 0.36, this.tileSize * 0.12)
+      .fill({ color: "#0f172a", alpha: 0.24 });
+  }
+
+  private drawLabel(): void {
+    const width = this.label.width + 16;
+    const height = this.label.height + 8;
+
+    this.labelBackground
+      .clear()
+      .roundRect(-width / 2, -height / 2, width, height, 6)
+      .fill({ color: "#172033", alpha: 0.92 })
+      .poly([-4, height / 2 - 1, 4, height / 2 - 1, 0, height / 2 + 5])
+      .fill({ color: "#172033", alpha: 0.92 });
   }
 }

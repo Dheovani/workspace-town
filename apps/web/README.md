@@ -175,6 +175,7 @@ A feature inicial está em `features/room`.
 - `stores/room-store.test.ts`: integração entre movimento, objetos demo e regras do editor.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
 - `components/room-shell.tsx`: layout client-side com cabeçalho compacto, área jogável flexível e sidebar responsiva.
+- `components/room-mode-switcher.tsx`: alternância explícita entre jogo, editor e debug.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
 - `renderer/avatar-visual-state.ts`: regras puras de orientação e estado de movimento.
 - `renderer/player-avatar-renderer.ts`: composição PixiJS isolada do avatar local.
@@ -184,15 +185,15 @@ A feature inicial está em `features/room`.
 - `renderer/interpolation.test.ts`: testes da progressão visual entre posições.
 - `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a câmera e limpa recursos no unmount.
 
-As páginas de sala não usam o container de largura máxima aplicado às telas convencionais. O canvas ocupa toda a área abaixo do cabeçalho, descontando apenas a sidebar no desktop. Em telas menores, a sidebar abre sobre a cena para preservar a área jogável.
+As páginas de sala não usam o container de largura máxima aplicado às telas convencionais. O canvas ocupa toda a área abaixo do cabeçalho, descontando apenas a sidebar no desktop. Em telas menores, a sidebar abre sobre a cena para preservar a área jogável. A HUD mostra controles diferentes nos modos de jogo, editor e debug.
 
-O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natural em mapas maiores que a viewport, acompanha o jogador e não expõe áreas externas à sala. Mapas menores são centralizados e ampliados proporcionalmente.
+O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natural em mapas maiores que a viewport, acompanha o jogador e não expõe áreas externas à sala. Mapas menores são centralizados e ampliados proporcionalmente. No modo de jogo, o grid lógico fica oculto sob um piso com faixas, limites e zonas visuais; editor e debug exibem overlays de grade próprios.
 
 A posição lógica permanece inteira no Zustand para colisão. O ticker do PixiJS interpola somente a posição visual do player; a câmera acompanha essa posição intermediária.
 
-O avatar atual é um personagem humanoide em pixel art, com poses frontal, traseira e lateral e animação alternada de braços e pernas. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
+O avatar atual é um personagem humanoide em pixel art, com poses frontal, traseira e lateral, animação alternada de braços e pernas e ancoragem pela base dos pés. O personagem pode ultrapassar visualmente um tile sem alterar sua posição lógica. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
 
-A customização inicial fica em `features/player/components/avatar-customizer-panel.tsx`. O painel altera localmente tom de pele, penteado, expressão, modelo da camisa e cores de cabelo, camisa, calça e calçado no Zustand. O canvas reflete a mudança imediatamente. Nome, catálogo visual ampliado, sprites autorais e persistência do avatar continuam planejados.
+A customização inicial fica em `features/player/components/avatar-customizer-panel.tsx`. O painel usa abas, thumbnails e swatches para alterar localmente tom de pele, penteado, expressão, modelo da camisa e cores de cabelo, camisa, calça e calçado no Zustand. O canvas reflete a mudança imediatamente. Nome persistente, catálogo visual ampliado, sprites autorais e persistência do avatar continuam planejados.
 
 Cliques ou toques em tiles livres calculam uma rota A\* ortogonal. O teclado assume o controle e cancela a rota atual; ativar o editor possui o mesmo comportamento. Um marcador no canvas identifica o destino enquanto o percurso está ativo.
 
@@ -200,6 +201,7 @@ Cliques ou toques em tiles livres calculam uma rota A\* ortogonal. O teclado ass
 
 O editor local está em `features/room-editor` e usa o Zustand da feature de sala.
 
+- o modo editor é separado da navegação normal e possui HUD e grid próprios;
 - o switch ativa ou desativa o modo de edição;
 - o catálogo inicial contém mesa, cadeira, quadro e planta;
 - um clique em tile vazio adiciona o item selecionado;
@@ -208,6 +210,8 @@ O editor local está em `features/room-editor` e usa o Zustand da feature de sal
 - o painel permite girar e remover a seleção.
 
 Na sala demo, as operações continuam locais. No mapa autenticado, o painel carrega o layout da API e oferece ações para salvar ou recarregar. O renderer recebe callbacks pelo `RoomCanvas` e permanece desacoplado do store Zustand.
+
+Os móveis procedurais possuem silhuetas específicas, sombras, hover e ordenação de profundidade pela coordenada vertical. O catálogo ainda é pequeno e objetos continuam limitados a um tile lógico.
 
 ## Feature de workspaces
 

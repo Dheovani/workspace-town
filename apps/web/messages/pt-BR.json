@@ -128,10 +128,15 @@
           "tshirt": "Camiseta"
         }
       },
+      "tabs": {
+        "character": "Personagem",
+        "outfit": "Roupas"
+      },
       "title": "Avatar"
     },
     "canvas": {
-      "ariaLabel": "Canvas da sala"
+      "ariaLabel": "Área jogável da sala",
+      "localPlayerName": "Você"
     },
     "shell": {
       "closeSidebar": "Fechar painel da sala",
@@ -145,6 +150,7 @@
       "title": "Sala demo"
     },
     "editor": {
+      "active": "Editando",
       "actions": {
         "remove": "Remover",
         "rotate": "Girar"
@@ -173,7 +179,21 @@
       "title": "Editor da sala",
       "toggle": "Editar"
     },
+    "modes": {
+      "descriptions": {
+        "debug": "Exibe grade, posição e direção para diagnóstico.",
+        "editor": "Edite móveis e objetos sem mover o personagem.",
+        "user": "Explore a sala e personalize seu personagem."
+      },
+      "options": {
+        "debug": "Debug",
+        "editor": "Editor",
+        "user": "Jogar"
+      },
+      "title": "Modo da sala"
+    },
     "status": {
+      "active": "Debug",
       "direction": "Direção",
       "directions": {
         "down": "baixo",

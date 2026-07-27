@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, DoorOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { AvatarCustomizerPanel } from "@/features/player/components/avatar-customizer-panel";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
+import { RoomModeSwitcher } from "@/features/room/components/room-mode-switcher";
 import { RoomShell } from "@/features/room/components/room-shell";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
 import { RoomEditorPanel } from "@/features/room-editor/components/room-editor-panel";
@@ -45,37 +46,40 @@ export default async function WorkspaceMapPage({
       closeSidebarLabel={shell("closeSidebar")}
       sidebar={
         <>
-          <nav className="border-b p-4" aria-label={shell("navigation")}>
-            <h2 className="text-xs font-medium text-muted-foreground">
-              {shell("navigation")}
-            </h2>
-            <div className="mt-2 grid gap-2">
-              <Button asChild variant="ghost" className="w-full justify-start">
+          <nav className="border-b p-3" aria-label={shell("navigation")}>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                asChild
+                size="sm"
+                variant="ghost"
+                className="justify-start"
+              >
                 <Link href="/workspaces">
                   <ArrowLeft aria-hidden="true" />
                   {actions("backToWorkspaces")}
                 </Link>
               </Button>
-              <SignOutButton className="w-full justify-start" />
+              <SignOutButton className="justify-start" />
             </div>
           </nav>
 
+          <RoomModeSwitcher />
           <section className="border-b p-4 text-sm">
-            <h2 className="text-base font-semibold">{labels("workspace")}</h2>
-            <dl className="mt-3 grid gap-2 text-muted-foreground">
-              <div className="flex justify-between gap-3">
-                <dt>{labels("members")}</dt>
-                <dd className="font-medium text-foreground">
-                  {workspace.memberCount}
-                </dd>
+            <h2 className="text-xs font-semibold uppercase text-muted-foreground">
+              {labels("workspace")}
+            </h2>
+            <dl className="mt-3 flex flex-wrap gap-2">
+              <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-2.5 py-2 text-emerald-950">
+                <Users aria-hidden="true" className="size-4" />
+                <dt className="sr-only">{labels("members")}</dt>
+                <dd className="font-semibold">{workspace.memberCount}</dd>
               </div>
-              <div className="flex justify-between gap-3">
-                <dt>{labels("rooms")}</dt>
-                <dd className="font-medium text-foreground">
-                  {workspace.roomCount}
-                </dd>
+              <div className="flex items-center gap-2 rounded-md bg-amber-50 px-2.5 py-2 text-amber-950">
+                <DoorOpen aria-hidden="true" className="size-4" />
+                <dt className="sr-only">{labels("rooms")}</dt>
+                <dd className="font-semibold">{workspace.roomCount}</dd>
               </div>
-              <div className="flex justify-between gap-3">
+              <div className="flex min-w-0 flex-1 items-center justify-between gap-2 rounded-md bg-slate-100 px-2.5 py-2">
                 <dt>{map("defaultRoom")}</dt>
                 <dd className="max-w-40 truncate font-medium text-foreground">
                   {workspace.defaultRoomId}

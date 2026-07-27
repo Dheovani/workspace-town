@@ -85,6 +85,10 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Criar shell de sala em tela cheia com cabeçalho compacto.
 - [x] Mover navegação, logout, status e edição para uma sidebar responsiva.
 - [x] Fazer o canvas ocupar todo o espaço restante da viewport.
+- [x] Separar visualmente os modos de usuário, editor e debug.
+- [x] Ocultar o grid técnico no modo usuário e exibi-lo em editor/debug.
+- [x] Criar piso, limites e zonas visuais para o mapa inicial.
+- [x] Criar HUD contextual com painéis específicos por modo.
 - [x] Criar câmera responsiva que acompanha o jogador em mapas maiores.
 - [x] Limitar a câmera às bordas do mundo.
 - [x] Testar enquadramento, acompanhamento e limites da câmera.
@@ -103,6 +107,9 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Definir toque no mapa como estratégia inicial para dispositivos móveis.
 - [x] Criar personagem humanoide em pixel art com poses direcionais e animação de caminhada.
 - [x] Criar customização inicial de pele, rosto, cabelo e roupas.
+- [x] Aumentar a escala visual e ancorar o personagem pela base dos pés.
+- [x] Substituir selects por thumbnails, abas e swatches no editor de avatar.
+- [x] Localizar o nome visível do player por i18n.
 - [ ] Evoluir o catálogo visual com novos cabelos, rostos, roupas e acessórios.
 - [ ] Avaliar spritesheets autorais quando a direção de arte do produto for definida.
 
@@ -115,9 +122,13 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Desabilitar movimento do player durante a edição.
 - [x] Criar API autenticada para carregar e salvar layouts.
 - [x] Criar seed idempotente de salas, itens e objetos iniciais.
+- [x] Melhorar móveis procedurais com silhuetas reconhecíveis, sombras e hover.
+- [x] Ordenar player e objetos por profundidade baseada na posição vertical.
 - [ ] Validar o round-trip completo de layout com migration e seed.
 - [ ] Adicionar undo e redo ao editor.
 - [ ] Preparar objetos maiores que um único tile.
+- [ ] Expandir o catálogo de ambiente com pisos, paredes, sofás, divisórias e decoração.
+- [ ] Modelar footprints de colisão para móveis maiores que um tile.
 
 ### Critério de saída do Marco 1
 
@@ -346,6 +357,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [ ] Criar `docs/realtime.md`.
 - [ ] Criar `docs/meetings.md`.
 - [ ] Remover conteúdo remanescente do template que não representa o produto.
+- [ ] Remover o campo derivado `isEditing` após todos os consumidores migrarem para `roomMode`.
 
 ### Critério de saída do Marco 7
 

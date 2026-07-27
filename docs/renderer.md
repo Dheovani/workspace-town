@@ -57,6 +57,8 @@ apps/web/features/room-editor/
 
 `room-shell.tsx` não participa da renderização da cena. Ele organiza a experiência em tela cheia: cabeçalho compacto, canvas flexível e sidebar fixa no desktop ou sobreposta em telas menores.
 
+O estado local distingue `user`, `editor` e `debug`. No modo usuário, a camada de grid continua recebendo interação, mas suas linhas não são desenhadas. Editor e debug usam overlays de grid com tratamentos visuais diferentes.
+
 ## Camadas da cena
 
 A cena atual usa três containers, nesta ordem:
@@ -85,6 +87,8 @@ A câmera usa a posição visual intermediária como alvo. Assim, player e mundo
 
 O renderer desenha poses frontal, traseira e lateral, espelha a pose lateral para a esquerda e alterna braços e pernas durante o deslocamento. `avatar-visual-state.ts` calcula a pose de caminhada e detecta quando a posição visual ainda está em trânsito. Essas regras são puras e testadas sem inicializar PixiJS. A separação permite reutilizar uma instância do renderer para cada participante quando o multiplayer for implementado.
 
+A posição PixiJS do player representa a base dos pés, enquanto a composição do personagem se estende para cima e pode ultrapassar os limites visuais de um tile. O nome exibido é fornecido pela camada React com `next-intl`, sem depender do valor técnico armazenado no mock.
+
 O painel React em `features/player/components/avatar-customizer-panel.tsx` altera tom de pele, penteado, expressão, modelo e cores das roupas no store. O `RoomCanvas` encaminha o player atualizado ao renderer, que redesenha a mesma instância do avatar. A configuração é local neste marco e ainda não é persistida.
 
 ## Movimento e colisão
@@ -112,6 +116,12 @@ O editor mantém uma cópia local no Zustand durante a interação:
 - pode girar ou remover o objeto selecionado pelo painel.
 
 Enquanto o editor está ativo, o movimento do avatar por teclado é desabilitado para evitar conflito de interação. O store impede que dois objetos ocupem o mesmo tile e não permite posicionar um objeto sobre o player.
+
+## Ambiente e profundidade
+
+O piso, os limites e as zonas visuais são desenhados em uma camada de ambiente. Eles não alteram colisão nem persistência. Móveis continuam sendo `roomObjects`, mas cada tipo possui uma silhueta procedural própria, sombra, estado de hover e destaque de seleção.
+
+Objetos e player compartilham uma camada ordenável. O `zIndex` usa a coordenada vertical da base de cada entidade, permitindo que o personagem passe visualmente à frente ou atrás dos móveis conforme se movimenta.
 
 ## Persistência e realtime
 

@@ -5,7 +5,7 @@ import {
   type Renderer,
   type Ticker,
 } from "pixi.js";
-import type { Player, Room, RoomObject } from "../types";
+import type { Player, Room, RoomMode, RoomObject } from "../types";
 import { isVisualPositionMoving } from "./avatar-visual-state";
 import { calculateCameraTransform } from "./camera";
 import { dampValue } from "./interpolation";
@@ -20,6 +20,7 @@ type Point = {
 
 export type RoomEditorInteraction = {
   enabled: boolean;
+  mode: RoomMode;
   selectedObjectId: string | null;
   onTileSelect: (position: { x: number; y: number }) => void;
   onObjectSelect: (objectId: string) => void;
@@ -33,6 +34,7 @@ type RoomRendererOptions = {
   container: HTMLElement;
   room: Room;
   player: Player;
+  playerDisplayName: string;
   objects: RoomObject[];
   editorInteraction: RoomEditorInteraction;
   navigationInteraction: RoomNavigationInteraction;
@@ -42,11 +44,12 @@ export class RoomRenderer {
   private readonly app = new Application<Renderer>();
   private readonly room: Room;
   private readonly worldLayer = new Container();
-  private readonly playerLayer = new Container();
+  private readonly floorLayer = new Container();
   private readonly objectLayer = new Container();
   private readonly gridLayer = new Container();
   private readonly navigationLayer = new Container();
   private player: Player;
+  private playerDisplayName: string;
   private objects: RoomObject[];
   private editorInteraction: RoomEditorInteraction;
   private readonly navigationInteraction: RoomNavigationInteraction;
@@ -59,6 +62,7 @@ export class RoomRenderer {
   private constructor(options: RoomRendererOptions) {
     this.room = options.room;
     this.player = options.player;
+    this.playerDisplayName = options.playerDisplayName;
     this.objects = options.objects;
     this.editorInteraction = options.editorInteraction;
     this.navigationInteraction = options.navigationInteraction;
@@ -70,8 +74,12 @@ export class RoomRenderer {
     return renderer;
   }
 
-  updatePlayer(player: Player): void {
+  updatePlayer(
+    player: Player,
+    playerDisplayName = this.playerDisplayName,
+  ): void {
     this.player = player;
+    this.playerDisplayName = playerDisplayName;
     this.drawPlayer();
   }
 
@@ -121,14 +129,16 @@ export class RoomRenderer {
 
     container.appendChild(this.app.canvas);
     this.app.canvas.style.display = "block";
+    this.objectLayer.sortableChildren = true;
     this.worldLayer.addChild(
+      this.floorLayer,
       this.gridLayer,
       this.navigationLayer,
       this.objectLayer,
-      this.playerLayer,
     );
     this.app.stage.addChild(this.worldLayer);
 
+    this.drawEnvironment();
     this.drawGrid();
     this.drawObjects();
     this.drawPlayer();
@@ -173,6 +183,9 @@ export class RoomRenderer {
       isMoving: isVisualPositionMoving(next, target),
       elapsedMilliseconds: this.animationElapsedMilliseconds,
     });
+    if (this.playerAvatar) {
+      this.playerAvatar.container.zIndex = next.y;
+    }
     this.updateCamera();
   };
 
@@ -201,27 +214,19 @@ export class RoomRenderer {
   private drawGrid(): void {
     this.gridLayer.removeChildren();
 
-    const grid = new Graphics();
+    const interactionSurface = new Graphics();
     const width = this.room.width * this.room.tileSize;
     const height = this.room.height * this.room.tileSize;
 
-    grid.rect(0, 0, width, height).fill("#e2e8f0");
-
-    for (let x = 0; x <= this.room.width; x += 1) {
-      const screenX = x * this.room.tileSize;
-      grid.moveTo(screenX, 0).lineTo(screenX, height);
-    }
-
-    for (let y = 0; y <= this.room.height; y += 1) {
-      const screenY = y * this.room.tileSize;
-      grid.moveTo(0, screenY).lineTo(width, screenY);
-    }
-
-    grid.stroke({ color: "#cbd5e1", width: 1 });
-    grid.eventMode = "static";
-    grid.cursor = this.editorInteraction.enabled ? "crosshair" : "pointer";
-    grid.on("pointertap", (event) => {
-      const localPosition = event.getLocalPosition(grid);
+    interactionSurface
+      .rect(0, 0, width, height)
+      .fill({ color: "#ffffff", alpha: 0.001 });
+    interactionSurface.eventMode = "static";
+    interactionSurface.cursor = this.editorInteraction.enabled
+      ? "crosshair"
+      : "pointer";
+    interactionSurface.on("pointertap", (event) => {
+      const localPosition = event.getLocalPosition(interactionSurface);
       const tileX = Math.floor(localPosition.x / this.room.tileSize);
       const tileY = Math.floor(localPosition.y / this.room.tileSize);
 
@@ -241,6 +246,30 @@ export class RoomRenderer {
       }
     });
 
+    this.gridLayer.addChild(interactionSurface);
+
+    if (this.editorInteraction.mode === "user") {
+      return;
+    }
+
+    const grid = new Graphics();
+    const isDebug = this.editorInteraction.mode === "debug";
+
+    for (let x = 0; x <= this.room.width; x += 1) {
+      const screenX = x * this.room.tileSize;
+      grid.moveTo(screenX, 0).lineTo(screenX, height);
+    }
+
+    for (let y = 0; y <= this.room.height; y += 1) {
+      const screenY = y * this.room.tileSize;
+      grid.moveTo(0, screenY).lineTo(width, screenY);
+    }
+
+    grid.stroke({
+      color: isDebug ? "#334155" : "#0f766e",
+      width: isDebug ? 1 : 1.5,
+      alpha: isDebug ? 0.42 : 0.3,
+    });
     this.gridLayer.addChild(grid);
   }
 
@@ -249,76 +278,161 @@ export class RoomRenderer {
 
     for (const object of this.objects) {
       const tile = this.toScreenPosition(object.position.x, object.position.y);
+      const objectContainer = new Container();
+      const visual = new Container();
       const item = new Graphics();
+      const shadow = new Graphics();
+      const highlight = new Graphics();
       const color =
         typeof object.state.color === "string" ? object.state.color : "#94a3b8";
       const isSelected =
         this.editorInteraction.enabled &&
         this.editorInteraction.selectedObjectId === object.id;
 
-      this.drawObjectShape(item, object, tile, color);
+      objectContainer.position.set(tile.x, tile.y);
+      objectContainer.zIndex = tile.y + this.room.tileSize;
+      visual.position.set(this.room.tileSize / 2, this.room.tileSize / 2);
+      visual.rotation = (object.rotation * Math.PI) / 180;
+      this.drawObjectShape(shadow, item, object, color);
 
       if (isSelected) {
-        item
-          .roundRect(
-            tile.x + 3,
-            tile.y + 3,
-            this.room.tileSize - 6,
-            this.room.tileSize - 6,
-            7,
-          )
-          .stroke({ color: "#0f766e", width: 3 });
+        highlight
+          .roundRect(3, 3, this.room.tileSize - 6, this.room.tileSize - 6, 7)
+          .fill({ color: "#f59e0b", alpha: 0.08 })
+          .stroke({ color: "#d97706", width: 3 });
       }
 
-      item.eventMode = this.editorInteraction.enabled ? "static" : "none";
-      item.cursor = this.editorInteraction.enabled ? "pointer" : "default";
-      item.on("pointertap", (event) => {
+      objectContainer.eventMode = "static";
+      objectContainer.cursor = this.editorInteraction.enabled
+        ? "pointer"
+        : "default";
+      objectContainer.hitArea = {
+        contains: (x: number, y: number) =>
+          x >= 2 &&
+          y >= 2 &&
+          x <= this.room.tileSize - 2 &&
+          y <= this.room.tileSize - 2,
+      };
+      objectContainer.on("pointerover", () => {
+        item.alpha = 0.88;
+        highlight
+          .clear()
+          .roundRect(4, 4, this.room.tileSize - 8, this.room.tileSize - 8, 7)
+          .stroke({ color: "#0f766e", width: 2, alpha: 0.7 });
+      });
+      objectContainer.on("pointerout", () => {
+        item.alpha = 1;
+        highlight.clear();
+
+        if (isSelected) {
+          highlight
+            .roundRect(3, 3, this.room.tileSize - 6, this.room.tileSize - 6, 7)
+            .fill({ color: "#f59e0b", alpha: 0.08 })
+            .stroke({ color: "#d97706", width: 3 });
+        }
+      });
+      objectContainer.on("pointertap", (event) => {
+        if (!this.editorInteraction.enabled) {
+          return;
+        }
+
         event.stopPropagation();
         this.editorInteraction.onObjectSelect(object.id);
       });
 
-      this.objectLayer.addChild(item);
+      visual.addChild(shadow, item);
+      objectContainer.addChild(visual, highlight);
+      this.objectLayer.addChild(objectContainer);
+    }
+
+    if (this.playerAvatar) {
+      this.objectLayer.addChild(this.playerAvatar.container);
     }
   }
 
   private drawObjectShape(
+    shadow: Graphics,
     item: Graphics,
     object: RoomObject,
-    tile: { x: number; y: number },
     color: string,
   ): void {
-    const centerX = tile.x + this.room.tileSize / 2;
-    const centerY = tile.y + this.room.tileSize / 2;
-    const stroke = { color: "#475569", width: 2 };
+    const stroke = { color: "#334155", width: 2 };
 
     switch (object.itemDefinitionId) {
       case "chair":
+        shadow.ellipse(2, 7, 16, 13).fill({
+          color: "#0f172a",
+          alpha: 0.18,
+        });
         item
-          .roundRect(tile.x + 12, tile.y + 10, 24, 28, 6)
+          .roundRect(-13, -11, 26, 25, 6)
           .fill(color)
-          .stroke(stroke);
+          .stroke(stroke)
+          .roundRect(-14, -16, 28, 8, 4)
+          .fill(color)
+          .stroke(stroke)
+          .moveTo(-8, 10)
+          .lineTo(-10, 17)
+          .moveTo(8, 10)
+          .lineTo(10, 17)
+          .stroke({ color: "#334155", width: 3 });
         break;
       case "whiteboard":
+        shadow.ellipse(2, 11, 24, 8).fill({
+          color: "#0f172a",
+          alpha: 0.16,
+        });
         item
-          .roundRect(tile.x + 5, tile.y + 12, 38, 24, 4)
-          .fill(color)
-          .stroke(stroke);
+          .moveTo(-16, 8)
+          .lineTo(-19, 18)
+          .moveTo(16, 8)
+          .lineTo(19, 18)
+          .stroke({ color: "#475569", width: 3 })
+          .roundRect(-22, -18, 44, 28, 4)
+          .fill("#f8fafc")
+          .stroke(stroke)
+          .moveTo(-15, -8)
+          .lineTo(9, -8)
+          .moveTo(-15, -2)
+          .lineTo(14, -2)
+          .stroke({ color, width: 2, alpha: 0.85 });
         break;
       case "plant":
-        item.circle(centerX, centerY, 14).fill(color).stroke(stroke);
+        shadow.ellipse(2, 11, 17, 8).fill({
+          color: "#0f172a",
+          alpha: 0.17,
+        });
+        item
+          .ellipse(-7, -9, 8, 15)
+          .fill("#3f8f67")
+          .stroke(stroke)
+          .ellipse(7, -8, 8, 15)
+          .fill("#5aa879")
+          .stroke(stroke)
+          .ellipse(0, -15, 8, 16)
+          .fill(color)
+          .stroke(stroke)
+          .roundRect(-11, 3, 22, 15, 4)
+          .fill("#c96f4a")
+          .stroke(stroke);
         break;
       default:
+        shadow.ellipse(3, 8, 24, 17).fill({
+          color: "#0f172a",
+          alpha: 0.2,
+        });
         item
-          .roundRect(tile.x + 6, tile.y + 10, 36, 28, 6)
+          .moveTo(-16, 10)
+          .lineTo(-16, 18)
+          .moveTo(16, 10)
+          .lineTo(16, 18)
+          .stroke({ color: "#475569", width: 4 })
+          .roundRect(-22, -15, 44, 30, 6)
           .fill(color)
-          .stroke(stroke);
+          .stroke(stroke)
+          .roundRect(-17, -10, 34, 20, 4)
+          .stroke({ color: "#fef3c7", width: 2, alpha: 0.55 });
     }
-
-    const angle = (object.rotation * Math.PI) / 180;
-    item
-      .moveTo(centerX, centerY)
-      .lineTo(centerX + Math.sin(angle) * 9, centerY - Math.cos(angle) * 9)
-      .stroke({ color: "#334155", width: 2 });
   }
 
   private drawPlayer(): void {
@@ -326,11 +440,12 @@ export class RoomRenderer {
       this.playerAvatar = new PlayerAvatarRenderer(
         this.room.tileSize,
         this.player,
+        this.playerDisplayName,
       );
-      this.playerLayer.addChild(this.playerAvatar.container);
+      this.objectLayer.addChild(this.playerAvatar.container);
     }
 
-    this.playerAvatar.updatePlayer(this.player);
+    this.playerAvatar.updatePlayer(this.player, this.playerDisplayName);
   }
 
   private snapPlayerToTarget(): void {
@@ -348,8 +463,64 @@ export class RoomRenderer {
   private getPlayerTargetPosition(): Point {
     return {
       x: (this.player.position.x + 0.5) * this.room.tileSize,
-      y: (this.player.position.y + 0.5) * this.room.tileSize,
+      y: (this.player.position.y + 0.78) * this.room.tileSize,
     };
+  }
+
+  private drawEnvironment(): void {
+    this.floorLayer.removeChildren();
+
+    const environment = new Graphics();
+    const width = this.room.width * this.room.tileSize;
+    const height = this.room.height * this.room.tileSize;
+    const tileSize = this.room.tileSize;
+
+    environment.rect(0, 0, width, height).fill("#dce5df");
+
+    for (let y = 0; y < this.room.height; y += 2) {
+      environment.rect(0, y * tileSize, width, tileSize * 2).fill({
+        color: y % 4 === 0 ? "#e5ece8" : "#d3dfd8",
+        alpha: 0.48,
+      });
+    }
+
+    environment
+      .roundRect(
+        tileSize * 6.4,
+        tileSize * 2.35,
+        tileSize * 4.2,
+        tileSize * 4.3,
+        16,
+      )
+      .fill("#b8d4cc")
+      .stroke({ color: "#6f9d90", width: 4, alpha: 0.75 })
+      .roundRect(
+        tileSize * 6.65,
+        tileSize * 2.6,
+        tileSize * 3.7,
+        tileSize * 3.8,
+        12,
+      )
+      .stroke({ color: "#e8f3ef", width: 3, alpha: 0.7 });
+
+    environment
+      .roundRect(tileSize * 14, tileSize * 8, tileSize * 6, tileSize * 4, 18)
+      .fill({ color: "#f3c7bc", alpha: 0.55 })
+      .stroke({ color: "#bd7565", width: 3, alpha: 0.5 });
+
+    environment
+      .rect(0, 0, width, 18)
+      .fill("#274d45")
+      .rect(0, 18, width, 7)
+      .fill("#7ca69a")
+      .rect(0, 0, 12, height)
+      .fill("#315c53")
+      .rect(width - 12, 0, 12, height)
+      .fill("#315c53")
+      .rect(0, height - 12, width, 12)
+      .fill("#315c53");
+
+    this.floorLayer.addChild(environment);
   }
 
   private toScreenPosition(x: number, y: number): { x: number; y: number } {
