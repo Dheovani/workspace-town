@@ -28,6 +28,8 @@ O Zustand mantém o estado local compartilhado entre essas camadas. O renderer n
 apps/web/features/room/
   components/room-canvas.tsx
   components/room-shell.tsx
+  renderer/camera.ts
+  renderer/camera.test.ts
   renderer/room-renderer.ts
   stores/room-store.ts
   types.ts
@@ -53,7 +55,11 @@ A cena atual usa três containers, nesta ordem:
 
 Objetos selecionados recebem um contorno visual. Mesa, cadeira, quadro e planta possuem formas simples distintas, sem assets externos nesta etapa.
 
-As camadas pertencem a um container de mundo comum. Um `ResizeObserver` reenquadra esse container quando o espaço disponível muda, preservando a proporção e exibindo o mapa atual por inteiro.
+As camadas pertencem a um container de mundo comum. Um `ResizeObserver` atualiza a câmera quando o espaço disponível muda.
+
+O cálculo da câmera fica em `camera.ts` e não depende do PixiJS. Quando o mapa cabe na viewport, ele é centralizado e ampliado proporcionalmente. Quando é maior, os tiles preservam ao menos o tamanho natural, a câmera acompanha o centro do jogador e seu deslocamento é limitado às bordas do mundo.
+
+O mapa local atual possui `32 x 20` tiles para exercitar esse comportamento em desktop e viewports menores. Os testes em `camera.test.ts` cobrem enquadramento, acompanhamento e limites.
 
 ## Editor de sala
 
@@ -77,7 +83,7 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 
 ## Limitações atuais
 
-- o enquadramento atual exibe o mapa inteiro, mas ainda não há câmera para acompanhar o jogador em mapas maiores;
+- o movimento da câmera e do player ainda é instantâneo, sem interpolação;
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;

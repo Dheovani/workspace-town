@@ -7,8 +7,8 @@ import type { Player, PlayerDirection, Room, RoomObject } from "../types";
 const demoRoom: Room = {
   id: "demo",
   name: "Demo Room",
-  width: 16,
-  height: 10,
+  width: 32,
+  height: 20,
   tileSize: 48,
   isPublic: true,
 };
@@ -149,9 +149,7 @@ export const useRoomStore = create<RoomState>((set) => ({
         return state;
       }
 
-      const definition = getRoomItemDefinition(
-        state.selectedItemDefinitionId,
-      );
+      const definition = getRoomItemDefinition(state.selectedItemDefinitionId);
 
       if (!definition) {
         return state;

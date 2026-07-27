@@ -13,7 +13,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Substituir login mockado por autenticação com `better-auth`.
 - [x] Adicionar PostgreSQL local via Docker Compose.
 - [ ] Definir padrão final para organização entre `apps/web`, `packages/db` e `packages/shared`.
-- [ ] Adicionar testes automatizados básicos.
+- [x] Adicionar testes automatizados básicos com o runner nativo do Bun.
 
 ## Web app
 
@@ -81,10 +81,11 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Desenhar player/avatar básico.
 - [x] Limpar o app Pixi no unmount.
 - [x] Redimensionar e reenquadrar a cena conforme o espaço disponível.
-- [ ] Adicionar câmera ou viewport para salas maiores.
+- [x] Adicionar câmera responsiva para salas maiores.
+- [ ] Adicionar interpolação ao movimento da câmera e do player.
 - [ ] Avaliar grid isométrico depois do protótipo top-down.
 - [ ] Adicionar colisão básica com objetos bloqueados.
-- [ ] Adicionar interação por ponteiro no canvas.
+- [x] Adicionar interação por ponteiro no canvas para o editor.
 
 ## Player/avatar
 

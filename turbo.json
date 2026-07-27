@@ -37,6 +37,9 @@
         "LIVEKIT_URL"
       ]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

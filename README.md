@@ -126,6 +126,12 @@ Lint:
 bun run lint
 ```
 
+Testes:
+
+```bash
+bun run test
+```
+
 Checagem de tipos do app web:
 
 ```bash
@@ -151,6 +157,8 @@ Já existe uma fundação inicial para o MVP:
 - grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
+- câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;
+- testes unitários iniciais para os cálculos da câmera;
 - store Zustand para estado local da sala e do player;
 - editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
 - API autenticada para carregar e salvar o layout das salas padrão;

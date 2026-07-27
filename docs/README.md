@@ -105,7 +105,8 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - A rota raiz `/` redireciona para o login.
 - O renderer PixiJS fica isolado de componentes React grandes.
 - O layout das salas não usa o container de largura máxima das páginas convencionais.
-- A cena atual é reenquadrada automaticamente quando a viewport muda; câmera e navegação por mapas maiores continuam planejadas.
+- A câmera 2D acompanha o jogador em mapas maiores, respeita os limites da sala e centraliza e amplia mapas que cabem integralmente na viewport.
+- O cálculo da câmera é isolado do PixiJS e possui testes unitários com o runner nativo do Bun.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.

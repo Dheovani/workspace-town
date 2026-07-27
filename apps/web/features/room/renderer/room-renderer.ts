@@ -7,6 +7,7 @@ import {
   type Renderer,
 } from "pixi.js";
 import type { Player, Room, RoomObject } from "../types";
+import { calculateCameraTransform } from "./camera";
 
 export type RoomEditorInteraction = {
   enabled: boolean;
@@ -36,6 +37,7 @@ export class RoomRenderer {
   private playerBody?: Graphics;
   private playerLabel?: Text;
   private resizeObserver?: ResizeObserver;
+  private container?: HTMLElement;
 
   private constructor(options: RoomRendererOptions) {
     this.room = options.room;
@@ -53,6 +55,7 @@ export class RoomRenderer {
   updatePlayer(player: Player): void {
     this.player = player;
     this.drawPlayer();
+    this.updateCamera();
   }
 
   updateObjects(objects: RoomObject[]): void {
@@ -68,10 +71,13 @@ export class RoomRenderer {
 
   destroy(): void {
     this.resizeObserver?.disconnect();
+    this.container = undefined;
     this.app.destroy(true, { children: true });
   }
 
   private async init(container: HTMLElement): Promise<void> {
+    this.container = container;
+
     await this.app.init({
       antialias: true,
       background: "#f8fafc",
@@ -90,31 +96,34 @@ export class RoomRenderer {
     this.drawGrid();
     this.drawObjects();
     this.drawPlayer();
-    this.frameWorld(container);
+    this.updateCamera();
 
     this.resizeObserver = new ResizeObserver(() => {
-      this.frameWorld(container);
+      this.updateCamera();
     });
     this.resizeObserver.observe(container);
   }
 
-  private frameWorld(container: HTMLElement): void {
-    const worldWidth = this.room.width * this.room.tileSize;
-    const worldHeight = this.room.height * this.room.tileSize;
-    const scale = Math.min(
-      container.clientWidth / worldWidth,
-      container.clientHeight / worldHeight,
-    );
-
-    if (!Number.isFinite(scale) || scale <= 0) {
+  private updateCamera(): void {
+    if (!this.container) {
       return;
     }
 
-    this.worldLayer.scale.set(scale);
-    this.worldLayer.position.set(
-      Math.round((container.clientWidth - worldWidth * scale) / 2),
-      Math.round((container.clientHeight - worldHeight * scale) / 2),
-    );
+    const worldWidth = this.room.width * this.room.tileSize;
+    const worldHeight = this.room.height * this.room.tileSize;
+    const playerCenterX = (this.player.position.x + 0.5) * this.room.tileSize;
+    const playerCenterY = (this.player.position.y + 0.5) * this.room.tileSize;
+    const camera = calculateCameraTransform({
+      viewportWidth: this.container.clientWidth,
+      viewportHeight: this.container.clientHeight,
+      worldWidth,
+      worldHeight,
+      targetX: playerCenterX,
+      targetY: playerCenterY,
+    });
+
+    this.worldLayer.scale.set(camera.scale);
+    this.worldLayer.position.set(camera.x, camera.y);
   }
 
   private drawGrid(): void {
