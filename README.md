@@ -157,9 +157,10 @@ Já existe uma fundação inicial para o MVP:
 - grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
 - colisão local com limites da sala e objetos bloqueantes;
+- interpolação visual do player e acompanhamento suave da câmera;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;
-- testes unitários iniciais para câmera e regras de movimentação;
+- testes unitários iniciais para câmera, interpolação e regras de movimentação;
 - store Zustand para estado local da sala e do player;
 - editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
 - API autenticada para carregar e salvar o layout das salas padrão;

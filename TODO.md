@@ -77,7 +77,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 
 **Resultado esperado:** uma pessoa consegue entrar na sala, explorar o mapa com movimentação consistente, reconhecer seu avatar e interagir com o ambiente sem atravessar objetos.
 
-**Próxima entrega:** interpolação visual do player e da câmera entre tiles.
+**Próxima entrega:** estados visuais de direção e movimento do avatar.
 
 ### 1.1 Área jogável e câmera
 
@@ -88,7 +88,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Criar câmera responsiva que acompanha o jogador em mapas maiores.
 - [x] Limitar a câmera às bordas do mundo.
 - [x] Testar enquadramento, acompanhamento e limites da câmera.
-- [ ] Adicionar interpolação ao movimento da câmera.
+- [x] Adicionar interpolação ao movimento da câmera.
 - [ ] Avaliar grid isométrico depois que o protótipo top-down estiver sólido.
 
 ### 1.2 Player e movimentação
@@ -97,7 +97,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Permitir movimento por WASD e setas.
 - [x] Restringir movimento aos limites da sala.
 - [x] Impedir movimento sobre objetos com `blocksMovement`.
-- [ ] Adicionar interpolação visual entre tiles.
+- [x] Adicionar interpolação visual entre tiles.
 - [ ] Adicionar estados visuais de direção e movimento.
 - [ ] Definir interação de movimento por clique e estratégia para dispositivos móveis.
 - [ ] Criar customização inicial de avatar.
@@ -118,7 +118,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 ### Critério de saída do Marco 1
 
 - [x] O jogador percorre uma sala completa sem atravessar limites ou objetos bloqueantes.
-- [ ] Movimento e câmera possuem transições visuais adequadas para uma experiência de jogo.
+- [x] Movimento e câmera possuem transições visuais adequadas para uma experiência de jogo.
 - [ ] O layout editado de uma sala autenticada permanece após recarregar a página.
 - [ ] A interação principal funciona com teclado e possui estratégia definida para ponteiro e mobile.
 
@@ -302,6 +302,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 ### 7.1 Qualidade e testes
 
 - [x] Adicionar testes unitários para a câmera.
+- [x] Adicionar testes unitários para interpolação visual independente da taxa de quadros.
 - [x] Adicionar testes unitários e de integração local para movimentação e colisão.
 - [ ] Adicionar testes para schemas Zod.
 - [ ] Adicionar testes para autenticação e rotas protegidas.

@@ -32,6 +32,8 @@ apps/web/features/room/
   domain/player-movement.test.ts
   renderer/camera.ts
   renderer/camera.test.ts
+  renderer/interpolation.ts
+  renderer/interpolation.test.ts
   renderer/room-renderer.ts
   stores/room-store.ts
   stores/room-store.test.ts
@@ -64,6 +66,12 @@ O cálculo da câmera fica em `camera.ts` e não depende do PixiJS. Quando o map
 
 O mapa local atual possui `32 x 20` tiles para exercitar esse comportamento em desktop e viewports menores. Os testes em `camera.test.ts` cobrem enquadramento, acompanhamento e limites.
 
+## Interpolação visual
+
+O store mantém a posição lógica inteira do player e aplica colisão imediatamente. O renderer mantém, separadamente, uma posição visual em pixels. A cada tick do PixiJS, `interpolation.ts` aproxima a posição visual do tile lógico usando amortecimento exponencial independente da taxa de quadros.
+
+A câmera usa a posição visual intermediária como alvo. Assim, player e mundo se deslocam juntos sem alterar as regras discretas de colisão ou persistir coordenadas transitórias. Os testes validam progressão, ausência de overshoot, equivalência entre intervalos de frame e snap no destino.
+
 ## Movimento e colisão
 
 O PixiJS não decide se um movimento é válido. `domain/player-movement.ts` recebe sala, player, objetos, catálogo e tentativa de movimento. A função atualiza a direção do avatar, mas mantém sua posição quando o destino está fora da sala ou contém um objeto bloqueante.
@@ -92,7 +100,7 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 
 ## Limitações atuais
 
-- o movimento da câmera e do player ainda é instantâneo, sem interpolação;
+- o avatar ainda não possui sprites ou animações direcionais;
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;

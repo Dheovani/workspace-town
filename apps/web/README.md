@@ -173,11 +173,15 @@ A feature inicial está em `features/room`.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
 - `renderer/camera.ts`: cálculo puro da câmera, independente do PixiJS.
 - `renderer/camera.test.ts`: testes unitários de enquadramento, acompanhamento e limites.
+- `renderer/interpolation.ts`: amortecimento visual independente da taxa de quadros.
+- `renderer/interpolation.test.ts`: testes da progressão visual entre posições.
 - `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a câmera e limpa recursos no unmount.
 
 As páginas de sala não usam o container de largura máxima aplicado às telas convencionais. O canvas ocupa toda a área abaixo do cabeçalho, descontando apenas a sidebar no desktop. Em telas menores, a sidebar abre sobre a cena para preservar a área jogável.
 
 O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natural em mapas maiores que a viewport, acompanha o jogador e não expõe áreas externas à sala. Mapas menores são centralizados e ampliados proporcionalmente.
+
+A posição lógica permanece inteira no Zustand para colisão. O ticker do PixiJS interpola somente a posição visual do player; a câmera acompanha essa posição intermediária.
 
 ## Editor de sala
 
@@ -240,6 +244,7 @@ Implementado:
 - player local;
 - movimento por WASD ou setas;
 - colisão com limites e objetos bloqueantes;
+- interpolação visual do player e da câmera;
 - câmera responsiva acompanhando o player;
 - objetos estáticos;
 - editor local para adicionar, mover, girar e remover objetos;

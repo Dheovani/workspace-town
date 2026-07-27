@@ -23,13 +23,13 @@ function calculateAxisOffset(
   const scaledWorldSize = worldSize * scale;
 
   if (scaledWorldSize <= viewportSize) {
-    return Math.round((viewportSize - scaledWorldSize) / 2);
+    return (viewportSize - scaledWorldSize) / 2;
   }
 
   const centeredOffset = viewportSize / 2 - targetPosition * scale;
   const minimumOffset = viewportSize - scaledWorldSize;
 
-  return Math.round(Math.min(0, Math.max(minimumOffset, centeredOffset)));
+  return Math.min(0, Math.max(minimumOffset, centeredOffset));
 }
 
 export function calculateCameraTransform({

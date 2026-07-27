@@ -5,9 +5,18 @@ import {
   Text,
   TextStyle,
   type Renderer,
+  type Ticker,
 } from "pixi.js";
 import type { Player, Room, RoomObject } from "../types";
 import { calculateCameraTransform } from "./camera";
+import { dampValue } from "./interpolation";
+
+const PLAYER_MOVEMENT_SMOOTHING = 18;
+
+type Point = {
+  x: number;
+  y: number;
+};
 
 export type RoomEditorInteraction = {
   enabled: boolean;
@@ -38,6 +47,7 @@ export class RoomRenderer {
   private playerLabel?: Text;
   private resizeObserver?: ResizeObserver;
   private container?: HTMLElement;
+  private visualPlayerPosition?: Point;
 
   private constructor(options: RoomRendererOptions) {
     this.room = options.room;
@@ -55,7 +65,6 @@ export class RoomRenderer {
   updatePlayer(player: Player): void {
     this.player = player;
     this.drawPlayer();
-    this.updateCamera();
   }
 
   updateObjects(objects: RoomObject[]): void {
@@ -71,6 +80,7 @@ export class RoomRenderer {
 
   destroy(): void {
     this.resizeObserver?.disconnect();
+    this.app.ticker.remove(this.animate);
     this.container = undefined;
     this.app.destroy(true, { children: true });
   }
@@ -96,13 +106,43 @@ export class RoomRenderer {
     this.drawGrid();
     this.drawObjects();
     this.drawPlayer();
+    this.snapPlayerToTarget();
     this.updateCamera();
+    this.app.ticker.add(this.animate);
 
     this.resizeObserver = new ResizeObserver(() => {
       this.updateCamera();
     });
     this.resizeObserver.observe(container);
   }
+
+  private readonly animate = (ticker: Ticker): void => {
+    const current = this.visualPlayerPosition;
+
+    if (!current) {
+      return;
+    }
+
+    const target = this.getPlayerTargetPosition();
+    const next = {
+      x: dampValue({
+        current: current.x,
+        target: target.x,
+        smoothing: PLAYER_MOVEMENT_SMOOTHING,
+        deltaMilliseconds: ticker.deltaMS,
+      }),
+      y: dampValue({
+        current: current.y,
+        target: target.y,
+        smoothing: PLAYER_MOVEMENT_SMOOTHING,
+        deltaMilliseconds: ticker.deltaMS,
+      }),
+    };
+
+    this.visualPlayerPosition = next;
+    this.playerLayer.position.set(next.x, next.y);
+    this.updateCamera();
+  };
 
   private updateCamera(): void {
     if (!this.container) {
@@ -111,15 +151,15 @@ export class RoomRenderer {
 
     const worldWidth = this.room.width * this.room.tileSize;
     const worldHeight = this.room.height * this.room.tileSize;
-    const playerCenterX = (this.player.position.x + 0.5) * this.room.tileSize;
-    const playerCenterY = (this.player.position.y + 0.5) * this.room.tileSize;
+    const playerPosition =
+      this.visualPlayerPosition ?? this.getPlayerTargetPosition();
     const camera = calculateCameraTransform({
       viewportWidth: this.container.clientWidth,
       viewportHeight: this.container.clientHeight,
       worldWidth,
       worldHeight,
-      targetX: playerCenterX,
-      targetY: playerCenterY,
+      targetX: playerPosition.x,
+      targetY: playerPosition.y,
     });
 
     this.worldLayer.scale.set(camera.scale);
@@ -266,22 +306,30 @@ export class RoomRenderer {
       return;
     }
 
-    const { x, y } = this.toScreenPosition(
-      this.player.position.x,
-      this.player.position.y,
-    );
     const radius = this.room.tileSize * 0.32;
-    const centerX = x + this.room.tileSize / 2;
-    const centerY = y + this.room.tileSize / 2;
 
     playerBody
       .clear()
-      .circle(centerX, centerY, radius)
+      .circle(0, 0, radius)
       .fill(this.player.avatarConfig.bodyColor)
       .stroke({ color: this.player.avatarConfig.accentColor, width: 3 });
 
     playerLabel.text = this.player.avatarConfig.displayName;
-    playerLabel.position.set(centerX, centerY + radius + 4);
+    playerLabel.position.set(0, radius + 4);
+  }
+
+  private snapPlayerToTarget(): void {
+    const target = this.getPlayerTargetPosition();
+
+    this.visualPlayerPosition = target;
+    this.playerLayer.position.set(target.x, target.y);
+  }
+
+  private getPlayerTargetPosition(): Point {
+    return {
+      x: (this.player.position.x + 0.5) * this.room.tileSize,
+      y: (this.player.position.y + 0.5) * this.room.tileSize,
+    };
   }
 
   private toScreenPosition(x: number, y: number): { x: number; y: number } {
