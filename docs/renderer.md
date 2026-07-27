@@ -89,6 +89,8 @@ O renderer desenha poses frontal, traseira e lateral, espelha a pose lateral par
 
 A posição PixiJS do player representa a base dos pés, enquanto a composição do personagem se estende para cima e pode ultrapassar os limites visuais de um tile. O nome exibido é fornecido pela camada React com `next-intl`, sem depender do valor técnico armazenado no mock.
 
+O label local usa texto pequeno com contorno, sem a antiga tarja escura. O preview da HUD é um componente React visual e não participa da cena nem das regras de movimento.
+
 O painel React em `features/player/components/avatar-customizer-panel.tsx` altera tom de pele, penteado, expressão, modelo e cores das roupas no store. O `RoomCanvas` encaminha o player atualizado ao renderer, que redesenha a mesma instância do avatar. A configuração é local neste marco e ainda não é persistida.
 
 ## Movimento e colisão
@@ -120,6 +122,8 @@ Enquanto o editor está ativo, o movimento do avatar por teclado é desabilitado
 ## Ambiente e profundidade
 
 O piso, os limites e as zonas visuais são desenhados em uma camada de ambiente. Eles não alteram colisão nem persistência. Móveis continuam sendo `roomObjects`, mas cada tipo possui uma silhueta procedural própria, sombra, estado de hover e destaque de seleção.
+
+A cena local usa `24 x 16` tiles e concentra entrada, estações de trabalho e daily próximas ao spawn. O piso usa um mosaico de baixo contraste em vez de faixas horizontais. Os nomes das zonas são recebidos como mensagens localizadas nas opções de criação do renderer.
 
 Objetos e player compartilham uma camada ordenável. O `zIndex` usa a coordenada vertical da base de cada entidade, permitindo que o personagem passe visualmente à frente ou atrás dos móveis conforme se movimenta.
 

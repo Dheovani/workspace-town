@@ -75,10 +75,12 @@
   },
   "map": {
     "defaultRoom": "Default room",
-    "eyebrow": "Mock main map"
+    "eyebrow": "Mock main map",
+    "mainRoom": "Main map"
   },
   "room": {
     "avatar": {
+      "collapse": "Close editor",
       "colors": {
         "amber": "Amber",
         "black": "Black",
@@ -106,11 +108,13 @@
       "hairColor": "Hair color",
       "hairStyle": "Hair",
       "pantsColor": "Pants color",
+      "previewDescription": "Your character on the map",
       "selectColor": "Select {color}",
       "shirtColor": "Shirt color",
       "shirtStyle": "Outfit",
       "shoeColor": "Shoe color",
       "skinTone": "Skin tone",
+      "customize": "Customize",
       "styles": {
         "face": {
           "focused": "Focused",
@@ -136,7 +140,13 @@
     },
     "canvas": {
       "ariaLabel": "Playable room area",
-      "localPlayerName": "You"
+      "interactionHint": "Click the floor or use WASD to walk",
+      "localPlayerName": "You",
+      "zones": {
+        "daily": "Daily",
+        "focus": "Workstations",
+        "spawn": "Entrance"
+      }
     },
     "shell": {
       "closeSidebar": "Close room panel",

@@ -1,11 +1,19 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Palette, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRoomStore } from "@/features/room/stores/room-store";
 import type { AvatarConfig } from "@/features/room/types";
 import { cn } from "@/lib/utils";
+import { AvatarPreview } from "./avatar-preview";
 
 const skinTones = [
   { color: "#f8d7bd", name: "light", foreground: "text-slate-950" },
@@ -257,6 +265,7 @@ function ShirtThumbnail({
 
 export function AvatarCustomizerPanel() {
   const t = useTranslations("room.avatar");
+  const [isOpen, setIsOpen] = useState(false);
   const avatarConfig = useRoomStore((state) => state.localPlayer.avatarConfig);
   const roomMode = useRoomStore((state) => state.roomMode);
   const updateLocalAvatar = useRoomStore((state) => state.updateLocalAvatar);
@@ -277,82 +286,113 @@ export function AvatarCustomizerPanel() {
 
   return (
     <section className="border-b p-4">
-      <h2 className="text-base font-semibold">{t("title")}</h2>
-      <Tabs defaultValue="character" className="mt-3">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="character">{t("tabs.character")}</TabsTrigger>
-          <TabsTrigger value="outfit">{t("tabs.outfit")}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="character" className="mt-4 grid gap-5">
-          <StyleOptions
-            label={t("hairStyle")}
-            options={hairStyles}
-            selectedOption={avatarConfig.hairStyle}
-            optionLabel={(option) => t(`styles.hair.${option}`)}
-            renderThumbnail={(option) => (
-              <HairThumbnail config={avatarConfig} style={option} />
-            )}
-            onSelect={(hairStyle) => updateAvatar({ hairStyle })}
-          />
-          <StyleOptions
-            label={t("faceStyle")}
-            options={faceStyles}
-            selectedOption={avatarConfig.faceStyle}
-            optionLabel={(option) => t(`styles.face.${option}`)}
-            renderThumbnail={(option) => (
-              <FaceThumbnail config={avatarConfig} expression={option} />
-            )}
-            onSelect={(faceStyle) => updateAvatar({ faceStyle })}
-          />
-          <ColorSwatches
-            label={t("skinTone")}
-            options={skinTones}
-            selectedColor={avatarConfig.skinTone}
-            selectLabel={colorLabel}
-            onSelect={(skinTone) => updateAvatar({ skinTone })}
-          />
-          <ColorSwatches
-            label={t("hairColor")}
-            options={hairColors}
-            selectedColor={avatarConfig.hairColor}
-            selectLabel={colorLabel}
-            onSelect={(hairColor) => updateAvatar({ hairColor })}
-          />
-        </TabsContent>
-        <TabsContent value="outfit" className="mt-4 grid gap-5">
-          <StyleOptions
-            label={t("shirtStyle")}
-            options={shirtStyles}
-            selectedOption={avatarConfig.shirtStyle}
-            optionLabel={(option) => t(`styles.shirt.${option}`)}
-            renderThumbnail={(option) => (
-              <ShirtThumbnail color={avatarConfig.shirtColor} style={option} />
-            )}
-            onSelect={(shirtStyle) => updateAvatar({ shirtStyle })}
-          />
-          <ColorSwatches
-            label={t("shirtColor")}
-            options={shirtColors}
-            selectedColor={avatarConfig.shirtColor}
-            selectLabel={colorLabel}
-            onSelect={(shirtColor) => updateAvatar({ shirtColor })}
-          />
-          <ColorSwatches
-            label={t("pantsColor")}
-            options={pantsColors}
-            selectedColor={avatarConfig.pantsColor}
-            selectLabel={colorLabel}
-            onSelect={(pantsColor) => updateAvatar({ pantsColor })}
-          />
-          <ColorSwatches
-            label={t("shoeColor")}
-            options={shoeColors}
-            selectedColor={avatarConfig.shoeColor}
-            selectLabel={colorLabel}
-            onSelect={(shoeColor) => updateAvatar({ shoeColor })}
-          />
-        </TabsContent>
-      </Tabs>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <div className="flex items-center gap-3">
+          <AvatarPreview config={avatarConfig} />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base font-semibold">{t("title")}</h2>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              {t("previewDescription")}
+            </p>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="mt-3 w-full"
+              >
+                {isOpen ? (
+                  <X aria-hidden="true" />
+                ) : (
+                  <Palette aria-hidden="true" />
+                )}
+                {isOpen ? t("collapse") : t("customize")}
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </div>
+
+        <CollapsibleContent>
+          <Tabs defaultValue="character" className="mt-5 border-t pt-4">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="character">{t("tabs.character")}</TabsTrigger>
+              <TabsTrigger value="outfit">{t("tabs.outfit")}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="character" className="mt-4 grid gap-5">
+              <StyleOptions
+                label={t("hairStyle")}
+                options={hairStyles}
+                selectedOption={avatarConfig.hairStyle}
+                optionLabel={(option) => t(`styles.hair.${option}`)}
+                renderThumbnail={(option) => (
+                  <HairThumbnail config={avatarConfig} style={option} />
+                )}
+                onSelect={(hairStyle) => updateAvatar({ hairStyle })}
+              />
+              <StyleOptions
+                label={t("faceStyle")}
+                options={faceStyles}
+                selectedOption={avatarConfig.faceStyle}
+                optionLabel={(option) => t(`styles.face.${option}`)}
+                renderThumbnail={(option) => (
+                  <FaceThumbnail config={avatarConfig} expression={option} />
+                )}
+                onSelect={(faceStyle) => updateAvatar({ faceStyle })}
+              />
+              <ColorSwatches
+                label={t("skinTone")}
+                options={skinTones}
+                selectedColor={avatarConfig.skinTone}
+                selectLabel={colorLabel}
+                onSelect={(skinTone) => updateAvatar({ skinTone })}
+              />
+              <ColorSwatches
+                label={t("hairColor")}
+                options={hairColors}
+                selectedColor={avatarConfig.hairColor}
+                selectLabel={colorLabel}
+                onSelect={(hairColor) => updateAvatar({ hairColor })}
+              />
+            </TabsContent>
+            <TabsContent value="outfit" className="mt-4 grid gap-5">
+              <StyleOptions
+                label={t("shirtStyle")}
+                options={shirtStyles}
+                selectedOption={avatarConfig.shirtStyle}
+                optionLabel={(option) => t(`styles.shirt.${option}`)}
+                renderThumbnail={(option) => (
+                  <ShirtThumbnail
+                    color={avatarConfig.shirtColor}
+                    style={option}
+                  />
+                )}
+                onSelect={(shirtStyle) => updateAvatar({ shirtStyle })}
+              />
+              <ColorSwatches
+                label={t("shirtColor")}
+                options={shirtColors}
+                selectedColor={avatarConfig.shirtColor}
+                selectLabel={colorLabel}
+                onSelect={(shirtColor) => updateAvatar({ shirtColor })}
+              />
+              <ColorSwatches
+                label={t("pantsColor")}
+                options={pantsColors}
+                selectedColor={avatarConfig.pantsColor}
+                selectLabel={colorLabel}
+                onSelect={(pantsColor) => updateAvatar({ pantsColor })}
+              />
+              <ColorSwatches
+                label={t("shoeColor")}
+                options={shoeColors}
+                selectedColor={avatarConfig.shoeColor}
+                selectLabel={colorLabel}
+                onSelect={(shoeColor) => updateAvatar({ shoeColor })}
+              />
+            </TabsContent>
+          </Tabs>
+        </CollapsibleContent>
+      </Collapsible>
     </section>
   );
 }

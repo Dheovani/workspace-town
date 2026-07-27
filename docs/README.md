@@ -108,6 +108,8 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O layout das salas não usa o container de largura máxima das páginas convencionais.
 - O grid lógico permanece disponível para interação, mas só é desenhado em editor e debug.
 - Piso, limites e zonas de ambiente são uma camada visual independente dos objetos persistentes.
+- A cena local compacta organiza entrada, estações de trabalho e daily perto do spawn.
+- Rótulos de zonas e nome do player são fornecidos ao renderer pela camada de i18n.
 - A câmera 2D acompanha o jogador em mapas maiores, respeita os limites da sala e centraliza e amplia mapas que cabem integralmente na viewport.
 - O cálculo da câmera é isolado do PixiJS e possui testes unitários com o runner nativo do Bun.
 - Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.

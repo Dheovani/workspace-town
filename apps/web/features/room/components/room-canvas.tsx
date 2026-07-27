@@ -1,5 +1,6 @@
 "use client";
 
+import { MousePointer2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,9 @@ export function RoomCanvas() {
   const selectedObjectId = useRoomStore((state) => state.selectedObjectId);
   const moveLocalPlayer = useRoomStore((state) => state.moveLocalPlayer);
   const localPlayerName = t("localPlayerName");
+  const spawnLabel = t("zones.spawn");
+  const focusLabel = t("zones.focus");
+  const dailyLabel = t("zones.daily");
 
   useEffect(() => {
     let cancelled = false;
@@ -57,6 +61,11 @@ export function RoomCanvas() {
         room: initialState.room,
         player: initialState.localPlayer,
         playerDisplayName: localPlayerName,
+        environmentLabels: {
+          spawn: spawnLabel,
+          focus: focusLabel,
+          daily: dailyLabel,
+        },
         objects: initialState.objects,
         editorInteraction: {
           enabled: initialState.isEditing,
@@ -90,7 +99,7 @@ export function RoomCanvas() {
       rendererRef.current?.destroy();
       rendererRef.current = null;
     };
-  }, [localPlayerName]);
+  }, [dailyLabel, focusLabel, localPlayerName, spawnLabel]);
 
   useEffect(() => {
     rendererRef.current?.updatePlayer(localPlayer, localPlayerName);
@@ -144,15 +153,21 @@ export function RoomCanvas() {
 
   return (
     <div
-      ref={containerRef}
-      aria-label={t("ariaLabel")}
       className={cn(
-        "h-full min-h-0 w-full overflow-hidden bg-slate-50",
+        "relative h-full min-h-0 w-full overflow-hidden bg-slate-50",
         roomMode === "editor" &&
           "outline-2 outline-offset-[-2px] outline-amber-500/70",
         roomMode === "debug" &&
           "outline-2 outline-offset-[-2px] outline-slate-900/80",
       )}
-    />
+    >
+      <div ref={containerRef} aria-label={t("ariaLabel")} className="h-full" />
+      {roomMode === "user" ? (
+        <div className="pointer-events-none absolute bottom-4 left-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-md border border-emerald-950/10 bg-white/90 px-3 py-2 text-xs font-medium text-emerald-950 shadow-sm backdrop-blur-sm">
+          <MousePointer2 aria-hidden="true" className="size-4 shrink-0" />
+          <span>{t("interactionHint")}</span>
+        </div>
+      ) : null}
+    </div>
   );
 }

@@ -15,20 +15,21 @@ beforeEach(() => {
 });
 
 describe("room store movement integration", () => {
-  test("stops the local player before the blocking demo table", () => {
-    const moveRight = () =>
-      useRoomStore
-        .getState()
-        .moveLocalPlayer({ dx: 1, dy: 0, direction: "right" });
+  test("stops the local player before a blocking daily chair", () => {
+    useRoomStore.setState((state) => ({
+      localPlayer: {
+        ...state.localPlayer,
+        position: { x: 14, y: 7 },
+      },
+    }));
 
-    moveRight();
-    moveRight();
-    moveRight();
-    moveRight();
+    useRoomStore
+      .getState()
+      .moveLocalPlayer({ dx: 1, dy: 0, direction: "right" });
 
     expect(useRoomStore.getState().localPlayer.position).toEqual({
-      x: 7,
-      y: 4,
+      x: 14,
+      y: 7,
     });
     expect(useRoomStore.getState().localPlayer.direction).toBe("right");
   });

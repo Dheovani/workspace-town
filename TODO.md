@@ -88,6 +88,9 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Separar visualmente os modos de usuário, editor e debug.
 - [x] Ocultar o grid técnico no modo usuário e exibi-lo em editor/debug.
 - [x] Criar piso, limites e zonas visuais para o mapa inicial.
+- [x] Recompor o mapa inicial com áreas de entrada, estações de trabalho e daily.
+- [x] Adicionar nomes localizados de zonas e uma pista discreta de movimentação.
+- [x] Reduzir o mapa local e aplicar zoom mínimo para evitar grandes vazios.
 - [x] Criar HUD contextual com painéis específicos por modo.
 - [x] Criar câmera responsiva que acompanha o jogador em mapas maiores.
 - [x] Limitar a câmera às bordas do mundo.
@@ -109,9 +112,11 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Criar customização inicial de pele, rosto, cabelo e roupas.
 - [x] Aumentar a escala visual e ancorar o personagem pela base dos pés.
 - [x] Substituir selects por thumbnails, abas e swatches no editor de avatar.
+- [x] Criar preview dedicado e recolhível para a customização do avatar.
 - [x] Localizar o nome visível do player por i18n.
 - [ ] Evoluir o catálogo visual com novos cabelos, rostos, roupas e acessórios.
 - [ ] Avaliar spritesheets autorais quando a direção de arte do produto for definida.
+- [ ] Adicionar animações de idle e interações contextuais além da caminhada.
 
 ### 1.3 Objetos e editor local
 
@@ -129,6 +134,8 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [ ] Preparar objetos maiores que um único tile.
 - [ ] Expandir o catálogo de ambiente com pisos, paredes, sofás, divisórias e decoração.
 - [ ] Modelar footprints de colisão para móveis maiores que um tile.
+- [ ] Criar affordances e ações reais para objetos interativos além do hover.
+- [ ] Tornar zonas, pisos e limites configuráveis pelo editor de sala.
 
 ### Critério de saída do Marco 1
 
@@ -336,6 +343,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [ ] Otimizar carregamento de sprites e assets.
 - [ ] Adicionar logs estruturados, métricas e rastreamento de erros.
 - [ ] Definir limites e testes de carga para realtime e chamadas.
+- [ ] Evoluir a câmera com dead zone, zoom configurável e transições entre salas.
 
 ### 7.3 Segurança e operação
 

@@ -28,10 +28,10 @@ export function RoomShell({
 
   return (
     <main className="flex h-dvh min-h-0 flex-col overflow-hidden bg-[#dce5df] text-foreground">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-emerald-950/30 bg-[#173f36] px-3 text-white shadow-sm sm:px-4">
+      <header className="flex h-14 shrink-0 items-center justify-between bg-[#173f36] px-3 text-white shadow-sm sm:px-4">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-emerald-200 text-emerald-950 shadow-sm">
-            <Building2 aria-hidden="true" className="size-5" />
+          <span className="grid size-8 shrink-0 place-items-center rounded-md bg-emerald-200 text-emerald-950 shadow-sm">
+            <Building2 aria-hidden="true" className="size-4" />
           </span>
           <div className="min-w-0">
             <p className="truncate text-xs text-emerald-100/75">{appName}</p>

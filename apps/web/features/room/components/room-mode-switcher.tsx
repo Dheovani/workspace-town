@@ -48,9 +48,11 @@ export function RoomModeSwitcher() {
           </Button>
         ))}
       </div>
-      <p className="mt-2 px-1 text-xs leading-relaxed text-muted-foreground">
-        {t(`descriptions.${roomMode}`)}
-      </p>
+      {roomMode !== "user" ? (
+        <p className="mt-2 px-1 text-xs leading-relaxed text-muted-foreground">
+          {t(`descriptions.${roomMode}`)}
+        </p>
+      ) : null}
     </section>
   );
 }

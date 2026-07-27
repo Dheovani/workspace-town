@@ -81,8 +81,8 @@ export default async function WorkspaceMapPage({
               </div>
               <div className="flex min-w-0 flex-1 items-center justify-between gap-2 rounded-md bg-slate-100 px-2.5 py-2">
                 <dt>{map("defaultRoom")}</dt>
-                <dd className="max-w-40 truncate font-medium text-foreground">
-                  {workspace.defaultRoomId}
+                <dd className="font-medium text-foreground">
+                  {map("mainRoom")}
                 </dd>
               </div>
             </dl>

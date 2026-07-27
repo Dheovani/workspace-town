@@ -156,14 +156,16 @@ Já existe uma fundação inicial para o MVP:
 - i18n inicial com `pt-BR` e `en-US`;
 - componente client-side que monta um canvas PixiJS;
 - renderer PixiJS separado da camada React;
-- ambiente 2D com piso visual, limites, zonas, móveis procedurais e player local;
+- ambiente 2D compacto com entrada, estações de trabalho, área de daily, limites, móveis procedurais e player local;
 - movimento local com teclado;
 - colisão local com limites da sala e objetos bloqueantes;
 - interpolação visual do player e acompanhamento suave da câmera;
 - personagem humanoide em pixel art com poses direcionais e animação de caminhada;
 - customização local de pele, rosto, cabelo, camisa, calça e calçado pela sidebar;
 - editor visual de avatar com thumbnails, abas e paletas;
+- preview dedicado e recolhível do avatar na HUD;
 - profundidade por posição vertical, sombras e hover nos objetos;
+- nomes localizados de zonas e pista discreta de movimentação;
 - movimento por clique ou toque com rota A\* e desvio de obstáculos;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;

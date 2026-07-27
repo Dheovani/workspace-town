@@ -2,6 +2,8 @@ import {
   Application,
   Container,
   Graphics,
+  Text,
+  TextStyle,
   type Renderer,
   type Ticker,
 } from "pixi.js";
@@ -30,11 +32,18 @@ export type RoomNavigationInteraction = {
   onDestinationSelect: (position: { x: number; y: number }) => void;
 };
 
+export type RoomEnvironmentLabels = {
+  spawn: string;
+  focus: string;
+  daily: string;
+};
+
 type RoomRendererOptions = {
   container: HTMLElement;
   room: Room;
   player: Player;
   playerDisplayName: string;
+  environmentLabels: RoomEnvironmentLabels;
   objects: RoomObject[];
   editorInteraction: RoomEditorInteraction;
   navigationInteraction: RoomNavigationInteraction;
@@ -50,6 +59,7 @@ export class RoomRenderer {
   private readonly navigationLayer = new Container();
   private player: Player;
   private playerDisplayName: string;
+  private readonly environmentLabels: RoomEnvironmentLabels;
   private objects: RoomObject[];
   private editorInteraction: RoomEditorInteraction;
   private readonly navigationInteraction: RoomNavigationInteraction;
@@ -63,6 +73,7 @@ export class RoomRenderer {
     this.room = options.room;
     this.player = options.player;
     this.playerDisplayName = options.playerDisplayName;
+    this.environmentLabels = options.environmentLabels;
     this.objects = options.objects;
     this.editorInteraction = options.editorInteraction;
     this.navigationInteraction = options.navigationInteraction;
@@ -205,6 +216,7 @@ export class RoomRenderer {
       worldHeight,
       targetX: playerPosition.x,
       targetY: playerPosition.y,
+      minimumScale: 1.08,
     });
 
     this.worldLayer.scale.set(camera.scale);
@@ -475,52 +487,117 @@ export class RoomRenderer {
     const height = this.room.height * this.room.tileSize;
     const tileSize = this.room.tileSize;
 
-    environment.rect(0, 0, width, height).fill("#dce5df");
+    environment.rect(0, 0, width, height).fill("#dce6e1");
 
     for (let y = 0; y < this.room.height; y += 2) {
-      environment.rect(0, y * tileSize, width, tileSize * 2).fill({
-        color: y % 4 === 0 ? "#e5ece8" : "#d3dfd8",
-        alpha: 0.48,
-      });
+      for (let x = 0; x < this.room.width; x += 2) {
+        if ((x + y) % 4 === 0) {
+          environment
+            .rect(x * tileSize, y * tileSize, tileSize * 2, tileSize * 2)
+            .fill({ color: "#cbdad3", alpha: 0.2 });
+        }
+      }
     }
 
     environment
       .roundRect(
-        tileSize * 6.4,
-        tileSize * 2.35,
-        tileSize * 4.2,
-        tileSize * 4.3,
+        tileSize * 1.25,
+        tileSize * 5.25,
+        tileSize * 4.75,
+        tileSize * 5.5,
+        20,
+      )
+      .fill({ color: "#b9d5ca", alpha: 0.72 })
+      .stroke({ color: "#78a898", width: 3, alpha: 0.68 })
+      .roundRect(
+        tileSize * 1.55,
+        tileSize * 5.55,
+        tileSize * 4.15,
+        tileSize * 4.9,
         16,
       )
-      .fill("#b8d4cc")
-      .stroke({ color: "#6f9d90", width: 4, alpha: 0.75 })
+      .stroke({ color: "#eef7f3", width: 2, alpha: 0.72 });
+
+    environment
       .roundRect(
-        tileSize * 6.65,
-        tileSize * 2.6,
-        tileSize * 3.7,
-        tileSize * 3.8,
-        12,
+        tileSize * 6.5,
+        tileSize * 3.25,
+        tileSize * 5.75,
+        tileSize * 6.75,
+        16,
       )
-      .stroke({ color: "#e8f3ef", width: 3, alpha: 0.7 });
+      .fill({ color: "#c5d8df", alpha: 0.62 })
+      .stroke({ color: "#7392a0", width: 3, alpha: 0.5 })
+      .roundRect(
+        tileSize * 13.5,
+        tileSize * 4.25,
+        tileSize * 6,
+        tileSize * 6.25,
+        22,
+      )
+      .fill({ color: "#efd1c8", alpha: 0.72 })
+      .stroke({ color: "#bd7565", width: 3, alpha: 0.58 })
+      .roundRect(
+        tileSize * 13.85,
+        tileSize * 4.6,
+        tileSize * 5.3,
+        tileSize * 5.55,
+        18,
+      )
+      .stroke({ color: "#fff3ef", width: 2, alpha: 0.75 });
 
     environment
-      .roundRect(tileSize * 14, tileSize * 8, tileSize * 6, tileSize * 4, 18)
-      .fill({ color: "#f3c7bc", alpha: 0.55 })
-      .stroke({ color: "#bd7565", width: 3, alpha: 0.5 });
-
-    environment
-      .rect(0, 0, width, 18)
+      .rect(0, 0, width, 14)
       .fill("#274d45")
-      .rect(0, 18, width, 7)
+      .rect(0, 14, width, 6)
       .fill("#7ca69a")
-      .rect(0, 0, 12, height)
+      .rect(0, 0, 10, height)
       .fill("#315c53")
-      .rect(width - 12, 0, 12, height)
+      .rect(width - 10, 0, 10, height)
       .fill("#315c53")
-      .rect(0, height - 12, width, 12)
+      .rect(0, height - 10, width, 10)
       .fill("#315c53");
 
     this.floorLayer.addChild(environment);
+    this.addZoneLabel(
+      this.environmentLabels.spawn,
+      tileSize * 1.75,
+      tileSize * 5.65,
+      "#285f52",
+    );
+    this.addZoneLabel(
+      this.environmentLabels.focus,
+      tileSize * 7,
+      tileSize * 3.65,
+      "#365f70",
+    );
+    this.addZoneLabel(
+      this.environmentLabels.daily,
+      tileSize * 14,
+      tileSize * 4.65,
+      "#8c4e41",
+    );
+  }
+
+  private addZoneLabel(
+    label: string,
+    x: number,
+    y: number,
+    color: string,
+  ): void {
+    const text = new Text({
+      text: label,
+      style: new TextStyle({
+        fill: color,
+        fontFamily: "Arial",
+        fontSize: 12,
+        fontWeight: "700",
+      }),
+    });
+
+    text.position.set(x, y);
+    text.alpha = 0.78;
+    this.floorLayer.addChild(text);
   }
 
   private toScreenPosition(x: number, y: number): { x: number; y: number } {

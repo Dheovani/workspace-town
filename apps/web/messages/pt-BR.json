@@ -7,11 +7,11 @@
       "enter": "Entrar"
     },
     "labels": {
-      "enterWorkspace": "Entrar no workspace",
+      "enterWorkspace": "Entrar na cidade",
       "members": "Membros",
       "mock": "mock",
       "rooms": "Salas",
-      "workspace": "Workspace"
+      "workspace": "Cidade"
     }
   },
   "auth": {
@@ -75,10 +75,12 @@
   },
   "map": {
     "defaultRoom": "Sala padrão",
-    "eyebrow": "Mapa principal mockado"
+    "eyebrow": "Mapa principal mockado",
+    "mainRoom": "Mapa principal"
   },
   "room": {
     "avatar": {
+      "collapse": "Fechar editor",
       "colors": {
         "amber": "Amarelo",
         "black": "Preto",
@@ -106,11 +108,13 @@
       "hairColor": "Cor do cabelo",
       "hairStyle": "Cabelo",
       "pantsColor": "Cor da calça",
+      "previewDescription": "Seu personagem no mapa",
       "selectColor": "Selecionar {color}",
       "shirtColor": "Cor da camisa",
       "shirtStyle": "Roupa",
       "shoeColor": "Cor do calçado",
       "skinTone": "Tom de pele",
+      "customize": "Personalizar",
       "styles": {
         "face": {
           "focused": "Concentrado",
@@ -136,7 +140,13 @@
     },
     "canvas": {
       "ariaLabel": "Área jogável da sala",
-      "localPlayerName": "Você"
+      "interactionHint": "Clique no piso ou use WASD para caminhar",
+      "localPlayerName": "Você",
+      "zones": {
+        "daily": "Daily",
+        "focus": "Estações de trabalho",
+        "spawn": "Entrada"
+      }
     },
     "shell": {
       "closeSidebar": "Fechar painel da sala",

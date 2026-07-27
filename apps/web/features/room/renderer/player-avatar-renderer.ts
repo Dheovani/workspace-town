@@ -19,7 +19,6 @@ export class PlayerAvatarRenderer {
 
   private readonly characterLayer = new Container();
   private readonly labelLayer = new Container();
-  private readonly labelBackground = new Graphics();
   private readonly shadow = new Graphics();
   private readonly backDetails = new Graphics();
   private readonly backArm = new Graphics();
@@ -43,21 +42,23 @@ export class PlayerAvatarRenderer {
     player: Player,
     displayName: string,
   ) {
-    this.characterScale = (tileSize / 48) * 1.35;
+    this.characterScale = (tileSize / 48) * 1.52;
     this.avatarConfig = player.avatarConfig;
     this.direction = player.direction;
     this.label = new Text({
       text: displayName,
       style: new TextStyle({
-        fill: "#ffffff",
+        fill: "#173f36",
         fontFamily: "Arial",
-        fontSize: 12,
-        fontWeight: "700",
+        fontSize: 10,
+        fontWeight: "600",
+        stroke: { color: "#ffffff", width: 3 },
       }),
     });
     this.label.anchor.set(0.5);
-    this.labelLayer.position.set(0, -tileSize * 1.58);
-    this.labelLayer.addChild(this.labelBackground, this.label);
+    this.label.alpha = 0.86;
+    this.labelLayer.position.set(0, -tileSize * 1.82);
+    this.labelLayer.addChild(this.label);
 
     this.characterLayer.addChild(
       this.backDetails,
@@ -81,7 +82,6 @@ export class PlayerAvatarRenderer {
     this.avatarConfig = player.avatarConfig;
     this.direction = player.direction;
     this.label.text = displayName;
-    this.drawLabel();
     this.drawCharacter();
   }
 
@@ -433,17 +433,5 @@ export class PlayerAvatarRenderer {
     this.shadow
       .ellipse(0, 0, this.tileSize * 0.36, this.tileSize * 0.12)
       .fill({ color: "#0f172a", alpha: 0.24 });
-  }
-
-  private drawLabel(): void {
-    const width = this.label.width + 16;
-    const height = this.label.height + 8;
-
-    this.labelBackground
-      .clear()
-      .roundRect(-width / 2, -height / 2, width, height, 6)
-      .fill({ color: "#172033", alpha: 0.92 })
-      .poly([-4, height / 2 - 1, 4, height / 2 - 1, 0, height / 2 + 5])
-      .fill({ color: "#172033", alpha: 0.92 });
   }
 }
