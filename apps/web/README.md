@@ -171,6 +171,8 @@ A feature inicial está em `features/room`.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
 - `components/room-shell.tsx`: layout client-side com cabeçalho compacto, área jogável flexível e sidebar responsiva.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
+- `renderer/avatar-visual-state.ts`: regras puras de orientação e estado de movimento.
+- `renderer/player-avatar-renderer.ts`: composição PixiJS isolada do avatar local.
 - `renderer/camera.ts`: cálculo puro da câmera, independente do PixiJS.
 - `renderer/camera.test.ts`: testes unitários de enquadramento, acompanhamento e limites.
 - `renderer/interpolation.ts`: amortecimento visual independente da taxa de quadros.
@@ -182,6 +184,8 @@ As páginas de sala não usam o container de largura máxima aplicado às telas 
 O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natural em mapas maiores que a viewport, acompanha o jogador e não expõe áreas externas à sala. Mapas menores são centralizados e ampliados proporcionalmente.
 
 A posição lógica permanece inteira no Zustand para colisão. O ticker do PixiJS interpola somente a posição visual do player; a câmera acompanha essa posição intermediária.
+
+O avatar vetorial atual possui indicador de direção e ciclo simples de caminhada. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
 
 ## Editor de sala
 
@@ -245,6 +249,7 @@ Implementado:
 - movimento por WASD ou setas;
 - colisão com limites e objetos bloqueantes;
 - interpolação visual do player e da câmera;
+- orientação visual e ciclo de caminhada do avatar;
 - câmera responsiva acompanhando o player;
 - objetos estáticos;
 - editor local para adicionar, mover, girar e remover objetos;

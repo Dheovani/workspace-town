@@ -77,7 +77,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 
 **Resultado esperado:** uma pessoa consegue entrar na sala, explorar o mapa com movimentação consistente, reconhecer seu avatar e interagir com o ambiente sem atravessar objetos.
 
-**Próxima entrega:** estados visuais de direção e movimento do avatar.
+**Próxima entrega:** movimento por clique e estratégia de controles para dispositivos móveis.
 
 ### 1.1 Área jogável e câmera
 
@@ -98,7 +98,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Restringir movimento aos limites da sala.
 - [x] Impedir movimento sobre objetos com `blocksMovement`.
 - [x] Adicionar interpolação visual entre tiles.
-- [ ] Adicionar estados visuais de direção e movimento.
+- [x] Adicionar estados visuais de direção e movimento.
 - [ ] Definir interação de movimento por clique e estratégia para dispositivos móveis.
 - [ ] Criar customização inicial de avatar.
 
@@ -303,6 +303,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 
 - [x] Adicionar testes unitários para a câmera.
 - [x] Adicionar testes unitários para interpolação visual independente da taxa de quadros.
+- [x] Adicionar testes unitários para orientação e estado visual do avatar.
 - [x] Adicionar testes unitários e de integração local para movimentação e colisão.
 - [ ] Adicionar testes para schemas Zod.
 - [ ] Adicionar testes para autenticação e rotas protegidas.

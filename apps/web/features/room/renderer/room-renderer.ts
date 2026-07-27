@@ -2,14 +2,14 @@ import {
   Application,
   Container,
   Graphics,
-  Text,
-  TextStyle,
   type Renderer,
   type Ticker,
 } from "pixi.js";
 import type { Player, Room, RoomObject } from "../types";
+import { isVisualPositionMoving } from "./avatar-visual-state";
 import { calculateCameraTransform } from "./camera";
 import { dampValue } from "./interpolation";
+import { PlayerAvatarRenderer } from "./player-avatar-renderer";
 
 const PLAYER_MOVEMENT_SMOOTHING = 18;
 
@@ -43,11 +43,11 @@ export class RoomRenderer {
   private player: Player;
   private objects: RoomObject[];
   private editorInteraction: RoomEditorInteraction;
-  private playerBody?: Graphics;
-  private playerLabel?: Text;
+  private playerAvatar?: PlayerAvatarRenderer;
   private resizeObserver?: ResizeObserver;
   private container?: HTMLElement;
   private visualPlayerPosition?: Point;
+  private animationElapsedMilliseconds = 0;
 
   private constructor(options: RoomRendererOptions) {
     this.room = options.room;
@@ -140,7 +140,13 @@ export class RoomRenderer {
     };
 
     this.visualPlayerPosition = next;
-    this.playerLayer.position.set(next.x, next.y);
+    this.animationElapsedMilliseconds += ticker.deltaMS;
+    this.playerAvatar?.updateAnimation({
+      position: next,
+      direction: this.player.direction,
+      isMoving: isVisualPositionMoving(next, target),
+      elapsedMilliseconds: this.animationElapsedMilliseconds,
+    });
     this.updateCamera();
   };
 
@@ -284,45 +290,27 @@ export class RoomRenderer {
   }
 
   private drawPlayer(): void {
-    if (!this.playerBody) {
-      this.playerBody = new Graphics();
-      this.playerLabel = new Text({
-        text: this.player.avatarConfig.displayName,
-        style: new TextStyle({
-          fill: "#0f172a",
-          fontFamily: "Arial",
-          fontSize: 12,
-          fontWeight: "700",
-        }),
-      });
-      this.playerLabel.anchor.set(0.5, 0);
-      this.playerLayer.addChild(this.playerBody, this.playerLabel);
+    if (!this.playerAvatar) {
+      this.playerAvatar = new PlayerAvatarRenderer(
+        this.room.tileSize,
+        this.player,
+      );
+      this.playerLayer.addChild(this.playerAvatar.container);
     }
 
-    const playerBody = this.playerBody;
-    const playerLabel = this.playerLabel;
-
-    if (!playerBody || !playerLabel) {
-      return;
-    }
-
-    const radius = this.room.tileSize * 0.32;
-
-    playerBody
-      .clear()
-      .circle(0, 0, radius)
-      .fill(this.player.avatarConfig.bodyColor)
-      .stroke({ color: this.player.avatarConfig.accentColor, width: 3 });
-
-    playerLabel.text = this.player.avatarConfig.displayName;
-    playerLabel.position.set(0, radius + 4);
+    this.playerAvatar.updatePlayer(this.player);
   }
 
   private snapPlayerToTarget(): void {
     const target = this.getPlayerTargetPosition();
 
     this.visualPlayerPosition = target;
-    this.playerLayer.position.set(target.x, target.y);
+    this.playerAvatar?.updateAnimation({
+      position: target,
+      direction: this.player.direction,
+      isMoving: false,
+      elapsedMilliseconds: this.animationElapsedMilliseconds,
+    });
   }
 
   private getPlayerTargetPosition(): Point {

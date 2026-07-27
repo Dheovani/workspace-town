@@ -30,10 +30,13 @@ apps/web/features/room/
   components/room-shell.tsx
   domain/player-movement.ts
   domain/player-movement.test.ts
+  renderer/avatar-visual-state.ts
+  renderer/avatar-visual-state.test.ts
   renderer/camera.ts
   renderer/camera.test.ts
   renderer/interpolation.ts
   renderer/interpolation.test.ts
+  renderer/player-avatar-renderer.ts
   renderer/room-renderer.ts
   stores/room-store.ts
   stores/room-store.test.ts
@@ -72,6 +75,12 @@ O store mantém a posição lógica inteira do player e aplica colisão imediata
 
 A câmera usa a posição visual intermediária como alvo. Assim, player e mundo se deslocam juntos sem alterar as regras discretas de colisão ou persistir coordenadas transitórias. Os testes validam progressão, ausência de overshoot, equivalência entre intervalos de frame e snap no destino.
 
+## Avatar local
+
+`player-avatar-renderer.ts` encapsula os elementos PixiJS do avatar e expõe um único container para a cena. O protótipo atual usa formas vetoriais simples, marcador de orientação, sombra, pés alternados e deslocamento corporal durante a caminhada.
+
+`avatar-visual-state.ts` converte direção em rotação e detecta quando a posição visual ainda está em trânsito. Essas regras são puras e testadas sem inicializar PixiJS. A separação permite reutilizar uma instância do renderer para cada participante quando o multiplayer for implementado.
+
 ## Movimento e colisão
 
 O PixiJS não decide se um movimento é válido. `domain/player-movement.ts` recebe sala, player, objetos, catálogo e tentativa de movimento. A função atualiza a direção do avatar, mas mantém sua posição quando o destino está fora da sala ou contém um objeto bloqueante.
@@ -100,7 +109,7 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 
 ## Limitações atuais
 
-- o avatar ainda não possui sprites ou animações direcionais;
+- o avatar ainda usa formas vetoriais e não possui sprites customizáveis;
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;

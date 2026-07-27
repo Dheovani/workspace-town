@@ -158,6 +158,7 @@ Já existe uma fundação inicial para o MVP:
 - movimento local com teclado;
 - colisão local com limites da sala e objetos bloqueantes;
 - interpolação visual do player e acompanhamento suave da câmera;
+- avatar vetorial básico com orientação e ciclo visual de caminhada;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;
 - testes unitários iniciais para câmera, interpolação e regras de movimentação;

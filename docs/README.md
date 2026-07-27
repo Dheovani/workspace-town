@@ -109,6 +109,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O cálculo da câmera é isolado do PixiJS e possui testes unitários com o runner nativo do Bun.
 - Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.
 - A posição lógica muda por tile no store, enquanto o ticker do PixiJS interpola a posição visual do player e da câmera.
+- O avatar local possui renderer próprio, orientação por direção e ciclo de caminhada, preparando a cena para múltiplos players.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.
