@@ -16,6 +16,7 @@ O renderer da sala não deve ser implementado como uma árvore grande de compone
 - next-intl para internacionalização.
 - better-auth para autenticação por e-mail e senha.
 - PixiJS para canvas da sala.
+- PathFinding.js para rotas locais em grid.
 - Zustand para estado local client-side.
 - Zod para schemas e validação.
 - Drizzle ORM e driver `postgres` para acesso server-side ao PostgreSQL.
@@ -52,6 +53,8 @@ features/
     schemas.ts                     # Validação Zod dos formulários
   room/
     components/                    # Canvas, shell de tela cheia e painéis da sala
+    domain/                        # Movimento, colisão e cálculo de rotas
+    navigation/                    # Controle temporal da navegação local
     renderer/                      # Renderer PixiJS isolado
     server/                        # Queries server-only de layout
     stores/                        # Zustand stores
@@ -166,6 +169,8 @@ A feature inicial está em `features/room`.
 - `types.ts`: schemas Zod e tipos de `room`, `player`, `roomObject`, `avatarConfig` e `meetingType`.
 - `domain/player-movement.ts`: valida movimento, limites e colisão sem depender de React, Zustand ou PixiJS.
 - `domain/player-movement.test.ts`: testes unitários das regras de movimentação.
+- `domain/find-room-path.ts`: adapta PathFinding.js ao mapa e aos objetos da sala.
+- `navigation/room-navigation-controller.ts`: executa e cancela rotas locais por passos.
 - `stores/room-store.ts`: estado local da sala demo, player local, objetos estáticos e movimento validado por grid.
 - `stores/room-store.test.ts`: integração entre movimento, objetos demo e regras do editor.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
@@ -186,6 +191,8 @@ O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natur
 A posição lógica permanece inteira no Zustand para colisão. O ticker do PixiJS interpola somente a posição visual do player; a câmera acompanha essa posição intermediária.
 
 O avatar vetorial atual possui indicador de direção e ciclo simples de caminhada. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
+
+Cliques ou toques em tiles livres calculam uma rota A\* ortogonal. O teclado assume o controle e cancela a rota atual; ativar o editor possui o mesmo comportamento. Um marcador no canvas identifica o destino enquanto o percurso está ativo.
 
 ## Editor de sala
 
@@ -250,6 +257,7 @@ Implementado:
 - colisão com limites e objetos bloqueantes;
 - interpolação visual do player e da câmera;
 - orientação visual e ciclo de caminhada do avatar;
+- movimento por clique ou toque com desvio de obstáculos;
 - câmera responsiva acompanhando o player;
 - objetos estáticos;
 - editor local para adicionar, mover, girar e remover objetos;

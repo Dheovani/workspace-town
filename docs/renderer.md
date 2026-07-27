@@ -30,6 +30,10 @@ apps/web/features/room/
   components/room-shell.tsx
   domain/player-movement.ts
   domain/player-movement.test.ts
+  domain/find-room-path.ts
+  domain/find-room-path.test.ts
+  navigation/room-navigation-controller.ts
+  navigation/room-navigation-controller.test.ts
   renderer/avatar-visual-state.ts
   renderer/avatar-visual-state.test.ts
   renderer/camera.ts
@@ -86,6 +90,14 @@ A câmera usa a posição visual intermediária como alvo. Assim, player e mundo
 O PixiJS não decide se um movimento é válido. `domain/player-movement.ts` recebe sala, player, objetos, catálogo e tentativa de movimento. A função atualiza a direção do avatar, mas mantém sua posição quando o destino está fora da sala ou contém um objeto bloqueante.
 
 O campo `state.blocksMovement` de uma instância pode sobrescrever a definição do catálogo. Objetos sem definição conhecida são bloqueantes por segurança. Os testes cobrem movimento livre, limites da sala, objetos bloqueantes, objetos atravessáveis e overrides. A integração do store também verifica a colisão com o mapa demo e a proteção do tile ocupado pelo player durante a edição.
+
+## Navegação por clique ou toque
+
+`find-room-path.ts` encapsula o PathFinding.js e calcula uma rota A\* ortogonal entre o player e o tile selecionado. A matriz considera limites, catálogo de itens e overrides de `blocksMovement`. O ponto inicial não é devolvido como passo, e destinos bloqueados ou inacessíveis resultam em rota vazia.
+
+`room-navigation-controller.ts` percorre a rota em passos discretos enviados ao store. Teclado e modo de edição cancelam o percurso. Cada passo é validado novamente, portanto um objeto adicionado durante a navegação interrompe o movimento. O renderer recebe apenas o destino para desenhar um marcador no mapa.
+
+Eventos `pointertap` do PixiJS atendem mouse, caneta e toque pela mesma fronteira. Essa é a estratégia mobile inicial; controles direcionais dedicados continuam desnecessários enquanto o fluxo por toque for suficiente.
 
 ## Editor de sala
 

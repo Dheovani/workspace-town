@@ -12,6 +12,28 @@ export type PlayerMove = {
   direction: PlayerDirection;
 };
 
+export function createPlayerMove(
+  current: { x: number; y: number },
+  next: { x: number; y: number },
+): PlayerMove | null {
+  const dx = next.x - current.x;
+  const dy = next.y - current.y;
+
+  if (Math.abs(dx) + Math.abs(dy) !== 1) {
+    return null;
+  }
+
+  if (dx > 0) {
+    return { dx, dy, direction: "right" };
+  }
+
+  if (dx < 0) {
+    return { dx, dy, direction: "left" };
+  }
+
+  return { dx, dy, direction: dy > 0 ? "down" : "up" };
+}
+
 type ResolvePlayerMovementOptions = {
   room: Room;
   player: Player;
@@ -20,7 +42,7 @@ type ResolvePlayerMovementOptions = {
   move: PlayerMove;
 };
 
-function objectBlocksMovement(
+export function roomObjectBlocksMovement(
   object: RoomObject,
   itemDefinitions: ItemDefinition[],
 ): boolean {
@@ -55,7 +77,7 @@ export function resolvePlayerMovement({
     (object) =>
       object.position.x === target.x &&
       object.position.y === target.y &&
-      objectBlocksMovement(object, itemDefinitions),
+      roomObjectBlocksMovement(object, itemDefinitions),
   );
 
   return {

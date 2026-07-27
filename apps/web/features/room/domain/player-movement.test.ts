@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { ItemDefinition, Player, Room, RoomObject } from "../types";
-import { resolvePlayerMovement } from "./player-movement";
+import { createPlayerMove, resolvePlayerMovement } from "./player-movement";
 
 const room: Room = {
   id: "room",
@@ -129,5 +129,25 @@ describe("resolvePlayerMovement", () => {
     });
 
     expect(result.position).toEqual(player.position);
+  });
+});
+
+describe("createPlayerMove", () => {
+  test("creates directional moves between adjacent tiles", () => {
+    expect(createPlayerMove({ x: 2, y: 2 }, { x: 3, y: 2 })).toEqual({
+      dx: 1,
+      dy: 0,
+      direction: "right",
+    });
+    expect(createPlayerMove({ x: 2, y: 2 }, { x: 2, y: 1 })).toEqual({
+      dx: 0,
+      dy: -1,
+      direction: "up",
+    });
+  });
+
+  test("rejects diagonal and non-adjacent steps", () => {
+    expect(createPlayerMove({ x: 2, y: 2 }, { x: 3, y: 3 })).toBeNull();
+    expect(createPlayerMove({ x: 2, y: 2 }, { x: 4, y: 2 })).toBeNull();
   });
 });

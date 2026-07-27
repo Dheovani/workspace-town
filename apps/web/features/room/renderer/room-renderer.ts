@@ -25,12 +25,17 @@ export type RoomEditorInteraction = {
   onObjectSelect: (objectId: string) => void;
 };
 
+export type RoomNavigationInteraction = {
+  onDestinationSelect: (position: { x: number; y: number }) => void;
+};
+
 type RoomRendererOptions = {
   container: HTMLElement;
   room: Room;
   player: Player;
   objects: RoomObject[];
   editorInteraction: RoomEditorInteraction;
+  navigationInteraction: RoomNavigationInteraction;
 };
 
 export class RoomRenderer {
@@ -40,9 +45,11 @@ export class RoomRenderer {
   private readonly playerLayer = new Container();
   private readonly objectLayer = new Container();
   private readonly gridLayer = new Container();
+  private readonly navigationLayer = new Container();
   private player: Player;
   private objects: RoomObject[];
   private editorInteraction: RoomEditorInteraction;
+  private readonly navigationInteraction: RoomNavigationInteraction;
   private playerAvatar?: PlayerAvatarRenderer;
   private resizeObserver?: ResizeObserver;
   private container?: HTMLElement;
@@ -54,6 +61,7 @@ export class RoomRenderer {
     this.player = options.player;
     this.objects = options.objects;
     this.editorInteraction = options.editorInteraction;
+    this.navigationInteraction = options.navigationInteraction;
   }
 
   static async create(options: RoomRendererOptions): Promise<RoomRenderer> {
@@ -78,6 +86,23 @@ export class RoomRenderer {
     this.drawObjects();
   }
 
+  setNavigationDestination(position: { x: number; y: number } | null): void {
+    this.navigationLayer.removeChildren();
+
+    if (!position) {
+      return;
+    }
+
+    const centerX = (position.x + 0.5) * this.room.tileSize;
+    const centerY = (position.y + 0.5) * this.room.tileSize;
+    const marker = new Graphics()
+      .circle(centerX, centerY, this.room.tileSize * 0.2)
+      .fill({ color: "#14b8a6", alpha: 0.16 })
+      .stroke({ color: "#0f766e", width: 2 });
+
+    this.navigationLayer.addChild(marker);
+  }
+
   destroy(): void {
     this.resizeObserver?.disconnect();
     this.app.ticker.remove(this.animate);
@@ -98,6 +123,7 @@ export class RoomRenderer {
     this.app.canvas.style.display = "block";
     this.worldLayer.addChild(
       this.gridLayer,
+      this.navigationLayer,
       this.objectLayer,
       this.playerLayer,
     );
@@ -192,8 +218,8 @@ export class RoomRenderer {
     }
 
     grid.stroke({ color: "#cbd5e1", width: 1 });
-    grid.eventMode = this.editorInteraction.enabled ? "static" : "none";
-    grid.cursor = this.editorInteraction.enabled ? "crosshair" : "default";
+    grid.eventMode = "static";
+    grid.cursor = this.editorInteraction.enabled ? "crosshair" : "pointer";
     grid.on("pointertap", (event) => {
       const localPosition = event.getLocalPosition(grid);
       const tileX = Math.floor(localPosition.x / this.room.tileSize);
@@ -205,7 +231,13 @@ export class RoomRenderer {
         tileY >= 0 &&
         tileY < this.room.height
       ) {
-        this.editorInteraction.onTileSelect({ x: tileX, y: tileY });
+        const position = { x: tileX, y: tileY };
+
+        if (this.editorInteraction.enabled) {
+          this.editorInteraction.onTileSelect(position);
+        } else {
+          this.navigationInteraction.onDestinationSelect(position);
+        }
       }
     });
 

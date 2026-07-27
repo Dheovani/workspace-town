@@ -32,6 +32,7 @@ No momento, a aplicação principal está em `apps/web`. A documentação técni
 - next-intl para internacionalização.
 - better-auth para autenticação por e-mail e senha.
 - PixiJS para o renderer da sala virtual.
+- PathFinding.js para rotas locais em grid.
 - Zustand para estado client-side local.
 - Zod para schemas e validação.
 - Drizzle ORM para modelagem de banco PostgreSQL.
@@ -159,6 +160,7 @@ Já existe uma fundação inicial para o MVP:
 - colisão local com limites da sala e objetos bloqueantes;
 - interpolação visual do player e acompanhamento suave da câmera;
 - avatar vetorial básico com orientação e ciclo visual de caminhada;
+- movimento por clique ou toque com rota A\* e desvio de obstáculos;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;
 - testes unitários iniciais para câmera, interpolação e regras de movimentação;

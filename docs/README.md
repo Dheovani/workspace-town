@@ -110,6 +110,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.
 - A posição lógica muda por tile no store, enquanto o ticker do PixiJS interpola a posição visual do player e da câmera.
 - O avatar local possui renderer próprio, orientação por direção e ciclo de caminhada, preparando a cena para múltiplos players.
+- Clique ou toque no mapa usa uma rota A\* ortogonal, cancelável por teclado ou editor e revalidada contra colisões a cada passo.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.

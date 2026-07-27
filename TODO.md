@@ -77,7 +77,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 
 **Resultado esperado:** uma pessoa consegue entrar na sala, explorar o mapa com movimentação consistente, reconhecer seu avatar e interagir com o ambiente sem atravessar objetos.
 
-**Próxima entrega:** movimento por clique e estratégia de controles para dispositivos móveis.
+**Próxima entrega:** customização inicial do avatar.
 
 ### 1.1 Área jogável e câmera
 
@@ -99,7 +99,8 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Impedir movimento sobre objetos com `blocksMovement`.
 - [x] Adicionar interpolação visual entre tiles.
 - [x] Adicionar estados visuais de direção e movimento.
-- [ ] Definir interação de movimento por clique e estratégia para dispositivos móveis.
+- [x] Implementar movimento por clique ou toque com rota que respeita obstáculos.
+- [x] Definir toque no mapa como estratégia inicial para dispositivos móveis.
 - [ ] Criar customização inicial de avatar.
 
 ### 1.3 Objetos e editor local
@@ -120,7 +121,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] O jogador percorre uma sala completa sem atravessar limites ou objetos bloqueantes.
 - [x] Movimento e câmera possuem transições visuais adequadas para uma experiência de jogo.
 - [ ] O layout editado de uma sala autenticada permanece após recarregar a página.
-- [ ] A interação principal funciona com teclado e possui estratégia definida para ponteiro e mobile.
+- [x] A interação principal funciona com teclado, ponteiro e toque.
 
 ## Marco 2 — Mundo persistente
 
@@ -305,6 +306,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Adicionar testes unitários para interpolação visual independente da taxa de quadros.
 - [x] Adicionar testes unitários para orientação e estado visual do avatar.
 - [x] Adicionar testes unitários e de integração local para movimentação e colisão.
+- [x] Adicionar testes para pathfinding e controle de rotas locais.
 - [ ] Adicionar testes para schemas Zod.
 - [ ] Adicionar testes para autenticação e rotas protegidas.
 - [ ] Adicionar testes para persistência de layouts.

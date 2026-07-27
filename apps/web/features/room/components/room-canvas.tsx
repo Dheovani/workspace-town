@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { roomItemDefinitions } from "@/features/room-editor/catalog/item-definitions";
+import { RoomNavigationController } from "../navigation/room-navigation-controller";
 import { RoomRenderer } from "../renderer/room-renderer";
 import { useRoomStore } from "../stores/room-store";
 import type { PlayerDirection } from "../types";
@@ -25,6 +27,7 @@ export function RoomCanvas() {
   const t = useTranslations("room.canvas");
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<RoomRenderer | null>(null);
+  const navigationControllerRef = useRef<RoomNavigationController | null>(null);
   const localPlayer = useRoomStore((state) => state.localPlayer);
   const objects = useRoomStore((state) => state.objects);
   const isEditing = useRoomStore((state) => state.isEditing);
@@ -33,6 +36,13 @@ export function RoomCanvas() {
 
   useEffect(() => {
     let cancelled = false;
+    const navigationController = new RoomNavigationController({
+      getState: useRoomStore.getState,
+      itemDefinitions: roomItemDefinitions,
+      onDestinationChange: (destination) =>
+        rendererRef.current?.setNavigationDestination(destination),
+    });
+    navigationControllerRef.current = navigationController;
 
     async function mountRenderer(): Promise<void> {
       if (!containerRef.current) {
@@ -53,6 +63,10 @@ export function RoomCanvas() {
           onObjectSelect: (objectId) =>
             useRoomStore.getState().selectObject(objectId),
         },
+        navigationInteraction: {
+          onDestinationSelect: (destination) =>
+            navigationController.moveTo(destination),
+        },
       });
 
       if (cancelled) {
@@ -67,6 +81,8 @@ export function RoomCanvas() {
 
     return () => {
       cancelled = true;
+      navigationController.cancel();
+      navigationControllerRef.current = null;
       rendererRef.current?.destroy();
       rendererRef.current = null;
     };
@@ -92,6 +108,12 @@ export function RoomCanvas() {
   }, [isEditing, selectedObjectId]);
 
   useEffect(() => {
+    if (isEditing) {
+      navigationControllerRef.current?.cancel();
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
       if (isEditing) {
         return;
@@ -104,6 +126,7 @@ export function RoomCanvas() {
       }
 
       event.preventDefault();
+      navigationControllerRef.current?.cancel();
       moveLocalPlayer(move);
     }
 
