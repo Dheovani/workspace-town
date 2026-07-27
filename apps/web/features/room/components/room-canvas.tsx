@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 import { RoomRenderer } from "../renderer/room-renderer";
 import { useRoomStore } from "../stores/room-store";
 import type { PlayerDirection } from "../types";
@@ -26,6 +27,8 @@ export function RoomCanvas() {
   const rendererRef = useRef<RoomRenderer | null>(null);
   const localPlayer = useRoomStore((state) => state.localPlayer);
   const objects = useRoomStore((state) => state.objects);
+  const isEditing = useRoomStore((state) => state.isEditing);
+  const selectedObjectId = useRoomStore((state) => state.selectedObjectId);
   const moveLocalPlayer = useRoomStore((state) => state.moveLocalPlayer);
 
   useEffect(() => {
@@ -42,6 +45,14 @@ export function RoomCanvas() {
         room: initialState.room,
         player: initialState.localPlayer,
         objects: initialState.objects,
+        editorInteraction: {
+          enabled: initialState.isEditing,
+          selectedObjectId: initialState.selectedObjectId,
+          onTileSelect: (position) =>
+            useRoomStore.getState().placeSelectionAt(position),
+          onObjectSelect: (objectId) =>
+            useRoomStore.getState().selectObject(objectId),
+        },
       });
 
       if (cancelled) {
@@ -70,7 +81,22 @@ export function RoomCanvas() {
   }, [objects]);
 
   useEffect(() => {
+    rendererRef.current?.updateEditorInteraction({
+      enabled: isEditing,
+      selectedObjectId,
+      onTileSelect: (position) =>
+        useRoomStore.getState().placeSelectionAt(position),
+      onObjectSelect: (objectId) =>
+        useRoomStore.getState().selectObject(objectId),
+    });
+  }, [isEditing, selectedObjectId]);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
+      if (isEditing) {
+        return;
+      }
+
       const move = keyMoves[event.code];
 
       if (!move) {
@@ -86,13 +112,16 @@ export function RoomCanvas() {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [moveLocalPlayer]);
+  }, [isEditing, moveLocalPlayer]);
 
   return (
     <div
       ref={containerRef}
       aria-label={t("ariaLabel")}
-      className="h-[min(70vh,640px)] min-h-[420px] w-full overflow-hidden rounded-md border bg-slate-50 shadow-sm"
+      className={cn(
+        "h-[min(70vh,640px)] min-h-[420px] w-full overflow-hidden rounded-md border bg-slate-50 shadow-sm transition-shadow",
+        isEditing && "ring-2 ring-teal-700/40",
+      )}
     />
   );
 }

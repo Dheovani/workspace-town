@@ -95,10 +95,11 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 ## Room editor
 
 - [x] Criar tipo e schema inicial de `roomObject`.
-- [ ] Criar catálogo inicial de item definitions.
-- [ ] Criar modo de edição de sala.
-- [ ] Permitir adicionar, mover e remover objetos.
+- [x] Criar catálogo inicial de item definitions.
+- [x] Criar modo de edição de sala.
+- [x] Permitir adicionar, mover, girar e remover objetos localmente.
 - [ ] Persistir layout da sala no banco.
+- [ ] Adicionar undo/redo para operações do editor.
 
 ## Database
 
@@ -150,7 +151,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Registrar regras iniciais de i18n no `AGENTS.md`.
 - [x] Criar `docs/database.md`.
 - [ ] Criar `docs/architecture.md`.
-- [ ] Criar `docs/renderer.md`.
+- [x] Criar `docs/renderer.md`.
 - [ ] Criar `docs/livekit.md`.
 - [ ] Criar `docs/realtime.md`.
 - [ ] Criar `docs/meetings.md`.
@@ -165,3 +166,6 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [ ] Remover qualquer conteúdo remanescente do template que não represente o produto.
 - [ ] Adicionar testes do fluxo de autenticação, seleção de workspace e mapa.
 - [ ] Remover fallback local de `DATABASE_URL` do código quando a validação de ambiente estiver formalizada.
+- [ ] Definir nomes curtos explícitos para constraints que excedem o limite de 63 caracteres do PostgreSQL.
+- [ ] Formalizar a validação de `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` para eliminar avisos no build sem ambiente configurado.
+- [ ] Reavaliar a dependência `@neondatabase/serverless` após definir o ambiente de deploy.

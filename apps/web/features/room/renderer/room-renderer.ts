@@ -8,11 +8,19 @@ import {
 } from "pixi.js";
 import type { Player, Room, RoomObject } from "../types";
 
+export type RoomEditorInteraction = {
+  enabled: boolean;
+  selectedObjectId: string | null;
+  onTileSelect: (position: { x: number; y: number }) => void;
+  onObjectSelect: (objectId: string) => void;
+};
+
 type RoomRendererOptions = {
   container: HTMLElement;
   room: Room;
   player: Player;
   objects: RoomObject[];
+  editorInteraction: RoomEditorInteraction;
 };
 
 export class RoomRenderer {
@@ -23,6 +31,7 @@ export class RoomRenderer {
   private readonly gridLayer = new Container();
   private player: Player;
   private objects: RoomObject[];
+  private editorInteraction: RoomEditorInteraction;
   private playerBody?: Graphics;
   private playerLabel?: Text;
 
@@ -30,6 +39,7 @@ export class RoomRenderer {
     this.room = options.room;
     this.player = options.player;
     this.objects = options.objects;
+    this.editorInteraction = options.editorInteraction;
   }
 
   static async create(options: RoomRendererOptions): Promise<RoomRenderer> {
@@ -45,6 +55,12 @@ export class RoomRenderer {
 
   updateObjects(objects: RoomObject[]): void {
     this.objects = objects;
+    this.drawObjects();
+  }
+
+  updateEditorInteraction(interaction: RoomEditorInteraction): void {
+    this.editorInteraction = interaction;
+    this.drawGrid();
     this.drawObjects();
   }
 
@@ -87,6 +103,23 @@ export class RoomRenderer {
     }
 
     grid.stroke({ color: "#cbd5e1", width: 1 });
+    grid.eventMode = this.editorInteraction.enabled ? "static" : "none";
+    grid.cursor = this.editorInteraction.enabled ? "crosshair" : "default";
+    grid.on("pointertap", (event) => {
+      const localPosition = event.getLocalPosition(grid);
+      const tileX = Math.floor(localPosition.x / this.room.tileSize);
+      const tileY = Math.floor(localPosition.y / this.room.tileSize);
+
+      if (
+        tileX >= 0 &&
+        tileX < this.room.width &&
+        tileY >= 0 &&
+        tileY < this.room.height
+      ) {
+        this.editorInteraction.onTileSelect({ x: tileX, y: tileY });
+      }
+    });
+
     this.gridLayer.addChild(grid);
   }
 
@@ -98,20 +131,76 @@ export class RoomRenderer {
       const item = new Graphics();
       const color =
         typeof object.state.color === "string" ? object.state.color : "#94a3b8";
+      const isSelected =
+        this.editorInteraction.enabled &&
+        this.editorInteraction.selectedObjectId === object.id;
 
-      item
-        .roundRect(
-          tile.x + 8,
-          tile.y + 8,
-          this.room.tileSize - 16,
-          this.room.tileSize - 16,
-          6,
-        )
-        .fill(color)
-        .stroke({ color: "#475569", width: 2 });
+      this.drawObjectShape(item, object, tile, color);
+
+      if (isSelected) {
+        item
+          .roundRect(
+            tile.x + 3,
+            tile.y + 3,
+            this.room.tileSize - 6,
+            this.room.tileSize - 6,
+            7,
+          )
+          .stroke({ color: "#0f766e", width: 3 });
+      }
+
+      item.eventMode = this.editorInteraction.enabled ? "static" : "none";
+      item.cursor = this.editorInteraction.enabled ? "pointer" : "default";
+      item.on("pointertap", (event) => {
+        event.stopPropagation();
+        this.editorInteraction.onObjectSelect(object.id);
+      });
 
       this.objectLayer.addChild(item);
     }
+  }
+
+  private drawObjectShape(
+    item: Graphics,
+    object: RoomObject,
+    tile: { x: number; y: number },
+    color: string,
+  ): void {
+    const centerX = tile.x + this.room.tileSize / 2;
+    const centerY = tile.y + this.room.tileSize / 2;
+    const stroke = { color: "#475569", width: 2 };
+
+    switch (object.itemDefinitionId) {
+      case "chair":
+        item
+          .roundRect(tile.x + 12, tile.y + 10, 24, 28, 6)
+          .fill(color)
+          .stroke(stroke);
+        break;
+      case "whiteboard":
+        item
+          .roundRect(tile.x + 5, tile.y + 12, 38, 24, 4)
+          .fill(color)
+          .stroke(stroke);
+        break;
+      case "plant":
+        item.circle(centerX, centerY, 14).fill(color).stroke(stroke);
+        break;
+      default:
+        item
+          .roundRect(tile.x + 6, tile.y + 10, 36, 28, 6)
+          .fill(color)
+          .stroke(stroke);
+    }
+
+    const angle = (object.rotation * Math.PI) / 180;
+    item
+      .moveTo(centerX, centerY)
+      .lineTo(
+        centerX + Math.sin(angle) * 9,
+        centerY - Math.cos(angle) * 9,
+      )
+      .stroke({ color: "#334155", width: 2 });
   }
 
   private drawPlayer(): void {

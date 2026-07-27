@@ -149,6 +149,7 @@ Já existe uma fundação inicial para o MVP:
 - grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
 - store Zustand para estado local da sala e do player;
+- editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
 - mocks tipados de workspaces em `apps/web/features/workspaces`;
 - schemas Zod iniciais para sala, player, avatar, objetos e tipos de reunião;
 - schema Drizzle inicial para os principais domínios persistentes;

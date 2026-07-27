@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
+import { RoomEditorPanel } from "@/features/room-editor/components/room-editor-panel";
 import { Link } from "@/i18n/navigation";
 
 export default async function DemoRoomPage() {
@@ -26,7 +27,10 @@ export default async function DemoRoomPage() {
 
         <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
           <RoomCanvas />
-          <RoomStatusPanel />
+          <div className="flex flex-col gap-4">
+            <RoomEditorPanel />
+            <RoomStatusPanel />
+          </div>
         </div>
       </div>
     </main>

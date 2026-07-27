@@ -86,6 +86,24 @@
       "description": "Mova-se com as setas ou WASD. Esta é uma presença local para a fundação do MVP.",
       "title": "Sala demo"
     },
+    "editor": {
+      "actions": {
+        "remove": "Remover",
+        "rotate": "Girar"
+      },
+      "catalog": "Catálogo",
+      "items": {
+        "chair": "Cadeira",
+        "plant": "Planta",
+        "table": "Mesa",
+        "whiteboard": "Quadro"
+      },
+      "noSelection": "Nenhuma seleção",
+      "objectCount": "{count, plural, one {# objeto} other {# objetos}}",
+      "selection": "Seleção",
+      "title": "Editor da sala",
+      "toggle": "Editar"
+    },
     "status": {
       "direction": "Direção",
       "directions": {

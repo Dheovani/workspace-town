@@ -6,11 +6,11 @@ Esta pasta concentra a documentação técnica do Workspace Town. O README da ra
 
 - `README.md`: este índice técnico.
 - `database.md`: banco local, Drizzle, migrations e regras iniciais de persistência.
+- `renderer.md`: renderer PixiJS, integração com React/Zustand e editor local.
 
 ## Documentos planejados
 
 - `architecture.md`: arquitetura geral do monorepo, fronteiras entre app web, renderer, banco, chamadas e realtime.
-- `renderer.md`: organização do renderer PixiJS, ciclo de vida, grid, objetos e avatar.
 - `i18n.md`: estratégia de internacionalização, mensagens e revisão de textos.
 - `livekit.md`: integração com LiveKit, token endpoint, permissões e relação com o domínio interno de chamadas.
 - `realtime.md`: arquitetura futura para presença, movimento e eventos transientes.
@@ -25,6 +25,7 @@ O projeto separa responsabilidades em camadas:
 - `apps/web/i18n`: configuração do `next-intl`, routing e helpers de navegação.
 - `apps/web/lib/auth`: configuração server-side e client-side do `better-auth`.
 - `apps/web/features/room`: domínio client-side da sala virtual, incluindo componentes, store, renderer e schemas.
+- `apps/web/features/room-editor`: catálogo e controles React do editor local de sala.
 - `apps/web/features/workspaces`: mocks e helpers para o fluxo inicial de seleção de workspace/cidade.
 - `apps/web/db/schema.ts`: schema Drizzle inicial para dados persistentes.
 - `docker-compose.yml`: PostgreSQL local para desenvolvimento.
@@ -106,6 +107,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O acesso server-side usa o driver `postgres`, compatível com PostgreSQL local e conexões PostgreSQL da Neon.
 - LiveKit é tratado como provider de chamada, não como modelo de domínio completo.
 - Workspaces ainda não são carregados do banco; a seleção atual usa dados mockados.
+- O editor de sala altera objetos apenas no Zustand; persistência será adicionada em uma etapa futura.
 
 ## Como evoluir esta documentação
 

@@ -52,6 +52,25 @@ export const roomSchema = z.object({
 
 export type Room = z.infer<typeof roomSchema>;
 
+export const itemDefinitionKindSchema = z.enum([
+  "table",
+  "chair",
+  "whiteboard",
+  "plant",
+]);
+
+export type ItemDefinitionKind = z.infer<typeof itemDefinitionKindSchema>;
+
+export const itemDefinitionSchema = z.object({
+  id: z.string().min(1),
+  kind: itemDefinitionKindSchema,
+  translationKey: itemDefinitionKindSchema,
+  color: z.string().min(1),
+  blocksMovement: z.boolean().default(true),
+});
+
+export type ItemDefinition = z.infer<typeof itemDefinitionSchema>;
+
 export const roomObjectSchema = z.object({
   id: z.string().min(1),
   roomId: z.string().min(1),

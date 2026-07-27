@@ -53,6 +53,9 @@ features/
     renderer/                      # Renderer PixiJS isolado
     stores/                        # Zustand stores
     types.ts                       # Tipos e schemas Zod
+  room-editor/
+    catalog/                       # Catálogo local de itens
+    components/                    # Controles React do editor
   workspaces/
     mocks/                         # Workspaces/cidades mockados
 i18n/
@@ -163,6 +166,19 @@ A feature inicial está em `features/room`.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
 - `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a cena e limpa recursos no unmount.
 
+## Editor de sala
+
+O editor local está em `features/room-editor` e usa o Zustand da feature de sala.
+
+- o switch ativa ou desativa o modo de edição;
+- o catálogo inicial contém mesa, cadeira, quadro e planta;
+- um clique em tile vazio adiciona o item selecionado;
+- um clique em objeto seleciona a instância;
+- outro clique em tile vazio move o objeto selecionado;
+- o painel permite girar e remover a seleção.
+
+As operações são locais e não são persistidas. O renderer recebe callbacks pelo `RoomCanvas` e permanece desacoplado do store Zustand.
+
 ## Feature de workspaces
 
 A seleção inicial de workspaces/cidades usa dados mockados em `features/workspaces/mocks/workspaces.ts`.
@@ -210,6 +226,7 @@ Implementado:
 - player local;
 - movimento por WASD ou setas;
 - objetos estáticos;
+- editor local para adicionar, mover, girar e remover objetos;
 - estado local com Zustand;
 - schemas Zod iniciais;
 - schema Drizzle inicial;

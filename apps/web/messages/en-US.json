@@ -86,6 +86,24 @@
       "description": "Move with arrow keys or WASD. This is local-only presence for the MVP foundation.",
       "title": "Demo Room"
     },
+    "editor": {
+      "actions": {
+        "remove": "Remove",
+        "rotate": "Rotate"
+      },
+      "catalog": "Catalog",
+      "items": {
+        "chair": "Chair",
+        "plant": "Plant",
+        "table": "Table",
+        "whiteboard": "Whiteboard"
+      },
+      "noSelection": "No selection",
+      "objectCount": "{count, plural, one {# object} other {# objects}}",
+      "selection": "Selection",
+      "title": "Room editor",
+      "toggle": "Edit"
+    },
     "status": {
       "direction": "Direction",
       "directions": {

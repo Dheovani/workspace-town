@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/features/auth/components/sign-out-button";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
+import { RoomEditorPanel } from "@/features/room-editor/components/room-editor-panel";
 import { getMockWorkspaceBySlug } from "@/features/workspaces/mocks/workspaces";
 import { Link } from "@/i18n/navigation";
 import { requireCurrentSession } from "@/lib/auth/session";
@@ -81,6 +82,7 @@ export default async function WorkspaceMapPage({
                 </div>
               </dl>
             </aside>
+            <RoomEditorPanel />
             <RoomStatusPanel />
           </div>
         </div>
