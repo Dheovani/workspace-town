@@ -1,8 +1,15 @@
 "use client";
 
 import { create } from "zustand";
-import { getRoomItemDefinition } from "@/features/room-editor/catalog/item-definitions";
-import type { Player, PlayerDirection, Room, RoomObject } from "../types";
+import {
+  getRoomItemDefinition,
+  roomItemDefinitions,
+} from "@/features/room-editor/catalog/item-definitions";
+import {
+  resolvePlayerMovement,
+  type PlayerMove,
+} from "../domain/player-movement";
+import type { Player, Room, RoomObject } from "../types";
 
 const demoRoom: Room = {
   id: "demo",
@@ -47,12 +54,6 @@ const demoObjects: RoomObject[] = [
   },
 ];
 
-type MoveDelta = {
-  dx: number;
-  dy: number;
-  direction: PlayerDirection;
-};
-
 type RoomState = {
   room: Room;
   localPlayer: Player;
@@ -60,7 +61,7 @@ type RoomState = {
   isEditing: boolean;
   selectedItemDefinitionId: string | null;
   selectedObjectId: string | null;
-  moveLocalPlayer: (delta: MoveDelta) => void;
+  moveLocalPlayer: (move: PlayerMove) => void;
   setEditing: (isEditing: boolean) => void;
   selectItemDefinition: (itemDefinitionId: string) => void;
   selectObject: (objectId: string) => void;
@@ -77,28 +78,16 @@ export const useRoomStore = create<RoomState>((set) => ({
   isEditing: false,
   selectedItemDefinitionId: null,
   selectedObjectId: null,
-  moveLocalPlayer: ({ dx, dy, direction }) =>
-    set((state) => {
-      const nextX = Math.max(
-        0,
-        Math.min(state.room.width - 1, state.localPlayer.position.x + dx),
-      );
-      const nextY = Math.max(
-        0,
-        Math.min(state.room.height - 1, state.localPlayer.position.y + dy),
-      );
-
-      return {
-        localPlayer: {
-          ...state.localPlayer,
-          direction,
-          position: {
-            x: nextX,
-            y: nextY,
-          },
-        },
-      };
-    }),
+  moveLocalPlayer: (move) =>
+    set((state) => ({
+      localPlayer: resolvePlayerMovement({
+        room: state.room,
+        player: state.localPlayer,
+        objects: state.objects,
+        itemDefinitions: roomItemDefinitions,
+        move,
+      }),
+    })),
   setEditing: (isEditing) =>
     set({
       isEditing,
@@ -130,8 +119,11 @@ export const useRoomStore = create<RoomState>((set) => ({
           object.position.x === position.x &&
           object.position.y === position.y,
       );
+      const playerOccupiesTile =
+        state.localPlayer.position.x === position.x &&
+        state.localPlayer.position.y === position.y;
 
-      if (occupied) {
+      if (occupied || playerOccupiesTile) {
         return state;
       }
 

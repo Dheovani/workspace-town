@@ -28,10 +28,13 @@ O Zustand mantém o estado local compartilhado entre essas camadas. O renderer n
 apps/web/features/room/
   components/room-canvas.tsx
   components/room-shell.tsx
+  domain/player-movement.ts
+  domain/player-movement.test.ts
   renderer/camera.ts
   renderer/camera.test.ts
   renderer/room-renderer.ts
   stores/room-store.ts
+  stores/room-store.test.ts
   types.ts
 
 apps/web/features/room-editor/
@@ -61,6 +64,12 @@ O cálculo da câmera fica em `camera.ts` e não depende do PixiJS. Quando o map
 
 O mapa local atual possui `32 x 20` tiles para exercitar esse comportamento em desktop e viewports menores. Os testes em `camera.test.ts` cobrem enquadramento, acompanhamento e limites.
 
+## Movimento e colisão
+
+O PixiJS não decide se um movimento é válido. `domain/player-movement.ts` recebe sala, player, objetos, catálogo e tentativa de movimento. A função atualiza a direção do avatar, mas mantém sua posição quando o destino está fora da sala ou contém um objeto bloqueante.
+
+O campo `state.blocksMovement` de uma instância pode sobrescrever a definição do catálogo. Objetos sem definição conhecida são bloqueantes por segurança. Os testes cobrem movimento livre, limites da sala, objetos bloqueantes, objetos atravessáveis e overrides. A integração do store também verifica a colisão com o mapa demo e a proteção do tile ocupado pelo player durante a edição.
+
 ## Editor de sala
 
 O editor mantém uma cópia local no Zustand durante a interação:
@@ -71,7 +80,7 @@ O editor mantém uma cópia local no Zustand durante a interação:
 - clica em outro tile vazio para movê-lo;
 - pode girar ou remover o objeto selecionado pelo painel.
 
-Enquanto o editor está ativo, o movimento do avatar por teclado é desabilitado para evitar conflito de interação. O store impede que dois objetos ocupem o mesmo tile.
+Enquanto o editor está ativo, o movimento do avatar por teclado é desabilitado para evitar conflito de interação. O store impede que dois objetos ocupem o mesmo tile e não permite posicionar um objeto sobre o player.
 
 ## Persistência e realtime
 
@@ -87,6 +96,5 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;
-- colisão do player com objetos ainda não foi implementada;
 - o catálogo ainda é local e fixo;
 - membership e permissões específicas de edição por workspace ainda não foram implementadas.

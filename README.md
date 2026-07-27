@@ -156,9 +156,10 @@ Já existe uma fundação inicial para o MVP:
 - renderer PixiJS separado da camada React;
 - grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
+- colisão local com limites da sala e objetos bloqueantes;
 - reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - câmera 2D que acompanha o jogador em mapas maiores e respeita os limites da sala;
-- testes unitários iniciais para os cálculos da câmera;
+- testes unitários iniciais para câmera e regras de movimentação;
 - store Zustand para estado local da sala e do player;
 - editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
 - API autenticada para carregar e salvar o layout das salas padrão;
@@ -212,4 +213,4 @@ As próximas etapas planejadas incluem:
 - Documentação técnica: [`docs/README.md`](docs/README.md)
 - Banco de dados: [`docs/database.md`](docs/database.md)
 - App web: [`apps/web/README.md`](apps/web/README.md)
-- Pendências vivas do projeto: [`TODO.md`](TODO.md)
+- Roadmap de marcos e pendências do produto: [`TODO.md`](TODO.md)

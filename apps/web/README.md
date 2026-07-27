@@ -164,7 +164,10 @@ Ele requer Docker Desktop ou outro Docker engine ativo.
 A feature inicial está em `features/room`.
 
 - `types.ts`: schemas Zod e tipos de `room`, `player`, `roomObject`, `avatarConfig` e `meetingType`.
-- `stores/room-store.ts`: estado local da sala demo, player local, objetos estáticos e movimento por grid.
+- `domain/player-movement.ts`: valida movimento, limites e colisão sem depender de React, Zustand ou PixiJS.
+- `domain/player-movement.test.ts`: testes unitários das regras de movimentação.
+- `stores/room-store.ts`: estado local da sala demo, player local, objetos estáticos e movimento validado por grid.
+- `stores/room-store.test.ts`: integração entre movimento, objetos demo e regras do editor.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
 - `components/room-shell.tsx`: layout client-side com cabeçalho compacto, área jogável flexível e sidebar responsiva.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
@@ -236,6 +239,7 @@ Implementado:
 - grid 2D;
 - player local;
 - movimento por WASD ou setas;
+- colisão com limites e objetos bloqueantes;
 - câmera responsiva acompanhando o player;
 - objetos estáticos;
 - editor local para adicionar, mover, girar e remover objetos;

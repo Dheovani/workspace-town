@@ -107,6 +107,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O layout das salas não usa o container de largura máxima das páginas convencionais.
 - A câmera 2D acompanha o jogador em mapas maiores, respeita os limites da sala e centraliza e amplia mapas que cabem integralmente na viewport.
 - O cálculo da câmera é isolado do PixiJS e possui testes unitários com o runner nativo do Bun.
+- Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.
@@ -118,4 +119,4 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 
 ## Como evoluir esta documentação
 
-Ao implementar novas frentes, crie documentos específicos nesta pasta e atualize este índice. Também atualize o `TODO.md` da raiz com tarefas concluídas, pendências novas e débitos técnicos descobertos.
+Ao implementar novas frentes, crie documentos específicos nesta pasta e atualize este índice. O `TODO.md` da raiz funciona como roadmap do produto: mantenha os marcos, critérios de saída, tarefas concluídas, novas pendências e débitos técnicos coerentes com o estado real da aplicação.
