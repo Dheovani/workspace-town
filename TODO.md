@@ -62,9 +62,9 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Adicionar tabelas Drizzle iniciais para `better-auth`.
 - [x] Adicionar `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL` aos exemplos de ambiente.
 - [x] Gerar migration inicial para tabelas de autenticação.
-- [ ] Aplicar migrations em um banco PostgreSQL configurado.
-- [ ] Iniciar Docker Desktop/engine local e validar `bun run db:up`.
-- [ ] Validar cadastro, login, sessão server-side e logout usando o PostgreSQL local.
+- [x] Aplicar migrations em um banco PostgreSQL configurado.
+- [x] Iniciar Docker Desktop/engine local e validar `bun run db:up`.
+- [x] Validar cadastro, login, sessão server-side e logout usando o PostgreSQL local.
 - [ ] Implementar recuperação de senha.
 - [ ] Implementar verificação de e-mail.
 - [ ] Avaliar OAuth quando o fluxo principal estiver estável.
@@ -109,9 +109,9 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Gerar migration inicial.
 - [x] Configurar PostgreSQL local para desenvolvimento.
 - [x] Documentar fluxo local de banco e migrations.
-- [ ] Aplicar migration inicial em PostgreSQL.
-- [ ] Validar a migration inicial contra o PostgreSQL local depois que o Docker engine estiver ativo.
-- [ ] Configurar cliente de banco server-side.
+- [x] Aplicar migration inicial em PostgreSQL.
+- [x] Validar a migration inicial contra o PostgreSQL local depois que o Docker engine estiver ativo.
+- [x] Configurar cliente de banco server-side compatível com PostgreSQL local e Neon.
 - [ ] Implementar queries iniciais para workspaces, rooms e room objects.
 - [ ] Avaliar migrar schema para `packages/db` quando o compartilhamento justificar.
 

@@ -58,6 +58,8 @@ cd apps/web
 bun run db:migrate
 ```
 
+A migration inicial foi validada nesse ambiente local e cria 22 tabelas públicas, incluindo as tabelas de autenticação e dos domínios iniciais.
+
 Abrir o Drizzle Studio:
 
 ```bash
@@ -78,6 +80,12 @@ As migrations ficam em:
 ```txt
 apps/web/drizzle/
 ```
+
+## Cliente server-side
+
+O cliente em `apps/web/db/client.ts` usa `postgres` com `drizzle-orm/postgres-js`. Essa configuração aceita a URL TCP do PostgreSQL local e URLs PostgreSQL da Neon.
+
+O driver HTTP de `@neondatabase/serverless` não é usado pelo cliente atual porque não conecta diretamente ao PostgreSQL local do Docker Compose. A dependência permanece instalada enquanto as necessidades de deploy são avaliadas.
 
 O schema atual inclui tabelas para:
 
@@ -105,3 +113,5 @@ O `better-auth` usa o banco configurado em `DATABASE_URL`. Para testar cadastro 
 3. suba o PostgreSQL com `bun run db:up`;
 4. aplique as migrations com `bun run db:migrate`;
 5. rode o app web e teste `/auth/register` e `/auth/login`.
+
+O fluxo de cadastro, login, leitura de sessão em rota protegida e logout foi validado contra o PostgreSQL local.

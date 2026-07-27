@@ -1,11 +1,15 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import "server-only";
+
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
 const databaseUrl =
   process.env.DATABASE_URL ??
   "postgresql://workspace_town:workspace_town@localhost:5432/workspace_town";
 
-const sql = neon(databaseUrl);
+const queryClient = postgres(databaseUrl, {
+  prepare: false,
+});
 
-export const db = drizzle(sql, { schema });
+export const db = drizzle(queryClient, { schema });

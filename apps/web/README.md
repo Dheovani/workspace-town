@@ -18,7 +18,7 @@ O renderer da sala não deve ser implementado como uma árvore grande de compone
 - PixiJS para canvas da sala.
 - Zustand para estado local client-side.
 - Zod para schemas e validação.
-- Drizzle ORM para schema PostgreSQL.
+- Drizzle ORM e driver `postgres` para acesso server-side ao PostgreSQL.
 - LiveKit server SDK para geração de token no servidor.
 
 ## Estrutura principal
@@ -182,7 +182,7 @@ type MockWorkspace = {
 };
 ```
 
-Ainda não há autenticação real, banco de dados ou permissão por workspace. O fluxo atual existe para validar navegação e composição do mapa principal.
+A autenticação usa o PostgreSQL, mas ainda não há persistência nem permissão real por workspace. A seleção atual continua mockada para validar navegação e composição do mapa principal.
 
 ## Client components e server-side code
 
@@ -190,7 +190,7 @@ Use `"use client"` apenas para código que depende do browser, como canvas, tecl
 
 Código server-side deve ficar em rotas do App Router ou módulos server-only. O endpoint atual de LiveKit está em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
 
-Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, há cliente Drizzle server-side e a migration inicial foi gerada, mas ainda não há queries de domínio implementadas.
+Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, o cliente Drizzle usa `postgres` no servidor e a migration inicial foi validada no PostgreSQL local, mas ainda não há queries de domínio implementadas.
 
 ## MVP atual
 
@@ -214,6 +214,7 @@ Implementado:
 - schemas Zod iniciais;
 - schema Drizzle inicial;
 - PostgreSQL local via Docker Compose;
+- migration e fluxo de autenticação validados no PostgreSQL local;
 - rota inicial de token LiveKit.
 
 Limites atuais:
@@ -222,8 +223,8 @@ Limites atuais:
 - não há multiplayer real;
 - a persistência ainda não foi conectada aos fluxos de workspaces e salas;
 - workspaces são mockados;
-- migration inicial gerada, mas ainda precisa ser aplicada no PostgreSQL local ou em outro banco configurado;
-- não há editor de sala;
+- migrations ainda precisam ser aplicadas separadamente em cada novo ambiente;
+- alterações do editor de sala ainda não são persistidas;
 - não há componente de chamada LiveKit conectado;
 - não há OAuth, recuperação de senha ou verificação de e-mail;
 - não há testes automatizados.

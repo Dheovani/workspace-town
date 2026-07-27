@@ -35,6 +35,7 @@ No momento, a aplicação principal está em `apps/web`. A documentação técni
 - Zustand para estado client-side local.
 - Zod para schemas e validação.
 - Drizzle ORM para modelagem de banco PostgreSQL.
+- Driver `postgres` para acesso server-side compatível com PostgreSQL local e Neon.
 - LiveKit como provedor planejado de áudio e vídeo.
 
 ## Internacionalização
@@ -153,6 +154,8 @@ Já existe uma fundação inicial para o MVP:
 - schema Drizzle inicial para os principais domínios persistentes;
 - tabelas Drizzle iniciais para `better-auth`;
 - PostgreSQL local via Docker Compose;
+- migration inicial validada no PostgreSQL local;
+- cadastro, login, sessão protegida e logout validados contra o banco local;
 - endpoint inicial `POST /api/livekit/token` para gerar token LiveKit;
 - arquivo `.env.example` do app web.
 
@@ -167,7 +170,7 @@ Usuários sem sessão são redirecionados para `/auth/login`. Após login ou cad
 
 Para autenticação real funcionar em desenvolvimento, configure `DATABASE_URL`, `BETTER_AUTH_SECRET` e `BETTER_AUTH_URL`, suba o PostgreSQL local e aplique as migrations do Drizzle.
 
-A migration inicial já foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. Para aplicar em um PostgreSQL configurado:
+A migration inicial está em `apps/web/drizzle/0000_solid_vivisector.sql` e foi validada no PostgreSQL local. Para aplicá-la em um banco novo:
 
 ```bash
 bun run db:up
@@ -185,8 +188,8 @@ As próximas etapas planejadas incluem:
 - persistência real de workspaces e salas;
 - painel de chamada LiveKit no app web;
 - conexão real a uma sala LiveKit;
-- editor básico de sala e objetos;
-- persistência real em PostgreSQL;
+- persistência do editor de sala;
+- persistência real de workspaces, salas e objetos em PostgreSQL;
 - servidor realtime para presença e movimento;
 - fluxo de reuniões para daily, planning, retro, review e pair programming;
 - testes automatizados para i18n, renderer, schemas, rotas e UI.

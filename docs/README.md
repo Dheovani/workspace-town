@@ -80,7 +80,7 @@ Rotas protegidas:
 
 A proteção acontece server-side por meio da sessão do Better Auth. Usuários sem sessão são redirecionados para `/auth/login`.
 
-O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inicial foi gerada em `apps/web/drizzle/0000_solid_vivisector.sql`. O repositório possui PostgreSQL local via Docker Compose. A migration ainda precisa ser aplicada no banco local antes de usar autenticação real contra um banco novo.
+O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inicial está em `apps/web/drizzle/0000_solid_vivisector.sql`. O repositório possui PostgreSQL local via Docker Compose. A migration e o fluxo de cadastro, login, sessão protegida e logout foram validados contra esse ambiente local.
 
 ## Domínios principais
 
@@ -103,6 +103,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.
+- O acesso server-side usa o driver `postgres`, compatível com PostgreSQL local e conexões PostgreSQL da Neon.
 - LiveKit é tratado como provider de chamada, não como modelo de domínio completo.
 - Workspaces ainda não são carregados do banco; a seleção atual usa dados mockados.
 
