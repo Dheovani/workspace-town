@@ -26,6 +26,7 @@ O projeto separa responsabilidades em camadas:
 - `apps/web/lib/auth`: configuração server-side e client-side do `better-auth`.
 - `apps/web/features/room`: domínio client-side da sala virtual, incluindo componentes, store, renderer e schemas.
 - `apps/web/features/room-editor`: catálogo e controles React do editor local de sala.
+- `apps/web/features/room/server`: queries server-only para layouts persistentes.
 - `apps/web/features/workspaces`: mocks e helpers para o fluxo inicial de seleção de workspace/cidade.
 - `apps/web/db/schema.ts`: schema Drizzle inicial para dados persistentes.
 - `docker-compose.yml`: PostgreSQL local para desenvolvimento.
@@ -107,7 +108,8 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O acesso server-side usa o driver `postgres`, compatível com PostgreSQL local e conexões PostgreSQL da Neon.
 - LiveKit é tratado como provider de chamada, não como modelo de domínio completo.
 - Workspaces ainda não são carregados do banco; a seleção atual usa dados mockados.
-- O editor de sala altera objetos apenas no Zustand; persistência será adicionada em uma etapa futura.
+- O mapa autenticado carrega e salva `roomObjects` por API; a sala demo continua local.
+- A API de layout exige sessão, mas membership e permissão por workspace ainda estão planejadas.
 
 ## Como evoluir esta documentação
 

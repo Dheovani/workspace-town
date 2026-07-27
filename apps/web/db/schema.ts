@@ -7,6 +7,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import type { AvatarConfig, MeetingType } from "@/features/room/types";
@@ -152,20 +153,29 @@ export const workspaceMembers = pgTable(
   (table) => [primaryKey({ columns: [table.workspaceId, table.userId] })],
 );
 
-export const rooms = pgTable("rooms", {
-  id: uuid("room_id").primaryKey().defaultRandom(),
-  workspaceId: uuid("workspace_id")
-    .notNull()
-    .references(() => workspaces.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
-  description: text("description"),
-  width: integer("width").notNull().default(16),
-  height: integer("height").notNull().default(10),
-  tileSize: integer("tile_size").notNull().default(48),
-  isPublic: boolean("is_public").notNull().default(false),
-  ...timestamps,
-});
+export const rooms = pgTable(
+  "rooms",
+  {
+    id: uuid("room_id").primaryKey().defaultRandom(),
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
+    width: integer("width").notNull().default(16),
+    height: integer("height").notNull().default(10),
+    tileSize: integer("tile_size").notNull().default(48),
+    isPublic: boolean("is_public").notNull().default(false),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("rooms_workspace_slug_unique").on(
+      table.workspaceId,
+      table.slug,
+    ),
+  ],
+);
 
 export const roomSettings = pgTable("room_settings", {
   roomId: uuid("room_id")

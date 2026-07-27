@@ -98,7 +98,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar catálogo inicial de item definitions.
 - [x] Criar modo de edição de sala.
 - [x] Permitir adicionar, mover, girar e remover objetos localmente.
-- [ ] Persistir layout da sala no banco.
+- [x] Implementar persistência do layout da sala via API autenticada.
+- [ ] Validar migration, seed e round-trip do layout no PostgreSQL local.
 - [ ] Adicionar undo/redo para operações do editor.
 
 ## Database
@@ -113,7 +114,8 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Aplicar migration inicial em PostgreSQL.
 - [x] Validar a migration inicial contra o PostgreSQL local depois que o Docker engine estiver ativo.
 - [x] Configurar cliente de banco server-side compatível com PostgreSQL local e Neon.
-- [ ] Implementar queries iniciais para workspaces, rooms e room objects.
+- [x] Implementar queries iniciais para rooms e room objects.
+- [ ] Implementar queries de listagem e membership para workspaces.
 - [ ] Avaliar migrar schema para `packages/db` quando o compartilhamento justificar.
 
 ## LiveKit/calls
@@ -161,6 +163,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 
 - [ ] Adicionar testes para schemas Zod.
 - [ ] Adicionar testes para rota de token LiveKit.
+- [ ] Adicionar testes para a API de persistência do layout da sala.
 - [ ] Validar comportamento do renderer com resize.
 - [ ] Revisar acessibilidade da página de sala.
 - [ ] Remover qualquer conteúdo remanescente do template que não represente o produto.

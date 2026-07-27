@@ -60,6 +60,15 @@ bun run db:migrate
 
 A migration inicial foi validada nesse ambiente local e cria 22 tabelas públicas, incluindo as tabelas de autenticação e dos domínios iniciais.
 
+Popular os dados iniciais:
+
+```bash
+cd apps/web
+bun run db:seed
+```
+
+O seed é idempotente para os workspaces mockados, suas salas padrão e o catálogo de mesa, cadeira, quadro e planta. Objetos iniciais são inseridos somente quando a sala ainda está vazia.
+
 Abrir o Drizzle Studio:
 
 ```bash
@@ -80,6 +89,11 @@ As migrations ficam em:
 ```txt
 apps/web/drizzle/
 ```
+
+Migrations atuais:
+
+- `0000_solid_vivisector.sql`: schema inicial;
+- `0001_absurd_thunderball.sql`: unicidade do slug da sala dentro do workspace.
 
 ## Cliente server-side
 
@@ -103,6 +117,8 @@ O schema atual inclui tabelas para:
 Dados persistentes, como workspaces, salas, objetos colocados e reuniões, pertencem ao PostgreSQL.
 
 Dados efêmeros, como posição atual do avatar, presença online e movimento contínuo, não devem ser gravados continuamente no PostgreSQL. No MVP, esses dados permanecem locais. No futuro, devem ser tratados por um serviço realtime.
+
+O layout do editor é persistido como um conjunto de `roomObjects`. A API substitui o layout da sala em uma transação após validar limites, sobreposição de tiles e item definitions conhecidos.
 
 ## Autenticação
 

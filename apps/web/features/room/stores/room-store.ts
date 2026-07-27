@@ -67,6 +67,7 @@ type RoomState = {
   placeSelectionAt: (position: { x: number; y: number }) => void;
   rotateSelectedObject: () => void;
   removeSelectedObject: () => void;
+  replaceObjects: (objects: RoomObject[]) => void;
 };
 
 export const useRoomStore = create<RoomState>((set) => ({
@@ -187,4 +188,10 @@ export const useRoomStore = create<RoomState>((set) => ({
       ),
       selectedObjectId: null,
     })),
+  replaceObjects: (objects) =>
+    set({
+      objects,
+      selectedItemDefinitionId: null,
+      selectedObjectId: null,
+    }),
 }));

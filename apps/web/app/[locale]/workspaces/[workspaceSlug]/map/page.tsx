@@ -82,7 +82,10 @@ export default async function WorkspaceMapPage({
                 </div>
               </dl>
             </aside>
-            <RoomEditorPanel />
+            <RoomEditorPanel
+              workspaceSlug={workspace.slug}
+              roomSlug={workspace.defaultRoomId}
+            />
             <RoomStatusPanel />
           </div>
         </div>

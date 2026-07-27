@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "rooms_workspace_slug_unique" ON "rooms" USING btree ("workspace_id","slug");

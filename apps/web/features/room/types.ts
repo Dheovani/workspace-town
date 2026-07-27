@@ -82,3 +82,37 @@ export const roomObjectSchema = z.object({
 });
 
 export type RoomObject = z.infer<typeof roomObjectSchema>;
+
+export const roomLayoutObjectInputSchema = roomObjectSchema
+  .pick({
+    itemDefinitionId: true,
+    label: true,
+    position: true,
+    rotation: true,
+    state: true,
+  })
+  .extend({
+    id: z.string().min(1).optional(),
+    rotation: z
+      .number()
+      .int()
+      .min(0)
+      .max(270)
+      .refine((rotation) => rotation % 90 === 0),
+  });
+
+export type RoomLayoutObjectInput = z.infer<
+  typeof roomLayoutObjectInputSchema
+>;
+
+export const roomLayoutInputSchema = z.object({
+  objects: z.array(roomLayoutObjectInputSchema).max(500),
+});
+
+export type RoomLayoutInput = z.infer<typeof roomLayoutInputSchema>;
+
+export const roomLayoutResponseSchema = z.object({
+  objects: z.array(roomObjectSchema),
+});
+
+export type RoomLayoutResponse = z.infer<typeof roomLayoutResponseSchema>;

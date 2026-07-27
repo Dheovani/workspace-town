@@ -2,8 +2,11 @@
 
 import {
   Armchair,
+  Loader2,
   Presentation,
+  RefreshCw,
   RotateCw,
+  Save,
   Sprout,
   Table2,
   Trash2,
@@ -17,6 +20,7 @@ import {
   getRoomItemDefinition,
   roomItemDefinitions,
 } from "../catalog/item-definitions";
+import { useRoomLayoutPersistence } from "../hooks/use-room-layout-persistence";
 
 function ItemIcon({ kind }: { kind: ItemDefinitionKind }) {
   switch (kind) {
@@ -31,7 +35,15 @@ function ItemIcon({ kind }: { kind: ItemDefinitionKind }) {
   }
 }
 
-export function RoomEditorPanel() {
+type RoomEditorPanelProps = {
+  workspaceSlug?: string;
+  roomSlug?: string;
+};
+
+export function RoomEditorPanel({
+  workspaceSlug,
+  roomSlug,
+}: RoomEditorPanelProps) {
   const t = useTranslations("room.editor");
   const isEditing = useRoomStore((state) => state.isEditing);
   const objects = useRoomStore((state) => state.objects);
@@ -49,6 +61,11 @@ export function RoomEditorPanel() {
   const removeSelectedObject = useRoomStore(
     (state) => state.removeSelectedObject,
   );
+  const { canPersist, loadLayout, saveLayout, status } =
+    useRoomLayoutPersistence({
+      workspaceSlug,
+      roomSlug,
+    });
   const selectedObject = objects.find(
     (object) => object.id === selectedObjectId,
   );
@@ -146,6 +163,59 @@ export function RoomEditorPanel() {
       <p className="mt-4 border-t pt-3 text-xs text-muted-foreground">
         {t("objectCount", { count: objects.length })}
       </p>
+
+      {canPersist ? (
+        <div className="mt-3 flex items-center gap-2 border-t pt-3">
+          <Button
+            type="button"
+            size="sm"
+            className="flex-1"
+            disabled={status === "loading" || status === "saving"}
+            onClick={() => void saveLayout()}
+          >
+            {status === "saving" ? (
+              <Loader2 aria-hidden="true" className="animate-spin" />
+            ) : (
+              <Save aria-hidden="true" />
+            )}
+            {status === "saving"
+              ? t("persistence.saving")
+              : t("persistence.save")}
+          </Button>
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="outline"
+            disabled={status === "loading" || status === "saving"}
+            aria-label={t("persistence.reload")}
+            title={t("persistence.reload")}
+            onClick={() => void loadLayout()}
+          >
+            <RefreshCw
+              aria-hidden="true"
+              className={status === "loading" ? "animate-spin" : undefined}
+            />
+          </Button>
+        </div>
+      ) : null}
+
+      {canPersist &&
+      ["loaded", "saved", "loadError", "saveError"].includes(status) ? (
+        <p
+          className={
+            status === "loadError" || status === "saveError"
+              ? "mt-2 text-xs text-destructive"
+              : "mt-2 text-xs text-muted-foreground"
+          }
+          role={
+            status === "loadError" || status === "saveError"
+              ? "alert"
+              : "status"
+          }
+        >
+          {t(`persistence.status.${status}`)}
+        </p>
+      ) : null}
     </aside>
   );
 }

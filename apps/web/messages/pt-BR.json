@@ -100,6 +100,17 @@
       },
       "noSelection": "Nenhuma seleção",
       "objectCount": "{count, plural, one {# objeto} other {# objetos}}",
+      "persistence": {
+        "reload": "Recarregar layout",
+        "save": "Salvar",
+        "saving": "Salvando...",
+        "status": {
+          "loaded": "Layout carregado.",
+          "loadError": "Não foi possível carregar o layout salvo.",
+          "saved": "Layout salvo.",
+          "saveError": "Não foi possível salvar o layout."
+        }
+      },
       "selection": "Seleção",
       "title": "Editor da sala",
       "toggle": "Editar"

@@ -105,6 +105,7 @@ Aplicar migrations no banco local:
 ```bash
 cd apps/web
 bun run db:migrate
+bun run db:seed
 ```
 
 Rodar todos os apps pelo monorepo:
@@ -150,6 +151,8 @@ Já existe uma fundação inicial para o MVP:
 - movimento local com teclado;
 - store Zustand para estado local da sala e do player;
 - editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
+- API autenticada para carregar e salvar o layout das salas padrão;
+- seed idempotente para workspaces, salas, catálogo e objetos iniciais;
 - mocks tipados de workspaces em `apps/web/features/workspaces`;
 - schemas Zod iniciais para sala, player, avatar, objetos e tipos de reunião;
 - schema Drizzle inicial para os principais domínios persistentes;
@@ -186,11 +189,10 @@ As próximas etapas planejadas incluem:
 - OAuth;
 - recuperação de senha;
 - verificação de e-mail;
-- persistência real de workspaces e salas;
+- carregamento da seleção de workspaces a partir do banco;
 - painel de chamada LiveKit no app web;
 - conexão real a uma sala LiveKit;
-- persistência do editor de sala;
-- persistência real de workspaces, salas e objetos em PostgreSQL;
+- membership e permissões reais por workspace;
 - servidor realtime para presença e movimento;
 - fluxo de reuniões para daily, planning, retro, review e pair programming;
 - testes automatizados para i18n, renderer, schemas, rotas e UI.

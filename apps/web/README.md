@@ -37,6 +37,8 @@ app/
     rooms/demo/page.tsx            # Rota da sala demo
   api/livekit/token/route.ts       # Endpoint server-side para token LiveKit
   api/auth/[...all]/route.ts       # Endpoint do Better Auth
+  api/workspaces/[workspaceSlug]/rooms/[roomSlug]/objects/route.ts
+                                   # Leitura e gravação do layout da sala
 components/
   ui/                              # Componentes shadcn/ui
 db/
@@ -51,6 +53,7 @@ features/
   room/
     components/                    # Componentes React da feature
     renderer/                      # Renderer PixiJS isolado
+    server/                        # Queries server-only de layout
     stores/                        # Zustand stores
     types.ts                       # Tipos e schemas Zod
   room-editor/
@@ -177,7 +180,7 @@ O editor local está em `features/room-editor` e usa o Zustand da feature de sal
 - outro clique em tile vazio move o objeto selecionado;
 - o painel permite girar e remover a seleção.
 
-As operações são locais e não são persistidas. O renderer recebe callbacks pelo `RoomCanvas` e permanece desacoplado do store Zustand.
+Na sala demo, as operações continuam locais. No mapa autenticado, o painel carrega o layout da API e oferece ações para salvar ou recarregar. O renderer recebe callbacks pelo `RoomCanvas` e permanece desacoplado do store Zustand.
 
 ## Feature de workspaces
 
@@ -198,7 +201,7 @@ type MockWorkspace = {
 };
 ```
 
-A autenticação usa o PostgreSQL, mas ainda não há persistência nem permissão real por workspace. A seleção atual continua mockada para validar navegação e composição do mapa principal.
+A autenticação e o layout das salas padrão usam o PostgreSQL, mas ainda não há membership nem permissão real por workspace. A seleção atual continua mockada para validar navegação e composição do mapa principal.
 
 ## Client components e server-side code
 
@@ -206,7 +209,7 @@ Use `"use client"` apenas para código que depende do browser, como canvas, tecl
 
 Código server-side deve ficar em rotas do App Router ou módulos server-only. O endpoint atual de LiveKit está em `app/api/livekit/token/route.ts` e usa `livekit-server-sdk` apenas no servidor.
 
-Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, o cliente Drizzle usa `postgres` no servidor e a migration inicial foi validada no PostgreSQL local, mas ainda não há queries de domínio implementadas.
+Banco de dados também deve permanecer no servidor. O schema inicial está em `db/schema.ts`, o cliente Drizzle usa `postgres` e as queries de layout ficam em `features/room/server`.
 
 ## MVP atual
 
@@ -227,6 +230,8 @@ Implementado:
 - movimento por WASD ou setas;
 - objetos estáticos;
 - editor local para adicionar, mover, girar e remover objetos;
+- API autenticada para persistir o layout da sala padrão;
+- seed idempotente dos workspaces, salas e itens iniciais;
 - estado local com Zustand;
 - schemas Zod iniciais;
 - schema Drizzle inicial;
@@ -238,10 +243,10 @@ Limites atuais:
 
 - não há servidor realtime;
 - não há multiplayer real;
-- a persistência ainda não foi conectada aos fluxos de workspaces e salas;
+- a lista e as permissões de workspaces ainda são mockadas;
 - workspaces são mockados;
 - migrations ainda precisam ser aplicadas separadamente em cada novo ambiente;
-- alterações do editor de sala ainda não são persistidas;
+- a persistência do editor ainda precisa ser validada localmente após a migration e o seed;
 - não há componente de chamada LiveKit conectado;
 - não há OAuth, recuperação de senha ou verificação de e-mail;
 - não há testes automatizados.
@@ -276,4 +281,5 @@ Aplicar migrations a partir de `apps/web`:
 
 ```bash
 bun run db:migrate
+bun run db:seed
 ```

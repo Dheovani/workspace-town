@@ -100,6 +100,17 @@
       },
       "noSelection": "No selection",
       "objectCount": "{count, plural, one {# object} other {# objects}}",
+      "persistence": {
+        "reload": "Reload layout",
+        "save": "Save",
+        "saving": "Saving...",
+        "status": {
+          "loaded": "Layout loaded.",
+          "loadError": "The saved layout could not be loaded.",
+          "saved": "Layout saved.",
+          "saveError": "The layout could not be saved."
+        }
+      },
       "selection": "Selection",
       "title": "Room editor",
       "toggle": "Edit"

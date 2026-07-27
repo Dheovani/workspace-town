@@ -8,6 +8,13 @@
       "when": 1783971250397,
       "tag": "0000_solid_vivisector",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785151659276,
+      "tag": "0001_absurd_thunderball",
+      "breakpoints": true
     }
   ]
 }

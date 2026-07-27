@@ -50,9 +50,9 @@ A cena atual usa três containers, nesta ordem:
 
 Objetos selecionados recebem um contorno visual. Mesa, cadeira, quadro e planta possuem formas simples distintas, sem assets externos nesta etapa.
 
-## Editor local
+## Editor de sala
 
-O editor atual funciona apenas em memória:
+O editor mantém uma cópia local no Zustand durante a interação:
 
 - o usuário ativa o modo de edição;
 - seleciona um item do catálogo e clica em um tile vazio para adicioná-lo;
@@ -64,7 +64,9 @@ Enquanto o editor está ativo, o movimento do avatar por teclado é desabilitado
 
 ## Persistência e realtime
 
-O layout editado ainda não é enviado ao PostgreSQL. Persistência de `roomObjects` será implementada em uma etapa futura.
+No mapa autenticado, o painel carrega o layout da sala padrão por uma API server-side e permite salvar ou recarregar os objetos. A gravação substitui os `roomObjects` da sala em uma transação.
+
+A rota `/rooms/demo` continua exclusivamente local. Para habilitar persistência nos mapas autenticados, é necessário aplicar as migrations e executar o seed.
 
 Posição atual do avatar e demais eventos de movimento continuam efêmeros e não devem ser persistidos continuamente no banco relacional. Multiplayer e presença dependem do futuro serviço realtime.
 
@@ -76,4 +78,4 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 - objetos ocupam um único tile;
 - colisão do player com objetos ainda não foi implementada;
 - o catálogo ainda é local e fixo;
-- alterações são perdidas ao recarregar a página.
+- membership e permissões específicas de edição por workspace ainda não foram implementadas.
