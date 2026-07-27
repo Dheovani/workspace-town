@@ -79,7 +79,13 @@
   },
   "room": {
     "canvas": {
-      "ariaLabel": "Canvas da sala demo"
+      "ariaLabel": "Canvas da sala"
+    },
+    "shell": {
+      "closeSidebar": "Fechar painel da sala",
+      "navigation": "Navegação",
+      "openSidebar": "Abrir painel da sala",
+      "sidebarLabel": "Painel da sala"
     },
     "demo": {
       "backLabel": "Workspace Town",

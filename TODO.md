@@ -26,11 +26,13 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Criar mapa principal por workspace em `/workspaces/[workspaceSlug]/map`.
 - [x] Criar página de sala demo.
 - [x] Adicionar painel simples de status da sala/player.
+- [x] Criar shell de sala em tela cheia com cabeçalho compacto e sidebar responsiva.
+- [x] Mover navegação, logout, status e edição para fora da área do mapa.
 - [ ] Criar layout principal do produto com navegação mínima.
 - [x] Proteger `/workspaces` e `/workspaces/[workspaceSlug]/map` por sessão server-side.
 - [x] Adicionar ação de logout na área autenticada.
 - [ ] Criar componentes de UI para painel de participantes, chat e chamada.
-- [ ] Revisar responsividade da sala em viewports pequenas.
+- [x] Adaptar a sidebar da sala para viewports pequenas.
 
 ## Internacionalização
 
@@ -78,6 +80,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [x] Desenhar objetos estáticos iniciais.
 - [x] Desenhar player/avatar básico.
 - [x] Limpar o app Pixi no unmount.
+- [x] Redimensionar e reenquadrar a cena conforme o espaço disponível.
 - [ ] Adicionar câmera ou viewport para salas maiores.
 - [ ] Avaliar grid isométrico depois do protótipo top-down.
 - [ ] Adicionar colisão básica com objetos bloqueados.
@@ -164,7 +167,7 @@ Mapa vivo de pendências do projeto. Atualize este arquivo sempre que novas alte
 - [ ] Adicionar testes para schemas Zod.
 - [ ] Adicionar testes para rota de token LiveKit.
 - [ ] Adicionar testes para a API de persistência do layout da sala.
-- [ ] Validar comportamento do renderer com resize.
+- [x] Validar visualmente o comportamento do renderer com resize em desktop e viewport pequena.
 - [ ] Revisar acessibilidade da página de sala.
 - [ ] Remover qualquer conteúdo remanescente do template que não represente o produto.
 - [ ] Adicionar testes do fluxo de autenticação, seleção de workspace e mapa.

@@ -119,8 +119,8 @@ export function RoomCanvas() {
       ref={containerRef}
       aria-label={t("ariaLabel")}
       className={cn(
-        "h-[min(70vh,640px)] min-h-[420px] w-full overflow-hidden rounded-md border bg-slate-50 shadow-sm transition-shadow",
-        isEditing && "ring-2 ring-teal-700/40",
+        "h-full min-h-0 w-full overflow-hidden bg-slate-50",
+        isEditing && "outline-2 outline-offset-[-2px] outline-teal-700/50",
       )}
     />
   );

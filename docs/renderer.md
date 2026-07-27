@@ -10,7 +10,7 @@ O PixiJS controla a cena da sala:
 - objetos posicionados;
 - avatar local;
 - desenho e destaque de seleção;
-- eventos de ponte para cliques em tiles e objetos.
+- eventos de ponteiro para cliques em tiles e objetos.
 
 O React controla a interface:
 
@@ -18,7 +18,7 @@ O React controla a interface:
 - catálogo de itens;
 - botões de rotação e remoção;
 - ativação do modo de edição;
-- composição da página.
+- composição do shell da sala, incluindo cabeçalho e sidebar.
 
 O Zustand mantém o estado local compartilhado entre essas camadas. O renderer não importa nem acessa o store diretamente.
 
@@ -27,6 +27,7 @@ O Zustand mantém o estado local compartilhado entre essas camadas. O renderer n
 ```txt
 apps/web/features/room/
   components/room-canvas.tsx
+  components/room-shell.tsx
   renderer/room-renderer.ts
   stores/room-store.ts
   types.ts
@@ -40,6 +41,8 @@ apps/web/features/room-editor/
 
 `room-renderer.ts` não contém JSX nem regras de persistência. A classe cria o `Application`, desenha as camadas e destrói os recursos no unmount.
 
+`room-shell.tsx` não participa da renderização da cena. Ele organiza a experiência em tela cheia: cabeçalho compacto, canvas flexível e sidebar fixa no desktop ou sobreposta em telas menores.
+
 ## Camadas da cena
 
 A cena atual usa três containers, nesta ordem:
@@ -49,6 +52,8 @@ A cena atual usa três containers, nesta ordem:
 3. player.
 
 Objetos selecionados recebem um contorno visual. Mesa, cadeira, quadro e planta possuem formas simples distintas, sem assets externos nesta etapa.
+
+As camadas pertencem a um container de mundo comum. Um `ResizeObserver` reenquadra esse container quando o espaço disponível muda, preservando a proporção e exibindo o mapa atual por inteiro.
 
 ## Editor de sala
 
@@ -72,7 +77,7 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 
 ## Limitações atuais
 
-- não há câmera para mapas maiores;
+- o enquadramento atual exibe o mapa inteiro, mas ainda não há câmera para acompanhar o jogador em mapas maiores;
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;

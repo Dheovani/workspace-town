@@ -8,7 +8,7 @@ export function RoomStatusPanel() {
   const player = useRoomStore((state) => state.localPlayer);
 
   return (
-    <aside className="rounded-md border bg-card p-4 text-sm shadow-sm">
+    <section className="border-b p-4 text-sm">
       <h2 className="text-base font-semibold">{t("title")}</h2>
       <dl className="mt-3 grid gap-2 text-muted-foreground">
         <div className="flex justify-between gap-3">
@@ -30,6 +30,6 @@ export function RoomStatusPanel() {
           </dd>
         </div>
       </dl>
-    </aside>
+    </section>
   );
 }

@@ -74,11 +74,14 @@ export function RoomEditorPanel({
   );
 
   return (
-    <aside className="rounded-md border bg-card p-4 text-sm shadow-sm">
+    <section className="border-b p-4 text-sm">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-base font-semibold">{t("title")}</h2>
         <div className="flex items-center gap-2">
-          <label className="text-xs text-muted-foreground" htmlFor="room-editor">
+          <label
+            className="text-xs text-muted-foreground"
+            htmlFor="room-editor"
+          >
             {t("toggle")}
           </label>
           <Switch
@@ -216,6 +219,6 @@ export function RoomEditorPanel({
           {t(`persistence.status.${status}`)}
         </p>
       ) : null}
-    </aside>
+    </section>
   );
 }

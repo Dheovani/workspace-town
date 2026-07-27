@@ -26,6 +26,7 @@ type RoomRendererOptions = {
 export class RoomRenderer {
   private readonly app = new Application<Renderer>();
   private readonly room: Room;
+  private readonly worldLayer = new Container();
   private readonly playerLayer = new Container();
   private readonly objectLayer = new Container();
   private readonly gridLayer = new Container();
@@ -34,6 +35,7 @@ export class RoomRenderer {
   private editorInteraction: RoomEditorInteraction;
   private playerBody?: Graphics;
   private playerLabel?: Text;
+  private resizeObserver?: ResizeObserver;
 
   private constructor(options: RoomRendererOptions) {
     this.room = options.room;
@@ -65,6 +67,7 @@ export class RoomRenderer {
   }
 
   destroy(): void {
+    this.resizeObserver?.disconnect();
     this.app.destroy(true, { children: true });
   }
 
@@ -76,11 +79,42 @@ export class RoomRenderer {
     });
 
     container.appendChild(this.app.canvas);
-    this.app.stage.addChild(this.gridLayer, this.objectLayer, this.playerLayer);
+    this.app.canvas.style.display = "block";
+    this.worldLayer.addChild(
+      this.gridLayer,
+      this.objectLayer,
+      this.playerLayer,
+    );
+    this.app.stage.addChild(this.worldLayer);
 
     this.drawGrid();
     this.drawObjects();
     this.drawPlayer();
+    this.frameWorld(container);
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.frameWorld(container);
+    });
+    this.resizeObserver.observe(container);
+  }
+
+  private frameWorld(container: HTMLElement): void {
+    const worldWidth = this.room.width * this.room.tileSize;
+    const worldHeight = this.room.height * this.room.tileSize;
+    const scale = Math.min(
+      container.clientWidth / worldWidth,
+      container.clientHeight / worldHeight,
+    );
+
+    if (!Number.isFinite(scale) || scale <= 0) {
+      return;
+    }
+
+    this.worldLayer.scale.set(scale);
+    this.worldLayer.position.set(
+      Math.round((container.clientWidth - worldWidth * scale) / 2),
+      Math.round((container.clientHeight - worldHeight * scale) / 2),
+    );
   }
 
   private drawGrid(): void {
@@ -196,10 +230,7 @@ export class RoomRenderer {
     const angle = (object.rotation * Math.PI) / 180;
     item
       .moveTo(centerX, centerY)
-      .lineTo(
-        centerX + Math.sin(angle) * 9,
-        centerY - Math.cos(angle) * 9,
-      )
+      .lineTo(centerX + Math.sin(angle) * 9, centerY - Math.cos(angle) * 9)
       .stroke({ color: "#334155", width: 2 });
   }
 

@@ -143,12 +143,14 @@ Já existe uma fundação inicial para o MVP:
 - rota `/workspaces` protegida por sessão, com seleção de workspaces/cidades mockados;
 - rota `/workspaces/[workspaceSlug]/map` protegida por sessão, com o mapa principal e renderer PixiJS;
 - rota `/rooms/demo`;
+- layout de sala em tela cheia, com cabeçalho compacto e controles em uma sidebar responsiva;
 - logout disponível na área autenticada;
 - i18n inicial com `pt-BR` e `en-US`;
 - componente client-side que monta um canvas PixiJS;
 - renderer PixiJS separado da camada React;
 - grid 2D simples, objetos estáticos e player local;
 - movimento local com teclado;
+- reenquadramento automático da cena PixiJS conforme o espaço disponível;
 - store Zustand para estado local da sala e do player;
 - editor local com catálogo de itens, posicionamento, movimentação, rotação e remoção;
 - API autenticada para carregar e salvar o layout das salas padrão;

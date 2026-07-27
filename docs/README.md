@@ -36,6 +36,8 @@ O projeto separa responsabilidades em camadas:
 
 React deve controlar a interface da aplicação. PixiJS deve controlar a cena da sala dentro do canvas. Movimento local, direção e presença atual são dados efêmeros e não devem ser persistidos diretamente em SQL.
 
+As rotas de sala usam um shell próprio em tela cheia. Um cabeçalho compacto ocupa o topo, o canvas usa todo o espaço restante e controles de navegação, sessão, status e edição ficam em uma sidebar fora da cena. Em telas menores, essa sidebar funciona como painel sobreposto.
+
 ## Internacionalização
 
 O idioma padrão é `pt-BR`. O app também possui mensagens iniciais em `en-US`.
@@ -102,6 +104,8 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - O fluxo inicial de usuário usa Better Auth: `/auth/login`, `/auth/register`, `/workspaces` e `/workspaces/[workspaceSlug]/map`.
 - A rota raiz `/` redireciona para o login.
 - O renderer PixiJS fica isolado de componentes React grandes.
+- O layout das salas não usa o container de largura máxima das páginas convencionais.
+- A cena atual é reenquadrada automaticamente quando a viewport muda; câmera e navegação por mapas maiores continuam planejadas.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.
 - O schema persistente inicial fica em `apps/web/db/schema.ts` para evitar criar pacotes antes de haver necessidade.

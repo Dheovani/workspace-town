@@ -51,7 +51,7 @@ features/
     components/                    # Formulários de login, cadastro e logout
     schemas.ts                     # Validação Zod dos formulários
   room/
-    components/                    # Componentes React da feature
+    components/                    # Canvas, shell de tela cheia e painéis da sala
     renderer/                      # Renderer PixiJS isolado
     server/                        # Queries server-only de layout
     stores/                        # Zustand stores
@@ -91,8 +91,8 @@ Rotas úteis:
 - `/auth/login`: login real com e-mail e senha.
 - `/auth/register`: cadastro real com e-mail e senha.
 - `/workspaces`: seleção de workspaces/cidades mockados.
-- `/workspaces/[workspaceSlug]/map`: mapa principal mockado do workspace.
-- `/rooms/demo`: sala demo com canvas PixiJS e movimento local.
+- `/workspaces/[workspaceSlug]/map`: mapa principal em tela cheia do workspace.
+- `/rooms/demo`: sala demo em tela cheia com canvas PixiJS e movimento local.
 - `/en-US/auth/login`: exemplo de rota em inglês.
 - `/api/livekit/token`: rota server-side para token LiveKit. Use `POST` para gerar token.
 
@@ -166,8 +166,11 @@ A feature inicial está em `features/room`.
 - `types.ts`: schemas Zod e tipos de `room`, `player`, `roomObject`, `avatarConfig` e `meetingType`.
 - `stores/room-store.ts`: estado local da sala demo, player local, objetos estáticos e movimento por grid.
 - `components/room-canvas.tsx`: componente client-side que monta o renderer e escuta teclado.
+- `components/room-shell.tsx`: layout client-side com cabeçalho compacto, área jogável flexível e sidebar responsiva.
 - `components/room-status-panel.tsx`: painel simples com dados do player local.
-- `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, atualiza a cena e limpa recursos no unmount.
+- `renderer/room-renderer.ts`: classe PixiJS que cria o app, desenha grid, objetos e player, reenquadra a cena no resize e limpa recursos no unmount.
+
+As páginas de sala não usam o container de largura máxima aplicado às telas convencionais. O canvas ocupa toda a área abaixo do cabeçalho, descontando apenas a sidebar no desktop. Em telas menores, a sidebar abre sobre a cena para preservar a área jogável.
 
 ## Editor de sala
 
@@ -224,6 +227,7 @@ Implementado:
 - tela `/workspaces`;
 - tela `/workspaces/[workspaceSlug]/map`;
 - sala demo;
+- shell de sala em tela cheia com sidebar responsiva;
 - canvas PixiJS;
 - grid 2D;
 - player local;
