@@ -9,7 +9,7 @@ import {
   resolvePlayerMovement,
   type PlayerMove,
 } from "../domain/player-movement";
-import type { Player, Room, RoomObject } from "../types";
+import type { AvatarConfig, Player, Room, RoomObject } from "../types";
 
 const demoRoom: Room = {
   id: "demo",
@@ -25,8 +25,14 @@ const demoPlayer: Player = {
   roomId: demoRoom.id,
   name: "Local Player",
   avatarConfig: {
-    bodyColor: "#38bdf8",
-    accentColor: "#0f172a",
+    skinTone: "#d49a6a",
+    hairStyle: "spiky",
+    hairColor: "#1f2937",
+    faceStyle: "smile",
+    shirtStyle: "hoodie",
+    shirtColor: "#38bdf8",
+    pantsColor: "#334155",
+    shoeColor: "#f8fafc",
     displayName: "You",
   },
   position: { x: 4, y: 4 },
@@ -62,6 +68,7 @@ type RoomState = {
   selectedItemDefinitionId: string | null;
   selectedObjectId: string | null;
   moveLocalPlayer: (move: PlayerMove) => void;
+  updateLocalAvatar: (avatarConfig: AvatarConfig) => void;
   setEditing: (isEditing: boolean) => void;
   selectItemDefinition: (itemDefinitionId: string) => void;
   selectObject: (objectId: string) => void;
@@ -87,6 +94,13 @@ export const useRoomStore = create<RoomState>((set) => ({
         itemDefinitions: roomItemDefinitions,
         move,
       }),
+    })),
+  updateLocalAvatar: (avatarConfig) =>
+    set((state) => ({
+      localPlayer: {
+        ...state.localPlayer,
+        avatarConfig,
+      },
     })),
   setEditing: (isEditing) =>
     set({

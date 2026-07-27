@@ -45,3 +45,27 @@ describe("room store movement integration", () => {
     expect(useRoomStore.getState().objects).toHaveLength(initialObjectCount);
   });
 });
+
+describe("room store avatar integration", () => {
+  test("updates the avatar appearance without changing player identity or position", () => {
+    const playerBeforeUpdate = useRoomStore.getState().localPlayer;
+
+    useRoomStore.getState().updateLocalAvatar({
+      ...playerBeforeUpdate.avatarConfig,
+      hairStyle: "bob",
+      shirtColor: "#fb7185",
+      pantsColor: "#1e3a8a",
+    });
+
+    const playerAfterUpdate = useRoomStore.getState().localPlayer;
+
+    expect(playerAfterUpdate.avatarConfig).toEqual({
+      ...playerBeforeUpdate.avatarConfig,
+      hairStyle: "bob",
+      shirtColor: "#fb7185",
+      pantsColor: "#1e3a8a",
+    });
+    expect(playerAfterUpdate.id).toBe(playerBeforeUpdate.id);
+    expect(playerAfterUpdate.position).toEqual(playerBeforeUpdate.position);
+  });
+});

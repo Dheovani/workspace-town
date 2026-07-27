@@ -1,21 +1,33 @@
-import type { PlayerDirection } from "../types";
-
 type Point = {
   x: number;
   y: number;
 };
 
-export function getDirectionRotation(direction: PlayerDirection): number {
-  switch (direction) {
-    case "right":
-      return Math.PI / 2;
-    case "down":
-      return Math.PI;
-    case "left":
-      return -Math.PI / 2;
-    default:
-      return 0;
+export type AvatarWalkPose = {
+  bodyOffsetY: number;
+  limbRotation: number;
+  stepOffsetY: number;
+};
+
+export function calculateAvatarWalkPose(
+  elapsedMilliseconds: number,
+  isMoving: boolean,
+): AvatarWalkPose {
+  if (!isMoving) {
+    return {
+      bodyOffsetY: 0,
+      limbRotation: 0,
+      stepOffsetY: 0,
+    };
   }
+
+  const phase = Math.sin(elapsedMilliseconds * 0.018);
+
+  return {
+    bodyOffsetY: -Math.abs(phase),
+    limbRotation: phase * 0.16,
+    stepOffsetY: phase * 1.5,
+  };
 }
 
 export function isVisualPositionMoving(

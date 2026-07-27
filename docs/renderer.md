@@ -81,9 +81,11 @@ A câmera usa a posição visual intermediária como alvo. Assim, player e mundo
 
 ## Avatar local
 
-`player-avatar-renderer.ts` encapsula os elementos PixiJS do avatar e expõe um único container para a cena. O protótipo atual usa formas vetoriais simples, marcador de orientação, sombra, pés alternados e deslocamento corporal durante a caminhada.
+`player-avatar-renderer.ts` encapsula os elementos PixiJS do avatar e expõe um único container para a cena. O personagem atual é humanoide e usa uma composição de pixel art em camadas para cabeça, rosto, cabelo, tronco, braços, pernas, roupas, calçados e sombra.
 
-`avatar-visual-state.ts` converte direção em rotação e detecta quando a posição visual ainda está em trânsito. Essas regras são puras e testadas sem inicializar PixiJS. A separação permite reutilizar uma instância do renderer para cada participante quando o multiplayer for implementado.
+O renderer desenha poses frontal, traseira e lateral, espelha a pose lateral para a esquerda e alterna braços e pernas durante o deslocamento. `avatar-visual-state.ts` calcula a pose de caminhada e detecta quando a posição visual ainda está em trânsito. Essas regras são puras e testadas sem inicializar PixiJS. A separação permite reutilizar uma instância do renderer para cada participante quando o multiplayer for implementado.
+
+O painel React em `features/player/components/avatar-customizer-panel.tsx` altera tom de pele, penteado, expressão, modelo e cores das roupas no store. O `RoomCanvas` encaminha o player atualizado ao renderer, que redesenha a mesma instância do avatar. A configuração é local neste marco e ainda não é persistida.
 
 ## Movimento e colisão
 
@@ -121,7 +123,8 @@ Posição atual do avatar e demais eventos de movimento continuam efêmeros e n�
 
 ## Limitações atuais
 
-- o avatar ainda usa formas vetoriais e não possui sprites customizáveis;
+- o catálogo inicial de cabelo, rosto e roupas ainda é pequeno e não possui persistência;
+- a direção de arte definitiva e eventuais spritesheets autorais ainda não foram definidos;
 - não há seleção por arraste;
 - não há undo/redo;
 - objetos ocupam um único tile;

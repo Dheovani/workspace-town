@@ -77,7 +77,7 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 
 **Resultado esperado:** uma pessoa consegue entrar na sala, explorar o mapa com movimentação consistente, reconhecer seu avatar e interagir com o ambiente sem atravessar objetos.
 
-**Próxima entrega:** customização inicial do avatar.
+**Próxima entrega:** validar o round-trip completo do layout persistente.
 
 ### 1.1 Área jogável e câmera
 
@@ -101,7 +101,10 @@ Os marcos são sequenciais em intenção, mas podem avançar parcialmente em par
 - [x] Adicionar estados visuais de direção e movimento.
 - [x] Implementar movimento por clique ou toque com rota que respeita obstáculos.
 - [x] Definir toque no mapa como estratégia inicial para dispositivos móveis.
-- [ ] Criar customização inicial de avatar.
+- [x] Criar personagem humanoide em pixel art com poses direcionais e animação de caminhada.
+- [x] Criar customização inicial de pele, rosto, cabelo e roupas.
+- [ ] Evoluir o catálogo visual com novos cabelos, rostos, roupas e acessórios.
+- [ ] Avaliar spritesheets autorais quando a direção de arte do produto for definida.
 
 ### 1.3 Objetos e editor local
 

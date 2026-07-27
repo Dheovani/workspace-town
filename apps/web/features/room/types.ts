@@ -11,9 +11,19 @@ export const meetingTypeSchema = z.enum([
 
 export type MeetingType = z.infer<typeof meetingTypeSchema>;
 
+export const avatarHairStyleSchema = z.enum(["short", "spiky", "bob"]);
+export const avatarFaceStyleSchema = z.enum(["neutral", "smile", "focused"]);
+export const avatarShirtStyleSchema = z.enum(["tshirt", "hoodie", "jacket"]);
+
 export const avatarConfigSchema = z.object({
-  bodyColor: z.string().min(1).default("#38bdf8"),
-  accentColor: z.string().min(1).default("#0f172a"),
+  skinTone: z.string().min(1).default("#d49a6a"),
+  hairStyle: avatarHairStyleSchema.default("short"),
+  hairColor: z.string().min(1).default("#1f2937"),
+  faceStyle: avatarFaceStyleSchema.default("smile"),
+  shirtStyle: avatarShirtStyleSchema.default("hoodie"),
+  shirtColor: z.string().min(1).default("#38bdf8"),
+  pantsColor: z.string().min(1).default("#334155"),
+  shoeColor: z.string().min(1).default("#f8fafc"),
   displayName: z.string().min(1).max(80),
 });
 
@@ -101,9 +111,7 @@ export const roomLayoutObjectInputSchema = roomObjectSchema
       .refine((rotation) => rotation % 90 === 0),
   });
 
-export type RoomLayoutObjectInput = z.infer<
-  typeof roomLayoutObjectInputSchema
->;
+export type RoomLayoutObjectInput = z.infer<typeof roomLayoutObjectInputSchema>;
 
 export const roomLayoutInputSchema = z.object({
   objects: z.array(roomLayoutObjectInputSchema).max(500),

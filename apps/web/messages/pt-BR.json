@@ -78,6 +78,58 @@
     "eyebrow": "Mapa principal mockado"
   },
   "room": {
+    "avatar": {
+      "colors": {
+        "amber": "Amarelo",
+        "black": "Preto",
+        "blond": "Loiro",
+        "blue": "Azul",
+        "brown": "Marrom",
+        "brownHair": "Castanho",
+        "burgundy": "Bordô",
+        "coral": "Coral",
+        "deep": "Pele retinta",
+        "graphite": "Grafite",
+        "gray": "Cinza",
+        "navy": "Azul-marinho",
+        "olive": "Verde-oliva",
+        "red": "Vermelho",
+        "sky": "Azul-céu",
+        "tan": "Pele morena",
+        "teal": "Verde-água",
+        "violet": "Violeta",
+        "warm": "Pele média",
+        "light": "Pele clara",
+        "white": "Branco"
+      },
+      "faceStyle": "Expressão",
+      "hairColor": "Cor do cabelo",
+      "hairStyle": "Cabelo",
+      "pantsColor": "Cor da calça",
+      "selectColor": "Selecionar {color}",
+      "shirtColor": "Cor da camisa",
+      "shirtStyle": "Roupa",
+      "shoeColor": "Cor do calçado",
+      "skinTone": "Tom de pele",
+      "styles": {
+        "face": {
+          "focused": "Concentrado",
+          "neutral": "Neutro",
+          "smile": "Sorridente"
+        },
+        "hair": {
+          "bob": "Chanel",
+          "short": "Curto",
+          "spiky": "Arrepiado"
+        },
+        "shirt": {
+          "hoodie": "Moletom",
+          "jacket": "Jaqueta",
+          "tshirt": "Camiseta"
+        }
+      },
+      "title": "Avatar"
+    },
     "canvas": {
       "ariaLabel": "Canvas da sala"
     },

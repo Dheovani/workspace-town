@@ -190,7 +190,9 @@ O mapa local possui `32 x 20` tiles. A câmera mantém os tiles no tamanho natur
 
 A posição lógica permanece inteira no Zustand para colisão. O ticker do PixiJS interpola somente a posição visual do player; a câmera acompanha essa posição intermediária.
 
-O avatar vetorial atual possui indicador de direção e ciclo simples de caminhada. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
+O avatar atual é um personagem humanoide em pixel art, com poses frontal, traseira e lateral e animação alternada de braços e pernas. Sua composição está isolada do renderer da sala para permitir múltiplas instâncias no futuro.
+
+A customização inicial fica em `features/player/components/avatar-customizer-panel.tsx`. O painel altera localmente tom de pele, penteado, expressão, modelo da camisa e cores de cabelo, camisa, calça e calçado no Zustand. O canvas reflete a mudança imediatamente. Nome, catálogo visual ampliado, sprites autorais e persistência do avatar continuam planejados.
 
 Cliques ou toques em tiles livres calculam uma rota A\* ortogonal. O teclado assume o controle e cancela a rota atual; ativar o editor possui o mesmo comportamento. Um marcador no canvas identifica o destino enquanto o percurso está ativo.
 

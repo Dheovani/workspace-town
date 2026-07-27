@@ -78,6 +78,58 @@
     "eyebrow": "Mock main map"
   },
   "room": {
+    "avatar": {
+      "colors": {
+        "amber": "Amber",
+        "black": "Black",
+        "blond": "Blond",
+        "blue": "Blue",
+        "brown": "Brown",
+        "brownHair": "Brown",
+        "burgundy": "Burgundy",
+        "coral": "Coral",
+        "deep": "Deep skin",
+        "graphite": "Graphite",
+        "gray": "Gray",
+        "navy": "Navy blue",
+        "olive": "Olive green",
+        "red": "Red",
+        "sky": "Sky blue",
+        "tan": "Tan skin",
+        "teal": "Teal",
+        "violet": "Violet",
+        "warm": "Medium skin",
+        "light": "Light skin",
+        "white": "White"
+      },
+      "faceStyle": "Expression",
+      "hairColor": "Hair color",
+      "hairStyle": "Hair",
+      "pantsColor": "Pants color",
+      "selectColor": "Select {color}",
+      "shirtColor": "Shirt color",
+      "shirtStyle": "Outfit",
+      "shoeColor": "Shoe color",
+      "skinTone": "Skin tone",
+      "styles": {
+        "face": {
+          "focused": "Focused",
+          "neutral": "Neutral",
+          "smile": "Smiling"
+        },
+        "hair": {
+          "bob": "Bob",
+          "short": "Short",
+          "spiky": "Spiky"
+        },
+        "shirt": {
+          "hoodie": "Hoodie",
+          "jacket": "Jacket",
+          "tshirt": "T-shirt"
+        }
+      },
+      "title": "Avatar"
+    },
     "canvas": {
       "ariaLabel": "Room canvas"
     },

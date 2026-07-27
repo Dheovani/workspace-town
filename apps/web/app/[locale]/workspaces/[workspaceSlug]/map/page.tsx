@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/features/auth/components/sign-out-button";
+import { AvatarCustomizerPanel } from "@/features/player/components/avatar-customizer-panel";
 import { RoomCanvas } from "@/features/room/components/room-canvas";
 import { RoomShell } from "@/features/room/components/room-shell";
 import { RoomStatusPanel } from "@/features/room/components/room-status-panel";
@@ -83,6 +84,7 @@ export default async function WorkspaceMapPage({
             </dl>
           </section>
 
+          <AvatarCustomizerPanel />
           <RoomEditorPanel
             workspaceSlug={workspace.slug}
             roomSlug={workspace.defaultRoomId}

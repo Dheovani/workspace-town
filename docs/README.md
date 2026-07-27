@@ -25,6 +25,7 @@ O projeto separa responsabilidades em camadas:
 - `apps/web/i18n`: configuração do `next-intl`, routing e helpers de navegação.
 - `apps/web/lib/auth`: configuração server-side e client-side do `better-auth`.
 - `apps/web/features/room`: domínio client-side da sala virtual, incluindo componentes, store, renderer e schemas.
+- `apps/web/features/player`: controles React da identidade jogável e customização local do avatar.
 - `apps/web/features/room-editor`: catálogo e controles React do editor local de sala.
 - `apps/web/features/room/server`: queries server-only para layouts persistentes.
 - `apps/web/features/workspaces`: mocks e helpers para o fluxo inicial de seleção de workspace/cidade.
@@ -110,6 +111,7 @@ O schema Drizzle inclui tabelas iniciais para `better-auth`, e a migration inici
 - Colisão e validação de movimento são regras de domínio executadas antes da atualização do renderer.
 - A posição lógica muda por tile no store, enquanto o ticker do PixiJS interpola a posição visual do player e da câmera.
 - O avatar local possui renderer próprio, orientação por direção e ciclo de caminhada, preparando a cena para múltiplos players.
+- A sidebar permite alterar localmente pele, rosto, cabelo e roupas do personagem; a persistência dessa configuração pertence ao futuro fluxo de identidade do player.
 - Clique ou toque no mapa usa uma rota A\* ortogonal, cancelável por teclado ou editor e revalidada contra colisões a cada passo.
 - O estado efêmero inicial usa Zustand.
 - Schemas de entrada e tipos compartilhados iniciais usam Zod.

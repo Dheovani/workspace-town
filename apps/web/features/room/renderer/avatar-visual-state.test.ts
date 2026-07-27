@@ -1,15 +1,30 @@
 import { describe, expect, test } from "bun:test";
 import {
-  getDirectionRotation,
+  calculateAvatarWalkPose,
   isVisualPositionMoving,
 } from "./avatar-visual-state";
 
-describe("getDirectionRotation", () => {
-  test("maps each player direction to the expected rotation", () => {
-    expect(getDirectionRotation("up")).toBe(0);
-    expect(getDirectionRotation("right")).toBe(Math.PI / 2);
-    expect(getDirectionRotation("down")).toBe(Math.PI);
-    expect(getDirectionRotation("left")).toBe(-Math.PI / 2);
+describe("calculateAvatarWalkPose", () => {
+  test("keeps every character layer at rest while idle", () => {
+    expect(calculateAvatarWalkPose(500, false)).toEqual({
+      bodyOffsetY: 0,
+      limbRotation: 0,
+      stepOffsetY: 0,
+    });
+  });
+
+  test("alternates limbs and raises the body while walking", () => {
+    const forwardPose = calculateAvatarWalkPose(90, true);
+    const backwardPose = calculateAvatarWalkPose(270, true);
+
+    expect(forwardPose.bodyOffsetY).toBeLessThanOrEqual(0);
+    expect(backwardPose.bodyOffsetY).toBeLessThanOrEqual(0);
+    expect(Math.sign(forwardPose.limbRotation)).not.toBe(
+      Math.sign(backwardPose.limbRotation),
+    );
+    expect(Math.sign(forwardPose.stepOffsetY)).not.toBe(
+      Math.sign(backwardPose.stepOffsetY),
+    );
   });
 });
 
